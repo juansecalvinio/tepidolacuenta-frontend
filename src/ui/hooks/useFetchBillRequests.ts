@@ -60,6 +60,7 @@ export const useFetchBillRequests = () => {
 
   const createBillRequest = useCallback(
     async (body: CreateBillRequestBody) => {
+      setLoading(true);
       clearError();
 
       try {
@@ -73,6 +74,8 @@ export const useFetchBillRequests = () => {
           err instanceof Error ? err.message : "Error al crear la solicitud";
         setError(errorMessage);
         return { success: false, error: errorMessage };
+      } finally {
+        setLoading(false);
       }
     },
     [repository, setIsRequested, setError, clearError]

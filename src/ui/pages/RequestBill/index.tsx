@@ -48,9 +48,28 @@ const SuccessMessage = () => (
   </div>
 );
 
+const ErrorMessage = ({ message }: { message: string }) => (
+  <div className="alert alert-soft alert-error absolute bottom-24 left-0 right-0 max-w-md mx-auto px-4 animate-fade-in">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="stroke-current shrink-0 h-6 w-6"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+        d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
+    </svg>
+    <span>{message}</span>
+  </div>
+);
+
 export const RequestBill = () => {
   const [searchParams] = useSearchParams();
-  const { isLoading, isRequested } = useBillRequests();
+  const { isLoading, isRequested, error } = useBillRequests();
   const { createBillRequest } = useFetchBillRequests();
   const [requestData, setRequestData] = useState<{
     restaurantId: string;
@@ -61,10 +80,13 @@ export const RequestBill = () => {
 
   useEffect(() => {
     // Fix para URLs con & escapados como \u0026
-    const rawParams = window.location.search.slice(1).replace(/\\u0026/g, '&');
+    const rawParams = window.location.search.slice(1).replace(/\\u0026/g, "&");
     const fixedSearchParams = new URLSearchParams(rawParams);
 
-    console.log("🚀 ~ RequestBill ~ searchParams:", Object.fromEntries(fixedSearchParams));
+    console.log(
+      "🚀 ~ RequestBill ~ searchParams:",
+      Object.fromEntries(fixedSearchParams)
+    );
     const restaurantId = fixedSearchParams.get("r");
     const tableId = fixedSearchParams.get("t");
     const tableNumber = fixedSearchParams.get("n");
@@ -116,6 +138,8 @@ export const RequestBill = () => {
       </div>
 
       {isRequested && <SuccessMessage />}
+
+      {error && <ErrorMessage message={error} />}
 
       <footer className="pb-8 pt-4">
         <p className="font-sans text-center text-lg font-extrabold text-base-content/40">

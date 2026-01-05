@@ -1,0 +1,14 @@
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NGE3ZjhiM2MxMjM0NTY3ODkwMTIzNCIsImlhdCI6MTY5ODUwMDAwMH0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+    "user": {
+      "id": "64a7f8b3c12345678901234",
+      "email": "restaurant@example.com",
+      "username": "La Pizzeria",
+      "createdAt": "2026-01-02T12:00:00Z",
+      "updatedAt": "2026-01-02T12:00:00Z"
+    }
+  }
+}

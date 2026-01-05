@@ -5,7 +5,7 @@ export const MainLayout = () => {
   return (
     <>
       <Header />
-      <main className="h-[90%]">
+      <main className="h-[90%] max-w-4xl mx-auto">
         <Outlet />
       </main>
     </>

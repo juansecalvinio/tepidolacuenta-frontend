@@ -1,4 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import { useFetchBillRequests } from "../../hooks/useFetchBillRequests";
+import { useBillRequests } from "../../hooks/useBillRequests";
 
 const Spinner = () => (
   <div
@@ -46,22 +49,48 @@ const SuccessMessage = () => (
 );
 
 export const RequestBill = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [isRequested, setIsRequested] = useState(false);
+  const [searchParams] = useSearchParams();
+  const { isLoading, isRequested } = useBillRequests();
+  const { createBillRequest } = useFetchBillRequests();
+  const [requestData, setRequestData] = useState<{
+    restaurantId: string;
+    tableId: string;
+    tableNumber: number;
+    hash: string;
+  } | null>(null);
 
-  const handleClick = () => {
-    setIsLoading(true);
-    // Simulate an async action
-    // TODO: Implementar llamada a la API POST /api/v1/public/request-account
-    setTimeout(() => {
-      setIsRequested(true);
-      setIsLoading(false);
-    }, 2000);
+  useEffect(() => {
+    // Fix para URLs con & escapados como \u0026
+    const rawParams = window.location.search.slice(1).replace(/\\u0026/g, '&');
+    const fixedSearchParams = new URLSearchParams(rawParams);
+
+    console.log("🚀 ~ RequestBill ~ searchParams:", Object.fromEntries(fixedSearchParams));
+    const restaurantId = fixedSearchParams.get("r");
+    const tableId = fixedSearchParams.get("t");
+    const tableNumber = fixedSearchParams.get("n");
+    const hash = fixedSearchParams.get("h");
+
+    if (restaurantId && tableId && tableNumber && hash) {
+      setRequestData({
+        restaurantId,
+        tableId,
+        tableNumber: parseInt(tableNumber, 10),
+        hash,
+      });
+    }
+  }, [searchParams]);
+
+  const handleClick = async () => {
+    if (!requestData) {
+      console.error("Datos de la mesa no disponibles");
+      return;
+    }
+
+    await createBillRequest(requestData);
   };
 
   return (
     <div className="h-full flex flex-col bg-base-200 relative">
-      {/* Main Content */}
       <div className="flex-1 flex items-center justify-center">
         <button
           onClick={handleClick}
@@ -86,10 +115,8 @@ export const RequestBill = () => {
         </button>
       </div>
 
-      {/* Success Message - positioned absolutely */}
       {isRequested && <SuccessMessage />}
 
-      {/* Footer */}
       <footer className="pb-8 pt-4">
         <p className="font-sans text-center text-lg font-extrabold text-base-content/40">
           tepidolacuenta

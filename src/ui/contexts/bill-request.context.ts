@@ -4,6 +4,7 @@ import type { BillRequest } from "../../core/modules/bill-request/domain/models/
 interface BillRequestContext {
   requests: BillRequest[];
   isLoading: boolean;
+  isRequested: boolean;
   error: string | null;
 
   setRequests: (requests: BillRequest[]) => void;
@@ -11,6 +12,7 @@ interface BillRequestContext {
   updateRequest: (requestId: string, updates: Partial<BillRequest>) => void;
   removeRequest: (requestId: string) => void;
   setLoading: (isLoading: boolean) => void;
+  setIsRequested: (isRequested: boolean) => void;
   setError: (error: string | null) => void;
   clearError: () => void;
 }
@@ -18,6 +20,7 @@ interface BillRequestContext {
 export const useBillRequestContext = create<BillRequestContext>((set) => ({
   requests: [],
   isLoading: false,
+  isRequested: false,
   error: null,
 
   setRequests: (requests) => set({ requests }),
@@ -36,6 +39,7 @@ export const useBillRequestContext = create<BillRequestContext>((set) => ({
       requests: state.requests.filter((req) => req.id !== requestId),
     })),
   setLoading: (isLoading) => set({ isLoading }),
+  setIsRequested: (isRequested) => set({ isRequested }),
   setError: (error) => set({ error }),
   clearError: () => set({ error: null }),
 }));

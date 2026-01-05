@@ -3,10 +3,18 @@ import { useBillRequestContext } from "../contexts/bill-request.context";
 import { getBillRequestRepository } from "../../core/modules/bill-request/infrastructure/repositories/BillRequestRepositoryFactory";
 import { GetPendingBillRequests } from "../../core/modules/bill-request/use-cases/GetPendingBillRequests";
 import { MarkBillRequestAsAttended } from "../../core/modules/bill-request/use-cases/MarkBillRequestAsAttended";
+import type { CreateBillRequestBody } from "../../core/modules/bill-request/domain/models/BillRequest";
+import { CreateBillRequest } from "../../core/modules/bill-request/use-cases/CreateBillRequest";
 
 export const useFetchBillRequests = () => {
-  const { setRequests, updateRequest, setLoading, setError, clearError } =
-    useBillRequestContext();
+  const {
+    setRequests,
+    updateRequest,
+    setLoading,
+    setIsRequested,
+    setError,
+    clearError,
+  } = useBillRequestContext();
   const repository = getBillRequestRepository();
 
   const fetchPendingRequests = useCallback(async () => {
@@ -37,7 +45,7 @@ export const useFetchBillRequests = () => {
         const response = await markAsAttendedUseCase({ requestId });
         updateRequest(requestId, {
           status: "attended",
-          attendedAt: response.request.attendedAt,
+          updatedAt: response.request.updatedAt,
         });
         return { success: true, data: response.request };
       } catch (err) {
@@ -50,8 +58,29 @@ export const useFetchBillRequests = () => {
     [repository, updateRequest, setError, clearError]
   );
 
+  const createBillRequest = useCallback(
+    async (body: CreateBillRequestBody) => {
+      clearError();
+
+      try {
+        const createBillRequestUseCase = CreateBillRequest(repository);
+        const response = await createBillRequestUseCase(body);
+        if (response.success) {
+          setIsRequested(true);
+        }
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Error al crear la solicitud";
+        setError(errorMessage);
+        return { success: false, error: errorMessage };
+      }
+    },
+    [repository, setIsRequested, setError, clearError]
+  );
+
   return {
     fetchPendingRequests,
     markAsAttended,
+    createBillRequest,
   };
 };

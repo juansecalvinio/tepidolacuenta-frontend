@@ -1,5 +1,7 @@
 import type { BillRequestRepository } from "../../domain/repositories/BillRequestRepository";
 import type {
+  CreateBillRequestBody,
+  CreateBillRequestResponse,
   GetPendingBillRequestsResponse,
   MarkBillRequestAsAttendedRequest,
   MarkBillRequestAsAttendedResponse,
@@ -20,5 +22,11 @@ export class ApiBillRequestRepository implements BillRequestRepository {
       `/api/v1/bill-requests/${request.requestId}/attended`,
       {}
     );
+  }
+
+  async createBillRequest(
+    body: CreateBillRequestBody
+  ): Promise<CreateBillRequestResponse> {
+    return await api.post("/api/v1/public/request-account", body);
   }
 }

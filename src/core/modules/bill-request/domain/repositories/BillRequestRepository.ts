@@ -1,4 +1,6 @@
 import type {
+  CreateBillRequestBody,
+  CreateBillRequestResponse,
   GetPendingBillRequestsResponse,
   MarkBillRequestAsAttendedRequest,
   MarkBillRequestAsAttendedResponse,
@@ -9,4 +11,7 @@ export interface BillRequestRepository {
   markAsAttended(
     request: MarkBillRequestAsAttendedRequest
   ): Promise<MarkBillRequestAsAttendedResponse>;
+  createBillRequest(
+    body: CreateBillRequestBody
+  ): Promise<CreateBillRequestResponse>;
 }

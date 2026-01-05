@@ -4,7 +4,9 @@ import type {
   MarkBillRequestAsAttendedRequest,
   MarkBillRequestAsAttendedResponse,
   BillRequest,
+  CreateBillRequestResponse,
 } from "../../domain/models/BillRequest";
+import { mockDelay } from "../../../../api/mock-client";
 
 let mockRequests: BillRequest[] = [
   {
@@ -24,6 +26,20 @@ let mockRequests: BillRequest[] = [
     createdAt: new Date(Date.now() - 8 * 60 * 1000).toISOString(),
   },
 ];
+
+const mockRequestResponse: CreateBillRequestResponse = {
+  success: true,
+  message: "Request created successfully",
+  data: {
+    id: "64a7fbcd12345678901234",
+    restaurantId: "64a7f9abc12345678901234",
+    tableId: "64a7fabc12345678901234",
+    tableNumber: 5,
+    status: "pending",
+    createdAt: "2026-01-02T12:25:00Z",
+    updatedAt: "2026-01-02T12:25:00Z",
+  },
+};
 
 export class MockBillRequestRepository implements BillRequestRepository {
   async getPendingRequests(): Promise<GetPendingBillRequestsResponse> {
@@ -49,8 +65,13 @@ export class MockBillRequestRepository implements BillRequestRepository {
     }
 
     billRequest.status = "attended";
-    billRequest.attendedAt = new Date().toISOString();
+    billRequest.updatedAt = new Date().toISOString();
 
     return { request: billRequest };
+  }
+
+  async createBillRequest(): Promise<CreateBillRequestResponse> {
+    await mockDelay(2000);
+    return mockRequestResponse;
   }
 }

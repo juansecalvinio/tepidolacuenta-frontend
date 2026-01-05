@@ -5,7 +5,7 @@ export interface BillRequest {
   restaurantId: string;
   status: "pending" | "attended";
   createdAt: string;
-  attendedAt?: string;
+  updatedAt?: string;
 }
 
 export interface GetPendingBillRequestsResponse {
@@ -18,4 +18,17 @@ export interface MarkBillRequestAsAttendedRequest {
 
 export interface MarkBillRequestAsAttendedResponse {
   request: BillRequest;
+}
+
+export interface CreateBillRequestBody {
+  restaurantId: string;
+  tableId: string;
+  tableNumber: number;
+  hash: string;
+}
+
+export interface CreateBillRequestResponse {
+  success: boolean;
+  message: string;
+  data: BillRequest;
 }

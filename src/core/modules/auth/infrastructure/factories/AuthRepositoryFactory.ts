@@ -4,7 +4,6 @@ import { MockAuthRepository } from "../repositories/MockAuthRepository";
 
 export const getAuthRepository = (): AuthRepository => {
   const mode = import.meta.env.MODE;
-  console.log("🚀 ~ getUsersRepository ~ mode:", mode);
   const useMocks = mode === "none";
 
   if (useMocks) {

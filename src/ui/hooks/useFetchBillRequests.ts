@@ -5,8 +5,10 @@ import { GetPendingBillRequests } from "../../core/modules/bill-request/use-case
 import { MarkBillRequestAsAttended } from "../../core/modules/bill-request/use-cases/MarkBillRequestAsAttended";
 import type { CreateBillRequestBody } from "../../core/modules/bill-request/domain/models/BillRequest";
 import { CreateBillRequest } from "../../core/modules/bill-request/use-cases/CreateBillRequest";
+import { useAuth } from "./useAuth";
 
 export const useFetchBillRequests = () => {
+  const { restaurantId } = useAuth();
   const {
     setRequests,
     updateRequest,
@@ -23,9 +25,9 @@ export const useFetchBillRequests = () => {
 
     try {
       const getPendingUseCase = GetPendingBillRequests(repository);
-      const response = await getPendingUseCase();
-      setRequests(response.requests);
-      return { success: true, data: response.requests };
+      const response = await getPendingUseCase(restaurantId!);
+      setRequests(response.data);
+      return { success: true, data: response.data };
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : "Error al cargar las solicitudes";

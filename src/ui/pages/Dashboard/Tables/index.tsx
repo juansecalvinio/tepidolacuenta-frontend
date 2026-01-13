@@ -17,7 +17,7 @@ export const Tables = () => {
   };
 
   return (
-    <div className="p-4 md:p-2 max-w-4xl mx-auto">
+    <div className="p-4 max-w-4xl mx-auto">
       <div className="mb-4 flex flex-col md:flex-row justify-between md:items-center gap-2">
         <div className="flex flex-col gap-2">
           <button

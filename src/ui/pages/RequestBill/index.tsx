@@ -79,14 +79,9 @@ export const RequestBill = () => {
   } | null>(null);
 
   useEffect(() => {
-    // Fix para URLs con & escapados como \u0026
     const rawParams = window.location.search.slice(1).replace(/\\u0026/g, "&");
     const fixedSearchParams = new URLSearchParams(rawParams);
 
-    console.log(
-      "🚀 ~ RequestBill ~ searchParams:",
-      Object.fromEntries(fixedSearchParams)
-    );
     const restaurantId = fixedSearchParams.get("r");
     const tableId = fixedSearchParams.get("t");
     const tableNumber = fixedSearchParams.get("n");

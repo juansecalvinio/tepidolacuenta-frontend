@@ -7,7 +7,6 @@ import { useFetchTables } from "../../hooks/useFetchTables";
 import { useNavigate } from "react-router-dom";
 import type { BillRequest } from "../../../core/modules/bill-request/domain/models/BillRequest";
 import { PendingRequestCard } from "../../components/PendingRequestCard";
-import { useNotifications } from "../../contexts/notification.context";
 import { useWebSocketNotifications } from "../../hooks/useWebSocketNotifications";
 
 export const Dashboard = () => {
@@ -20,7 +19,6 @@ export const Dashboard = () => {
     pendingCount,
     isLoading: isLoadingRequests,
   } = useBillRequests();
-  const { addNotification } = useNotifications();
   const { fetchPendingRequests, markAsAttended } = useFetchBillRequests();
 
   // Activar WebSocket cuando tengas restaurantId y token

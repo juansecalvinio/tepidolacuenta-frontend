@@ -40,7 +40,8 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
     isConnectingRef.current = true;
 
     try {
-      const url = `ws://${baseUrl}/api/v1/requests/ws/${restaurantId}?token=${token}`;
+      const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+      const url = `${protocol}://${baseUrl}/api/v1/requests/ws/${restaurantId}?token=${token}`;
       console.log(`🔗 Conectando a: ${url}`);
       const ws = new WebSocket(url);
 

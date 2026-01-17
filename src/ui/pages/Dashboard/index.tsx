@@ -8,11 +8,11 @@ import { useNavigate } from "react-router-dom";
 import type { BillRequest } from "../../../core/modules/bill-request/domain/models/BillRequest";
 import { PendingRequestCard } from "../../components/PendingRequestCard";
 import { useNotifications } from "../../contexts/notification.context";
-// import { useWebSocketNotifications } from "../../hooks/useWebSocketNotifications"; // Descomenta cuando tengas WebSocket
+import { useWebSocketNotifications } from "../../hooks/useWebSocketNotifications";
 
 export const Dashboard = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, token, restaurantId } = useAuth();
   const { fetchTables } = useFetchTables();
   const { tables, isLoading: isLoadingTables } = useTables();
   const {
@@ -23,14 +23,18 @@ export const Dashboard = () => {
   const { addNotification } = useNotifications();
   const { fetchPendingRequests, markAsAttended } = useFetchBillRequests();
 
-  // Descomenta estas líneas cuando tengas el servidor WebSocket listo:
-  // import { useWebSocketNotifications } from "../../hooks/useWebSocketNotifications";
-  // useWebSocketNotifications('ws://localhost:8080/notifications');
+  // Activar WebSocket cuando tengas restaurantId y token
+  useWebSocketNotifications({
+    restaurantId: restaurantId || "",
+    token: token || "",
+  });
 
   useEffect(() => {
     fetchTables();
     fetchPendingRequests();
   }, []);
+
+  useEffect(() => {}, [restaurantId, token]);
 
   const handleMarkAsAttended = async (requestId: string) => {
     await markAsAttended(requestId);
@@ -49,37 +53,6 @@ export const Dashboard = () => {
         <div className="mb-6">
           <h1 className="text-3xl sm:text-4xl font-bold mb-2">Dashboard</h1>
           <h2 className="text-xl font-semibold mb-2">{user?.username}</h2>
-          <button
-            className="btn btn-primary btn-sm mt-2 mr-2"
-            onClick={() => {
-              const tableNumber = Math.floor(Math.random() * 20) + 1; // Mesa aleatoria 1-20
-              addNotification(
-                tableNumber,
-                `¡La mesa ${tableNumber} pidió la cuenta!`
-              );
-            }}
-          >
-            Simular Notificación
-          </button>
-          <button
-            className="btn btn-secondary btn-sm mt-2"
-            onClick={() => {
-              // Simular múltiples notificaciones
-              const notifications = [
-                { table: 5, delay: 0 },
-                { table: 12, delay: 1000 },
-                { table: 8, delay: 2000 },
-              ];
-
-              notifications.forEach(({ table, delay }) => {
-                setTimeout(() => {
-                  addNotification(table, `¡La mesa ${table} pidió la cuenta!`);
-                }, delay);
-              });
-            }}
-          >
-            Simular Múltiples
-          </button>{" "}
         </div>
 
         {isLoadingTables && (

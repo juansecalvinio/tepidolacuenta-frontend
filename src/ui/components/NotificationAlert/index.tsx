@@ -21,7 +21,7 @@ export const NotificationAlert = ({
   const [isClosing, setIsClosing] = useState(false);
   const [_, setProgress] = useState(100);
 
-  const { play } = useSound("/sounds/notification.wav");
+  const { play } = useSound("/sounds/notification.wav", { volume: 0.3 });
 
   useEffect(() => {
     // El componente se muestra inmediatamente cuando se monta
@@ -71,7 +71,7 @@ export const NotificationAlert = ({
           isClosing ? "animate-fade-out" : "animate-fade-in"
         }`}
       >
-        <div className="alert alert-warning shadow-lg">
+        <div className="alert bg-primary shadow-lg">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"

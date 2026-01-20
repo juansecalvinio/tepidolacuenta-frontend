@@ -21,9 +21,10 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectAttemptsRef = useRef(0);
   const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null
+    null,
   );
   const isConnectingRef = useRef(false); // Prevenir múltiples intentos de conexión
+  const recentNotificationsRef = useRef<Set<string>>(new Set()); // Deduplicar notificaciones
   const maxReconnectAttempts = 10;
   const initialReconnectDelay = 1000; // 1 segundo
 
@@ -61,14 +62,35 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
 
           // Mostrar notificación solo si es un pedido nuevo (pending)
           if (data.status === "pending") {
+            // Crear una clave única para deduplicar notificaciones en un período corto
+            const notificationKey = `${data.tableNumber}-${data.id || data.tableNumber}`;
+
+            // Si ya se mostró recientemente, ignorar
+            if (recentNotificationsRef.current.has(notificationKey)) {
+              console.log(
+                "⚠️ Notificación duplicada ignorada para mesa:",
+                data.tableNumber,
+              );
+              return;
+            }
+
             console.log(
               "🎯 Nueva solicitud - Agregando notificación para mesa:",
-              data.tableNumber
+              data.tableNumber,
             );
+
+            // Marcar como notificado recientemente
+            recentNotificationsRef.current.add(notificationKey);
+
             addNotification(
               data.tableNumber,
-              `¡La mesa ${data.tableNumber} pidió la cuenta!`
+              `¡La mesa ${data.tableNumber} pidió la cuenta!`,
             );
+
+            // Limpiar la entrada después de 10 segundos para permitir duplicados genuinos
+            setTimeout(() => {
+              recentNotificationsRef.current.delete(notificationKey);
+            }, 10000);
 
             // Refrescar la lista de pedidos para mostrar el nuevo pedido
             console.log("🔄 Refrescando lista de pedidos...");
@@ -83,19 +105,19 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
         console.error("❌ Error en WebSocket:", error);
         console.error(
           "📍 URL intentada:",
-          `ws://${baseUrl}/api/v1/requests/ws/${restaurantId}?token=${token}`
+          `ws://${baseUrl}/api/v1/requests/ws/${restaurantId}?token=${token}`,
         );
         console.error(
           "🔍 Estado WebSocket:",
           ws.readyState,
-          "- 0=CONNECTING, 1=OPEN, 2=CLOSING, 3=CLOSED"
+          "- 0=CONNECTING, 1=OPEN, 2=CLOSING, 3=CLOSED",
         );
         console.error("💡 Verifica que:");
         console.error("   1. El servidor está corriendo en", baseUrl);
         console.error("   2. El restaurantId es válido:", restaurantId);
         console.error(
           "   3. El token es válido:",
-          token ? "✓ Presente" : "✗ Faltante"
+          token ? "✓ Presente" : "✗ Faltante",
         );
       };
 
@@ -108,11 +130,11 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
           "   Código:",
           event.code,
           "- Razón:",
-          event.reason || "Sin razón"
+          event.reason || "Sin razón",
         );
         console.log(
           "   ¿Limpio?:",
-          event.wasClean ? "Sí" : "No (conexión interrumpida)"
+          event.wasClean ? "Sí" : "No (conexión interrumpida)",
         );
 
         // Implementar reconexión automática con backoff exponencial
@@ -124,10 +146,10 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
 
           console.log(
             `⏳ Reconectando en ${(actualDelay / 1000).toFixed(
-              1
+              1,
             )}s... (Intento ${
               reconnectAttemptsRef.current + 1
-            }/${maxReconnectAttempts})`
+            }/${maxReconnectAttempts})`,
           );
 
           reconnectAttemptsRef.current += 1;
@@ -136,7 +158,7 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
           }, actualDelay);
         } else {
           console.error(
-            "❌ Máximo número de intentos de reconexión alcanzado. Por favor, recarga la página."
+            "❌ Máximo número de intentos de reconexión alcanzado. Por favor, recarga la página.",
           );
         }
       };
@@ -164,9 +186,12 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
       }
-      if (wsRef.current) {
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
         wsRef.current.close();
+        wsRef.current = null;
       }
+      // Limpiar las notificaciones recientes al desmontar
+      recentNotificationsRef.current.clear();
     };
-  }, [connectWebSocket]);
+  }, [restaurantId, token, connectWebSocket]);
 };

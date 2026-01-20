@@ -17,7 +17,7 @@ export const NotificationAlert = ({
   autoClose = true,
   duration = 5000,
 }: NotificationAlertProps) => {
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
   const [isClosing, setIsClosing] = useState(false);
   const [_, setProgress] = useState(100);
 
@@ -26,9 +26,7 @@ export const NotificationAlert = ({
   useEffect(() => {
     // El componente se muestra inmediatamente cuando se monta
     play();
-    setIsVisible(true);
-    setProgress(100);
-  }, []);
+  }, [play]);
 
   useEffect(() => {
     if (!isVisible || !autoClose) return;

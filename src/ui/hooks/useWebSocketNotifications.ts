@@ -8,14 +8,17 @@ interface Props {
   token: string;
 }
 
+// Global set para evitar duplicados incluso entre montajes del componente
+const globalRecentNotifications = new Set<string>();
+
 export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
   const { addNotification } = useNotifications();
   const { fetchPendingRequests } = useFetchBillRequests();
 
   // Limpiar baseUrl de protocolos existentes
-  let baseUrl = import.meta.env.VITE_WS_BASE_URL || "localhost:8080";
-  baseUrl = baseUrl.replace(/^(wss?:\/\/)/, ""); // Eliminar ws:// o wss://
-  baseUrl = baseUrl.replace(/^(https?:\/\/)/, ""); // Eliminar http:// o https://
+  const baseUrl = (import.meta.env.VITE_WS_BASE_URL || "localhost:8080")
+    .replace(/^(wss?:\/\/)/, "")
+    .replace(/^(https?:\/\/)/, "");
 
   // Referencias para manejar la reconexión
   const wsRef = useRef<WebSocket | null>(null);
@@ -23,8 +26,8 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
   const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
-  const isConnectingRef = useRef(false); // Prevenir múltiples intentos de conexión
-  const recentNotificationsRef = useRef<Set<string>>(new Set()); // Deduplicar notificaciones
+  const isConnectingRef = useRef(false);
+  const hasInitializedRef = useRef(false); // Prevenir inicialización múltiple
   const maxReconnectAttempts = 10;
   const initialReconnectDelay = 1000; // 1 segundo
 
@@ -32,9 +35,10 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
     // Evitar múltiples conexiones simultáneas
     if (
       isConnectingRef.current ||
-      wsRef.current?.readyState === WebSocket.OPEN
+      wsRef.current?.readyState === WebSocket.OPEN ||
+      !restaurantId ||
+      !token
     ) {
-      console.log("⚠️ Ya hay una conexión activa o en proceso");
       return;
     }
 
@@ -62,35 +66,27 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
 
           // Mostrar notificación solo si es un pedido nuevo (pending)
           if (data.status === "pending") {
-            // Crear una clave única para deduplicar notificaciones en un período corto
-            const notificationKey = `${data.tableNumber}-${data.id || data.tableNumber}`;
+            // Crear una clave única usando timestamp para deduplicar con precisión
+            const timestamp = Math.floor(Date.now() / 1000); // Timestamp en segundos
+            const notificationKey = `${data.tableNumber}-${data.id || data.tableNumber}-${timestamp}`;
 
             // Si ya se mostró recientemente, ignorar
-            if (recentNotificationsRef.current.has(notificationKey)) {
-              console.log(
-                "⚠️ Notificación duplicada ignorada para mesa:",
-                data.tableNumber,
-              );
+            if (globalRecentNotifications.has(notificationKey)) {
               return;
             }
 
-            console.log(
-              "🎯 Nueva solicitud - Agregando notificación para mesa:",
-              data.tableNumber,
-            );
-
             // Marcar como notificado recientemente
-            recentNotificationsRef.current.add(notificationKey);
+            globalRecentNotifications.add(notificationKey);
 
             addNotification(
               data.tableNumber,
               `¡La mesa ${data.tableNumber} pidió la cuenta!`,
             );
 
-            // Limpiar la entrada después de 10 segundos para permitir duplicados genuinos
+            // Limpiar la entrada después de 5 segundos
             setTimeout(() => {
-              recentNotificationsRef.current.delete(notificationKey);
-            }, 10000);
+              globalRecentNotifications.delete(notificationKey);
+            }, 5000);
 
             // Refrescar la lista de pedidos para mostrar el nuevo pedido
             console.log("🔄 Refrescando lista de pedidos...");
@@ -169,16 +165,15 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
       isConnectingRef.current = false;
       return null;
     }
-  }, [restaurantId, token, addNotification, fetchPendingRequests, baseUrl]);
+  }, [restaurantId, token, addNotification, fetchPendingRequests]);
 
   useEffect(() => {
-    // Solo conectar si tenemos restaurantId y token válidos
-    if (!restaurantId || !token) {
-      console.log("⚠️ Esperando restaurantId y token para conectar WebSocket");
+    // Solo conectar una sola vez por montaje
+    if (!restaurantId || !token || hasInitializedRef.current) {
       return;
     }
 
-    console.log("🔌 Iniciando conexión WebSocket...");
+    hasInitializedRef.current = true;
     connectWebSocket();
 
     // Cleanup: cerrar conexión y limpiar timeouts cuando el componente se desmonte
@@ -186,12 +181,10 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
       }
-      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+      if (wsRef.current?.readyState === WebSocket.OPEN) {
         wsRef.current.close();
-        wsRef.current = null;
       }
-      // Limpiar las notificaciones recientes al desmontar
-      recentNotificationsRef.current.clear();
+      wsRef.current = null;
     };
   }, [restaurantId, token, connectWebSocket]);
 };

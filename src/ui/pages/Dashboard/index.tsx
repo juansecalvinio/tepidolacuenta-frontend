@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import type { BillRequest } from "../../../core/modules/bill-request/domain/models/BillRequest";
 import { PendingRequestCard } from "../../components/PendingRequestCard";
 import { useWebSocketNotifications } from "../../hooks/useWebSocketNotifications";
+import { useBillRequestContext } from "../../contexts/bill-request.context";
 
 export const Dashboard = () => {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ export const Dashboard = () => {
     isLoading: isLoadingRequests,
   } = useBillRequests();
   const { fetchPendingRequests, markAsAttended } = useFetchBillRequests();
+  const { removeRequest } = useBillRequestContext();
 
   // Activar WebSocket cuando tengas restaurantId y token
   useWebSocketNotifications({
@@ -28,15 +30,27 @@ export const Dashboard = () => {
   });
 
   useEffect(() => {
-    fetchTables();
-    fetchPendingRequests();
+    const fetchInitialData = async () => {
+      await fetchTables();
+      await fetchPendingRequests();
+    };
+
+    fetchInitialData();
   }, []);
 
   useEffect(() => {}, [restaurantId, token]);
 
   const handleMarkAsAttended = async (requestId: string) => {
-    await markAsAttended(requestId);
-    await fetchPendingRequests();
+    // Actualización optimista: eliminar inmediatamente del estado
+    removeRequest(requestId);
+
+    // Llamar al servidor en background
+    const result = await markAsAttended(requestId);
+
+    // Si falla, refrescar la lista completa para restaurar el estado
+    if (!result.success) {
+      await fetchPendingRequests();
+    }
   };
 
   let pendingRequests: BillRequest[] = [];

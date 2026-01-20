@@ -69,7 +69,7 @@ export const NotificationAlert = ({
           isClosing ? "animate-fade-out" : "animate-fade-in"
         }`}
       >
-        <div className="alert bg-success shadow-lg">
+        <div className="alert alert-soft alert-success shadow-lg">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"

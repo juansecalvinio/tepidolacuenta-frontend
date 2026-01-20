@@ -20,12 +20,12 @@ export const Landing = () => {
           tepidolacuenta
         </h1>
         <p className="text-base sm:text-lg md:text-xl text-base-content/70 mb-6 sm:mb-8 px-2">
-          Sistema de solicitud de cuenta para restaurantes.
-          Gestiona las solicitudes de tus clientes en tiempo real.
+          Sistema de solicitud de cuenta para restaurantes. Gestiona las
+          solicitudes de tus clientes en tiempo real.
         </p>
         <button
           onClick={handleGetStarted}
-          className="btn btn-primary btn-md sm:btn-lg"
+          className="btn btn-neutral btn-md sm:btn-lg"
         >
           {isAuthenticated ? "Ir al Dashboard" : "Comenzar"}
         </button>

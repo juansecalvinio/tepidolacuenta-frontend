@@ -47,10 +47,13 @@ export const Dashboard = () => {
 
   return (
     <>
-      <div className="p-4 max-w-4xl mx-auto">
+      <div className="p-4 max-w-2xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-3xl sm:text-4xl font-bold mb-2">Dashboard</h1>
-          <h2 className="text-xl font-semibold mb-2">{user?.username}</h2>
+          <h1 className="text-3xl sm:text-4xl font-bold mb-2">
+            {user?.username}
+          </h1>
+          {/* TODO: Agregar direcciones en los restaurantes */}
+          {/* <h2 className="text-lg font-light mb-2">{restaurant?.address}</h2> */}
         </div>
 
         {isLoadingTables && (
@@ -63,8 +66,8 @@ export const Dashboard = () => {
         )}
 
         {!isLoadingRequests && (
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            <div className="card bg-base-100 shadow">
+          <div className="flex flex-col md:flex-row justify-start gap-4 mb-6">
+            <div className="card bg-base-100 shadow w-full md:max-w-40">
               <div className="card-body p-4 flex flex-col justify-between">
                 <div className="text-sm text-base-content/60">
                   Mesas totales
@@ -98,12 +101,12 @@ export const Dashboard = () => {
                 </div>
               </div>
             </div>
-            <div className="card bg-base-100 shadow">
+            <div className="card bg-base-100 shadow w-full md:max-w-40">
               <div className="card-body p-4">
                 <div className="text-sm text-base-content/60">
                   Solicitudes pendientes
                 </div>
-                <div className="text-3xl font-bold text-primary">
+                <div className="text-3xl font-bold text-success">
                   {pendingCount}
                 </div>
               </div>
@@ -116,7 +119,7 @@ export const Dashboard = () => {
             <h2 className="text-2xl font-bold flex items-center gap-2">
               Solicitudes de Cuenta
               {pendingCount > 0 && (
-                <span className="badge badge-primary badge-lg">
+                <span className="badge badge-soft badge-success badge-lg">
                   {pendingCount}
                 </span>
               )}

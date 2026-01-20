@@ -26,7 +26,7 @@ export const Header = () => {
   const showToggleTheme = false;
 
   return (
-    <header className="max-w-4xl mx-auto border-b border-neutral-100">
+    <header className="max-w-2xl mx-auto border-b border-neutral-100">
       <div className="p-3 sm:p-4 flex justify-between items-center gap-2">
         <h1
           className="text-xl sm:text-2xl font-extrabold tracking-tighter cursor-pointer hover:opacity-80 transition-opacity"

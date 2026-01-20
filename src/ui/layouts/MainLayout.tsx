@@ -6,7 +6,7 @@ export const MainLayout = () => {
   return (
     <>
       <Header />
-      <main className="h-[90%] max-w-4xl mx-auto relative">
+      <main className="h-[90%] max-w-2xl mx-auto relative">
         <Outlet />
       </main>
       <NotificationContainer />

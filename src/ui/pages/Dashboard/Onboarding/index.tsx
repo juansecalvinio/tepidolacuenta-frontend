@@ -44,13 +44,16 @@ export const Onboarding = () => {
 
     if (!restaurantResult.success || !restaurantResult.data) {
       setValidationError(
-        restaurantResult.error || "Error al crear el restaurante"
+        restaurantResult.error || "Error al crear el restaurante",
       );
       return;
     }
 
     // 2. Crear las mesas pasando el restaurantId recién creado
-    const tablesResult = await createTables(numQuantity, restaurantResult.data.id);
+    const tablesResult = await createTables(
+      numQuantity,
+      restaurantResult.data.id,
+    );
 
     if (tablesResult.success) {
       navigate("/dashboard");
@@ -58,7 +61,7 @@ export const Onboarding = () => {
   };
 
   const handleRestaurantNameChange = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setRestaurantName(e.target.value);
     setValidationError("");
@@ -145,7 +148,7 @@ export const Onboarding = () => {
               <div className="form-control mt-6">
                 <button
                   type="submit"
-                  className="btn btn-primary w-full"
+                  className="btn btn-neutral w-full"
                   disabled={isLoading}
                 >
                   {isLoading ? (

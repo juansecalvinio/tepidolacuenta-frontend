@@ -45,7 +45,7 @@ export const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-base-200 p-4">
+    <div className="min-h-screen flex flex-col items-center justify-start bg-base-200 p-4 pt-16">
       <div className="w-full max-w-sm">
         {/* Logo */}
         <h1 className="text-4xl font-extrabold tracking-tighter text-center mb-8">
@@ -179,7 +179,7 @@ export const Register = () => {
               <div className="form-control mt-6">
                 <button
                   type="submit"
-                  className="btn btn-primary w-full"
+                  className="btn btn-neutral w-full"
                   disabled={isLoading}
                 >
                   {isLoading ? (

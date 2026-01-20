@@ -11,14 +11,14 @@ export const Tables = () => {
   const handleSearchField = (event: React.ChangeEvent<HTMLInputElement>) => {
     const searchTerm = event.target.value.toLowerCase();
     const filtered = tables.filter((table) =>
-      table.number.toString().includes(searchTerm)
+      table.number.toString().includes(searchTerm),
     );
     setFilteredTables(filtered);
   };
 
   return (
-    <div className="p-4 max-w-4xl mx-auto">
-      <div className="mb-4 flex flex-col md:flex-row justify-between md:items-center gap-2">
+    <div className="p-4 max-w-2xl mx-auto">
+      <div className="mb-4 flex flex-col md:flex-row justify-between md:items-start gap-2">
         <div className="flex flex-col gap-2">
           <button
             className="btn btn-soft btn-sm w-fit mb-4"
@@ -40,9 +40,7 @@ export const Tables = () => {
             </svg>
             Dashboard
           </button>
-          <h2 className="text-xl md:text-2xl font-bold">
-            Estos son los QRs de las tus mesas
-          </h2>
+          <h2 className="text-xl font-bold">Estos son los QRs de tus mesas</h2>
           <p className="text-sm md:text-md">
             Podés imprimirlos para que cada cliente pueda pedir su cuenta
           </p>

@@ -2,11 +2,15 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TableQR } from "../../../components/TableQR";
 import { useTables } from "../../../hooks/useTables";
+import { QRModal } from "../../../components/QRModal";
 
 export const Tables = () => {
   const navigate = useNavigate();
   const { tables } = useTables();
   const [filteredTables, setFilteredTables] = useState(tables);
+  const [modalTableNumber, setModalTableNumber] = useState<number | null>(null);
+  const [modalTableQRCode, setModalTableQRCode] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSearchField = (event: React.ChangeEvent<HTMLInputElement>) => {
     const searchTerm = event.target.value.toLowerCase();
@@ -16,8 +20,24 @@ export const Tables = () => {
     setFilteredTables(filtered);
   };
 
+  const handleQRClick = (tableNumber: number, qrCode: string) => {
+    setModalTableNumber(tableNumber);
+    setModalTableQRCode(qrCode);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <div className="p-4 max-w-2xl mx-auto">
+      <QRModal
+        show={isModalOpen}
+        title={`Mesa ${modalTableNumber}`}
+        qrCode={modalTableQRCode || ""}
+        onClose={handleCloseModal}
+      />
       <div className="mb-4 flex flex-col md:flex-row justify-between md:items-start gap-2">
         <div className="flex flex-col gap-2">
           <button
@@ -41,9 +61,9 @@ export const Tables = () => {
             Dashboard
           </button>
           <h2 className="text-xl font-bold">Estos son los QRs de tus mesas</h2>
-          <p className="text-sm md:text-md">
+          {/* <p className="text-sm md:text-md">
             Podés imprimirlos para que cada cliente pueda pedir su cuenta
-          </p>
+          </p> */}
         </div>
         <label className="input">
           <svg
@@ -74,7 +94,12 @@ export const Tables = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {filteredTables.length > 0 &&
           filteredTables.map((table) => (
-            <TableQR tableNumber={table.number} qrCode={table.qrCode} />
+            <TableQR
+              key={table.qrCode}
+              tableNumber={table.number}
+              qrCode={table.qrCode}
+              onClick={() => handleQRClick(table.number, table.qrCode)}
+            />
           ))}
       </div>
     </div>

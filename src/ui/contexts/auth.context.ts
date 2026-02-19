@@ -6,6 +6,7 @@ interface AuthState {
   user: User | null;
   token: string | null;
   restaurantId: string | null;
+  branchId: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
@@ -15,6 +16,7 @@ interface AuthActions {
   setUser: (user: User) => void;
   setToken: (token: string) => void;
   setRestaurantId: (restaurantId: string) => void;
+  setBranchId: (branchId: string) => void;
   setAuth: (user: User, token: string, restaurantId?: string) => void;
   setLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
@@ -28,6 +30,7 @@ const initialState: AuthState = {
   user: null,
   token: null,
   restaurantId: null,
+  branchId: null,
   isAuthenticated: false,
   isLoading: false,
   error: null,
@@ -53,6 +56,11 @@ export const useAuthContext = create<AuthContext>()(
         setRestaurantId: (restaurantId) =>
           set({
             restaurantId,
+          }),
+
+        setBranchId: (branchId) =>
+          set({
+            branchId,
           }),
 
         setAuth: (user, token, restaurantId) =>
@@ -94,10 +102,10 @@ export const useAuthContext = create<AuthContext>()(
           restaurantId: state.restaurantId,
           isAuthenticated: state.isAuthenticated,
         }),
-      }
+      },
     ),
     {
       name: "AuthContext",
-    }
-  )
+    },
+  ),
 );

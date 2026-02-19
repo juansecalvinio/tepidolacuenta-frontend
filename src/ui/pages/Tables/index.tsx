@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { TableQR } from "../../../components/TableQR";
-import { useTables } from "../../../hooks/useTables";
-import { QRModal } from "../../../components/QRModal";
+import { TableQR } from "../../components/TableQR";
+import { useTables } from "../../hooks/useTables";
+import { QRModal } from "../../components/QRModal";
 
 export const Tables = () => {
   const navigate = useNavigate();
@@ -61,9 +61,6 @@ export const Tables = () => {
             Dashboard
           </button>
           <h2 className="text-xl font-bold">Estos son los QRs de tus mesas</h2>
-          {/* <p className="text-sm md:text-md">
-            Podés imprimirlos para que cada cliente pueda pedir su cuenta
-          </p> */}
         </div>
         <label className="input">
           <svg

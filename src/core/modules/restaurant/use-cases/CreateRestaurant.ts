@@ -6,7 +6,7 @@ import type { RestaurantRepository } from "../domain/repositories/RestaurantRepo
 
 export const CreateRestaurant = (repository: RestaurantRepository) => {
   return async (
-    request: CreateRestaurantRequest
+    request: CreateRestaurantRequest,
   ): Promise<CreateRestaurantResponse> => {
     return await repository.createRestaurant(request);
   };

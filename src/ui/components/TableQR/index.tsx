@@ -8,11 +8,12 @@ interface Props {
 
 export const TableQR = ({ tableNumber, qrCode, onClick }: Props) => {
   return (
-    <div className="card bg-base-100 shadow" onClick={onClick}>
+    <div
+      className="card bg-base-100 border-2 border-base-300"
+      onClick={onClick}
+    >
       <div className="card-body p-4 flex flex-col items-center justify-between">
-        <div className="text-xl font-bold text-base-content/60">
-          Mesa {tableNumber}
-        </div>
+        <div className="text-xl font-bold">Mesa {tableNumber}</div>
         <QRCode value={qrCode} size={150} />
       </div>
     </div>

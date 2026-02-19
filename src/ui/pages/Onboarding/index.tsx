@@ -1,16 +1,17 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { useFetchRestaurant } from "../../../hooks/useFetchRestaurant";
-import { useFetchTables } from "../../../hooks/useFetchTables";
-import { useTables } from "../../../hooks/useTables";
+import { useFetchRestaurant } from "../../hooks/useFetchRestaurant";
+import { useTables } from "../../hooks/useTables";
+import { AuthLogo } from "../../components/AuthLogo";
 
 export const Onboarding = () => {
   const navigate = useNavigate();
   const { createRestaurant } = useFetchRestaurant();
-  const { createTables } = useFetchTables();
   const { isLoading, error } = useTables();
 
   const [restaurantName, setRestaurantName] = useState<string>("");
+  const [cuit, setCuit] = useState<string>("");
+  const [address, setAddress] = useState<string>("");
   const [quantity, setQuantity] = useState<string>("");
   const [validationError, setValidationError] = useState<string>("");
 
@@ -20,6 +21,16 @@ export const Onboarding = () => {
     // Validar nombre del restaurante
     if (!restaurantName.trim()) {
       setValidationError("Ingresa el nombre de tu restaurante");
+      return;
+    }
+
+    if (!cuit.trim()) {
+      setValidationError("Ingresa el CUIT de tu restaurante");
+      return;
+    }
+
+    if (!address.trim()) {
+      setValidationError("Ingresa la dirección de tu restaurante");
       return;
     }
 
@@ -37,9 +48,11 @@ export const Onboarding = () => {
 
     setValidationError("");
 
-    // 1. Crear restaurante primero
     const restaurantResult = await createRestaurant({
       name: restaurantName.trim(),
+      address: address.trim(),
+      cuit: cuit.trim(),
+      tableCount: numQuantity,
     });
 
     if (!restaurantResult.success || !restaurantResult.data) {
@@ -49,13 +62,7 @@ export const Onboarding = () => {
       return;
     }
 
-    // 2. Crear las mesas pasando el restaurantId recién creado
-    const tablesResult = await createTables(
-      numQuantity,
-      restaurantResult.data.id,
-    );
-
-    if (tablesResult.success) {
+    if (restaurantResult.success) {
       navigate("/dashboard");
     }
   };
@@ -67,29 +74,37 @@ export const Onboarding = () => {
     setValidationError("");
   };
 
+  const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAddress(e.target.value);
+    setValidationError("");
+  };
+
+  const handleCuitChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const cuitValue = e.target.value;
+    // Permitir solo números
+    if (!/^\d*$/.test(cuitValue)) {
+      setValidationError("El CUIT debe contener solo números");
+      return;
+    }
+    setCuit(cuitValue);
+    setValidationError("");
+  };
+
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuantity(e.target.value);
     setValidationError("");
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-base-200 p-4">
+    <div className="min-h-screen flex flex-col items-center justify-start bg-base-100 p-4 mt-4">
       <div className="w-full max-w-md">
-        <h1 className="text-4xl font-extrabold tracking-tighter text-center mb-2">
-          tepidolacuenta
-        </h1>
-        <p className="text-center text-base-content/60 mb-8">
-          Configuración inicial
-        </p>
+        <AuthLogo />
 
         <div className="card w-full bg-base-100 shadow-xl">
           <div className="card-body p-6">
             <h2 className="text-2xl font-bold text-center mb-2">
-              Configurar tu restaurante
+              Configura tu local
             </h2>
-            <p className="text-sm text-center text-base-content/70 mb-6">
-              Completa los datos para comenzar
-            </p>
 
             {(error || validationError) && (
               <div className="alert alert-soft alert-error mb-4">
@@ -106,7 +121,7 @@ export const Onboarding = () => {
                     d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                <span>{validationError || error}</span>
+                <span>{error || validationError}</span>
               </div>
             )}
 
@@ -118,7 +133,7 @@ export const Onboarding = () => {
                 <input
                   type="text"
                   name="restaurantName"
-                  placeholder="Ej: Mi Restaurante"
+                  placeholder="Mi Restaurante"
                   className="input input-bordered w-full"
                   value={restaurantName}
                   onChange={handleRestaurantNameChange}
@@ -129,26 +144,59 @@ export const Onboarding = () => {
 
               <div className="form-control mt-4">
                 <label className="label">
+                  <span className="label-text">Dirección de la sucursal</span>
+                </label>
+                <input
+                  type="text"
+                  name="address"
+                  placeholder="Mi dirección"
+                  className="input input-bordered w-full"
+                  value={address}
+                  onChange={handleAddressChange}
+                  disabled={isLoading}
+                  autoFocus
+                />
+              </div>
+
+              <div className="form-control mt-4">
+                <label className="label">
+                  <span className="label-text">
+                    Ingresá el CUIT (sin guiones)
+                  </span>
+                </label>
+                <input
+                  type="text"
+                  name="cuit"
+                  placeholder="11222233334"
+                  className="input input-bordered w-full"
+                  value={cuit}
+                  onChange={handleCuitChange}
+                  disabled={isLoading}
+                />
+              </div>
+
+              <div className="form-control mt-4">
+                <label className="label">
                   <span className="label-text">Cantidad de mesas</span>
                 </label>
                 <input
                   type="number"
                   name="quantity"
-                  placeholder="Ej: 10"
+                  placeholder="0"
                   className="input input-bordered text-center text-2xl font-bold w-full"
                   value={quantity}
                   onChange={handleQuantityChange}
                   disabled={isLoading}
                 />
-                <label className="label">
+                {/* <label className="label">
                   <span className="label-text-alt">Mínimo 1, máximo 100</span>
-                </label>
+                </label> */}
               </div>
 
               <div className="form-control mt-6">
                 <button
                   type="submit"
-                  className="btn btn-neutral w-full"
+                  className="btn btn-primary w-full"
                   disabled={isLoading}
                 >
                   {isLoading ? (

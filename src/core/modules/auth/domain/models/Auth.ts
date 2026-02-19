@@ -3,7 +3,6 @@ import type { User } from "./User";
 export interface RegisterRequest {
   email: string;
   password: string;
-  username: string;
 }
 
 export interface LoginRequest {

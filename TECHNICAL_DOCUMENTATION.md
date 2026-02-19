@@ -224,10 +224,10 @@ export const useFetchAuth = () => {
 **Responsabilidad**: Autenticación y autorización de usuarios
 
 #### Modelos
-- **User**: `id`, `email`, `username`, `createdAt`, `updatedAt`
+- **User**: `id`, `email`, `createdAt`, `updatedAt`
 - **LoginRequest**: `email`, `password`
 - **LoginResponse**: `success`, `data: { token, user }`
-- **RegisterRequest**: `email`, `username`, `password`
+- **RegisterRequest**: `email`, `password`
 - **RegisterResponse**: `success`, `data: { user }`
 
 #### Repositorio
@@ -255,8 +255,8 @@ interface AuthRepository {
 **Responsabilidad**: Gestión de información de restaurantes
 
 #### Modelos
-- **Restaurant**: `id`, `userId`, `name`, `address`, `phone`, `description`, timestamps
-- **CreateRestaurantRequest**: `name`, `address`, `phone`, `description`
+- **Restaurant**: `id`, `userId`, `name`, `address`, `description`, timestamps
+- **CreateRestaurantRequest**: `name`, `address`, `description`
 - **CreateRestaurantResponse**: `success`, `data: Restaurant`
 - **GetRestaurantsResponse**: `success`, `data: Restaurant[]`
 
@@ -285,7 +285,7 @@ interface RestaurantRepository {
 **Responsabilidad**: Gestión de mesas del restaurante
 
 #### Modelos
-- **Table**: `id`, `restaurantId`, `number`, `capacity`, `qrCode`, `isActive`, timestamps
+- **Table**: `id`, `restaurantId`, `number`, `qrCode`, `isActive`, timestamps
 - **CreateTablesRequest**: `restaurantId`, `count`
 - **CreateTablesResponse**: `success`, `data: Table[]`
 - **GetTablesResponse**: `success`, `data: Table[]`
@@ -553,7 +553,7 @@ const { requests, isLoading, isRequested, error, pendingCount } = useBillRequest
 
 #### Register (`/register`)
 - Formulario de creación de cuenta
-- Campos: email, username, password
+- Campos: email, password
 - UI similar a login
 
 #### Dashboard (`/dashboard`)
@@ -803,14 +803,14 @@ VITE_MODE=development
 
 | Método | Endpoint | Body | Respuesta |
 |--------|----------|------|-----------|
-| POST | `/api/v1/auth/register` | `{ email, username, password }` | `{ success, data: { user } }` |
+| POST | `/api/v1/auth/register` | `{ email, password }` | `{ success, data: { user } }` |
 | POST | `/api/v1/auth/login` | `{ email, password }` | `{ success, data: { token, user } }` |
 
 ### Restaurantes
 
 | Método | Endpoint | Body | Respuesta |
 |--------|----------|------|-----------|
-| POST | `/api/v1/restaurants` | `{ name, address, phone, description }` | `{ success, data: Restaurant }` |
+| POST | `/api/v1/restaurants` | `{ name, address, description }` | `{ success, data: Restaurant }` |
 | GET | `/api/v1/restaurants` | - | `{ success, data: Restaurant[] }` |
 
 ### Mesas

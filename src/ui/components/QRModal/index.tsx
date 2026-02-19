@@ -43,9 +43,7 @@ export const QRModal = ({ title, qrCode, show, onClose }: Props) => {
             ✕
           </button>
         </form>
-        <h3 className="text-3xl font-bold text-base-content/60 text-center mb-4">
-          {title}
-        </h3>
+        <h3 className="text-3xl font-bold text-center mb-4">{title}</h3>
         <div className="flex justify-center">
           <QRCode value={qrCode} size={300} />
         </div>

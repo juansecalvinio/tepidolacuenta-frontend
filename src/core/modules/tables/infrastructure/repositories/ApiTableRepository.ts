@@ -8,14 +8,14 @@ import type { TableRepository } from "../../domain/repositories/TableRepository"
 
 export class ApiTableRepository implements TableRepository {
   async createTables(
-    request: CreateTablesRequest
+    request: CreateTablesRequest,
   ): Promise<CreateTablesResponse> {
     return await api.post<CreateTablesResponse>("/api/v1/tables/bulk", request);
   }
 
-  async getTables(restaurantId: string): Promise<GetTablesResponse> {
+  async getTables(branchId: string): Promise<GetTablesResponse> {
     return await api.get<GetTablesResponse>(
-      `/api/v1/tables/restaurant/${restaurantId}`
+      `/api/v1/tables/branch/${branchId}`,
     );
   }
 }

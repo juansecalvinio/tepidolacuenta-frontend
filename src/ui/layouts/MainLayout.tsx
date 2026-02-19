@@ -1,15 +1,13 @@
 import { Header } from "../components/Header";
-import { NotificationContainer } from "../components/NotificationContainer";
 import { Outlet } from "react-router-dom";
 
 export const MainLayout = () => {
   return (
-    <>
-      <Header />
-      <main className="h-[90%] max-w-2xl mx-auto relative">
+    <main className="h-full bg-base-200">
+      <div className="max-w-2xl mx-auto relative">
+        <Header />
         <Outlet />
-      </main>
-      <NotificationContainer />
-    </>
+      </div>
+    </main>
   );
 };

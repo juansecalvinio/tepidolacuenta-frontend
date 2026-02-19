@@ -26,6 +26,7 @@ export interface MarkBillRequestAsAttendedResponse {
 
 export interface CreateBillRequestBody {
   restaurantId: string;
+  branchId: string;
   tableId: string;
   tableNumber: number;
   hash: string;

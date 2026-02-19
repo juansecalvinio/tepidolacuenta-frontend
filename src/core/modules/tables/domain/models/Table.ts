@@ -1,8 +1,7 @@
 export interface Table {
   id: string;
-  restaurantId: string;
+  branchId: string;
   number: number;
-  capacity: number;
   qrCode: string;
   isActive: boolean;
   createdAt: string;
@@ -10,7 +9,7 @@ export interface Table {
 }
 
 export interface CreateTablesRequest {
-  restaurantId: string;
+  branchId: string;
   count: number;
 }
 

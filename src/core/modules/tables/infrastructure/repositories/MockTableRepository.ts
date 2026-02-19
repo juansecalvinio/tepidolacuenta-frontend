@@ -7,18 +7,17 @@ import type {
 
 export class MockTableRepository implements TableRepository {
   async createTables(
-    request: CreateTablesRequest
+    request: CreateTablesRequest,
   ): Promise<CreateTablesResponse> {
     // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     const tables = Array.from({ length: request.count }, (_, i) => ({
       id: `table-${i + 1}`,
-      restaurantId: request.restaurantId,
+      branchId: request.branchId,
       number: i + 1,
-      capacity: 4,
       qrCode: `http://localhost:5173/request?r=${
-        request.restaurantId
+        request.branchId
       }&t=table-${i + 1}&n=${i + 1}&h=mock-hash`,
       isActive: true,
       createdAt: new Date().toISOString(),
@@ -32,7 +31,7 @@ export class MockTableRepository implements TableRepository {
     };
   }
 
-  async getTables(_restaurantId: string): Promise<GetTablesResponse> {
+  async getTables(_branchId: string): Promise<GetTablesResponse> {
     // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 500));
 

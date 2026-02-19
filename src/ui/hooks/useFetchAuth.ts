@@ -36,6 +36,7 @@ export const useFetchAuth = () => {
         const loginUseCase = Login(authRepository);
         const response = await loginUseCase(credentials);
 
+        //
         if (response.success) {
           // Save token to sessionStorage
           sessionStorage.setItem("auth-token", response.data.token);
@@ -54,7 +55,7 @@ export const useFetchAuth = () => {
             setAuth(
               response.data.user,
               response.data.token,
-              restaurantId || undefined
+              restaurantId || undefined,
             );
           } catch {
             // If fetching restaurant fails, still login but without restaurantId
@@ -82,7 +83,7 @@ export const useFetchAuth = () => {
       setLoading,
       setError,
       clearError,
-    ]
+    ],
   );
 
   const register = useCallback(
@@ -97,7 +98,7 @@ export const useFetchAuth = () => {
         if (response.success) {
           // After successful registration, user might want to login automatically
           // or redirect to login page - adjust based on your needs
-          if (response.data && response.data.username !== "") {
+          if (response.data) {
             // TODO: create restaurant with username as restaurant name
           }
 
@@ -121,7 +122,7 @@ export const useFetchAuth = () => {
         setLoading(false);
       }
     },
-    [authRepository, setLoading, setError, clearError]
+    [authRepository, setLoading, setError, clearError],
   );
 
   const logout = useCallback(() => {

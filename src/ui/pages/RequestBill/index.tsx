@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useFetchBillRequests } from "../../hooks/useFetchBillRequests";
 import { useBillRequests } from "../../hooks/useBillRequests";
+import { AuthLogo } from "../../components/AuthLogo";
 
 const Spinner = () => (
   <div
@@ -73,23 +74,33 @@ export const RequestBill = () => {
   const { createBillRequest } = useFetchBillRequests();
   const [requestData, setRequestData] = useState<{
     restaurantId: string;
+    branchId: string;
     tableId: string;
     tableNumber: number;
     hash: string;
   } | null>(null);
 
   useEffect(() => {
+    document.documentElement.setAttribute("data-theme", "black");
+    return () => {
+      document.documentElement.setAttribute("data-theme", "white");
+    };
+  }, []);
+
+  useEffect(() => {
     const rawParams = window.location.search.slice(1).replace(/\\u0026/g, "&");
     const fixedSearchParams = new URLSearchParams(rawParams);
 
     const restaurantId = fixedSearchParams.get("r");
+    const branchId = fixedSearchParams.get("b");
     const tableId = fixedSearchParams.get("t");
     const tableNumber = fixedSearchParams.get("n");
     const hash = fixedSearchParams.get("h");
 
-    if (restaurantId && tableId && tableNumber && hash) {
+    if (restaurantId && branchId && tableId && tableNumber && hash) {
       setRequestData({
         restaurantId,
+        branchId,
         tableId,
         tableNumber: parseInt(tableNumber, 10),
         hash,
@@ -114,15 +125,15 @@ export const RequestBill = () => {
           disabled={isRequested}
           className={`
           flex items-center justify-center
-          w-50 h-50
+          w-70 h-70
           rounded-full
-          text-white text-4xl font-extrabold
+          text-neutral text-4xl font-extrabold
           transition-all
           disabled:cursor-not-allowed
           ${
             isRequested
-              ? "bg-linear-to-br from-green-500 to-green-700 ring-4 ring-green-900/70 shadow-[0_0_25px_rgba(34,197,94,0.5)]"
-              : "bg-linear-to-br from-cyan-400 to-cyan-600 ring-4 ring-cyan-700/70 shadow-[0_0_25px_rgba(34,211,238,0.5)] active:shadow-[0_4px_0_#0e7490] active:translate-y-1 hover:from-cyan-500 hover:to-cyan-700"
+              ? "bg-linear-to-br from-lime-300 to-green-500 ring-4 ring-lime-900/70 shadow-[0_0_25px_rgba(34,197,94,0.5)]"
+              : "bg-linear-to-br from-lime-300 to-green-500 ring-4 ring-lime-900/70 shadow-[0_0_25px_rgba(34,197,94,0.5)] active:translate-y-1 hover:cursor-pointer"
           }
           `}
         >
@@ -137,9 +148,7 @@ export const RequestBill = () => {
       {error && <ErrorMessage message={error} />}
 
       <footer className="pb-8 pt-4">
-        <p className="font-sans text-center text-lg font-extrabold text-base-content/40">
-          tepidolacuenta
-        </p>
+        <AuthLogo />
       </footer>
     </div>
   );

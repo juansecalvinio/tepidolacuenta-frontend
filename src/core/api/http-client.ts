@@ -5,7 +5,7 @@ interface HttpClientOptions {
   headers?: Record<string, string>;
   interceptRequest?: (
     input: RequestInfo,
-    init: RequestInit
+    init: RequestInit,
   ) => Promise<[RequestInfo, RequestInit]> | [RequestInfo, RequestInit];
   interceptResponse?: (response: Response) => Promise<Response> | Response;
 }
@@ -32,7 +32,7 @@ export class HttpClient {
     url: string,
     method: HttpMethod,
     body?: unknown,
-    customHeaders?: Record<string, string>
+    customHeaders?: Record<string, string>,
   ): Promise<TResponse> {
     let input: RequestInfo = this.buildUrl(url);
     let init: RequestInit = {
@@ -53,6 +53,7 @@ export class HttpClient {
     }
 
     let response = await fetch(input, init);
+    console.log("🚀 ~ HttpClient ~ request ~ response:", response);
 
     if (this.interceptResponse) {
       response = await this.interceptResponse(response);
@@ -82,7 +83,7 @@ export class HttpClient {
   post<TResponse, TBody = unknown>(
     url: string,
     body?: TBody,
-    headers?: Record<string, string>
+    headers?: Record<string, string>,
   ) {
     return this.request<TResponse>(url, "POST", body, headers);
   }
@@ -90,7 +91,7 @@ export class HttpClient {
   put<TResponse, TBody = unknown>(
     url: string,
     body: TBody,
-    headers?: Record<string, string>
+    headers?: Record<string, string>,
   ) {
     return this.request<TResponse>(url, "PUT", body, headers);
   }
@@ -98,7 +99,7 @@ export class HttpClient {
   patch<TResponse, TBody = unknown>(
     url: string,
     body: TBody,
-    headers?: Record<string, string>
+    headers?: Record<string, string>,
   ) {
     return this.request<TResponse>(url, "PATCH", body, headers);
   }
@@ -114,7 +115,8 @@ export const api = new HttpClient({
     const token = sessionStorage.getItem("auth-token");
 
     if (token && init.headers) {
-      (init.headers as Record<string, string>)["Authorization"] = `Bearer ${token}`;
+      (init.headers as Record<string, string>)["Authorization"] =
+        `Bearer ${token}`;
     }
 
     return [input, init];

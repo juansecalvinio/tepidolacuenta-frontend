@@ -4,7 +4,6 @@
   "data": {
     "id": "64a7f8b3c12345678901234",
     "email": "restaurant@example.com",
-    "username": "La Pizzeria",
     "createdAt": "2026-01-02T12:00:00Z",
     "updatedAt": "2026-01-02T12:00:00Z"
   }

@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useFetchBillRequests } from "../../hooks/useFetchBillRequests";
 import { useBillRequests } from "../../hooks/useBillRequests";
-import { AuthLogo } from "../../components/AuthLogo";
 
 const Spinner = () => (
   <div

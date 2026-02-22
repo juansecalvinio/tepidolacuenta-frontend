@@ -6,6 +6,7 @@ import { MarkBillRequestAsAttended } from "../../core/modules/bill-request/use-c
 import type { CreateBillRequestBody } from "../../core/modules/bill-request/domain/models/BillRequest";
 import { CreateBillRequest } from "../../core/modules/bill-request/use-cases/CreateBillRequest";
 import { useAuth } from "./useAuth";
+import { getErrorMessage } from "../../core/utils/error-messages";
 
 export const useFetchBillRequests = () => {
   const { restaurantId } = useAuth();
@@ -29,8 +30,7 @@ export const useFetchBillRequests = () => {
       setRequests(response.data);
       return { success: true, data: response.data };
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Error al cargar las solicitudes";
+      const errorMessage = getErrorMessage(err, "fetchRequests");
       setError(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
@@ -51,8 +51,7 @@ export const useFetchBillRequests = () => {
         });
         return { success: true, data: response.request };
       } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : "Error al marcar como atendida";
+        const errorMessage = getErrorMessage(err, "markAttended");
         setError(errorMessage);
         return { success: false, error: errorMessage };
       }
@@ -72,8 +71,7 @@ export const useFetchBillRequests = () => {
           setIsRequested(true);
         }
       } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : "Error al crear la solicitud";
+        const errorMessage = getErrorMessage(err, "createBillRequest");
         setError(errorMessage);
         return { success: false, error: errorMessage };
       } finally {

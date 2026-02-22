@@ -9,6 +9,7 @@ import type {
   LoginRequest,
   RegisterRequest,
 } from "../../core/modules/auth/domain/models/Auth";
+import { getErrorMessage } from "../../core/utils/error-messages";
 
 export const useFetchAuth = () => {
   const {
@@ -64,12 +65,12 @@ export const useFetchAuth = () => {
 
           return { success: true, message: response.message };
         } else {
-          setError(response.message || "Login failed");
-          return { success: false, message: response.message };
+          const errorMessage = getErrorMessage(null, "login");
+          setError(errorMessage);
+          return { success: false, message: errorMessage };
         }
       } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : "An error occurred during login";
+        const errorMessage = getErrorMessage(err, "login");
         setError(errorMessage);
         return { success: false, message: errorMessage };
       } finally {
@@ -108,14 +109,12 @@ export const useFetchAuth = () => {
             data: response.data,
           };
         } else {
-          setError(response.message || "Registration failed");
-          return { success: false, message: response.message };
+          const errorMessage = getErrorMessage(null, "register");
+          setError(errorMessage);
+          return { success: false, message: errorMessage };
         }
       } catch (err) {
-        const errorMessage =
-          err instanceof Error
-            ? err.message
-            : "An error occurred during registration";
+        const errorMessage = getErrorMessage(err, "register");
         setError(errorMessage);
         return { success: false, message: errorMessage };
       } finally {

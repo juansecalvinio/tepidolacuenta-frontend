@@ -4,6 +4,7 @@ import { getTableRepository } from "../../core/modules/tables/infrastructure/rep
 import { GetTables } from "../../core/modules/tables/use-cases/GetTables";
 import { CreateTables } from "../../core/modules/tables/use-cases/CreateTables";
 import { useRestaurantContext } from "../contexts/restaurant.context";
+import { getErrorMessage } from "../../core/utils/error-messages";
 
 export const useFetchTables = () => {
   const { setTables, setLoading, setError, clearError } = useTablesContext();
@@ -25,8 +26,7 @@ export const useFetchTables = () => {
       setTables(response.data);
       return { success: true, data: response.data };
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Error al cargar las mesas";
+      const errorMessage = getErrorMessage(err, "fetchTables");
       setError(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
@@ -59,8 +59,7 @@ export const useFetchTables = () => {
         setTables(response.data);
         return { success: true, data: response.data };
       } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : "Error al crear las mesas";
+        const errorMessage = getErrorMessage(err, "createTables");
         setError(errorMessage);
         return { success: false, error: errorMessage };
       } finally {

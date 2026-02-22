@@ -10,7 +10,7 @@ export const PendingRequestCard = ({ request, onClick }: Props) => {
   return (
     <div key={request.id} className="card bg-base-100 border-2 border-base-300">
       <div className="card-body p-4">
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 flex-1">
             <div className="w-2 h-2 bg-brand rounded-full animate-pulse"></div>
             <div>

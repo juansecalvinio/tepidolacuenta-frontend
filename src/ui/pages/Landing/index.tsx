@@ -18,7 +18,7 @@ export const Landing = () => {
     if (isAuthenticated) {
       navigate("/dashboard");
     } else {
-      navigate("/register");
+      navigate("/login");
     }
   };
 
@@ -42,11 +42,12 @@ export const Landing = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, ease: "linear" }}
         className="text-center max-w-2xl w-full"
-        style={{ textShadow: "0 0 40px rgba(190, 242, 100, 0.6)" }}
       >
         <h1 className="text-white text-4xl sm:text-5xl md:text-6xl lg:text-7xl  font-extrabold tracking-tight mb-4 sm:mb-6">
           Pedir la cuenta
-          <span className="text-lime-300 block">ahora es más simple</span>
+          <span className="text-primary block text-shadow-primary">
+            ahora es más simple
+          </span>
         </h1>
         <p className="text-base sm:text-xl md:text-2xl text-base-content mb-6 sm:mb-8 px-2">
           Gestiona las solicitudes de tus mesas en tiempo real.
@@ -61,7 +62,7 @@ export const Landing = () => {
           }}
           className="btn btn-primary btn-xl"
         >
-          {isAuthenticated ? "Ir al Dashboard" : "Comenzar"}
+          Comenzar
         </motion.button>
       </motion.div>
     </div>

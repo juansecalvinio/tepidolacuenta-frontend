@@ -120,7 +120,7 @@ export const AuthPage = ({ authType = "login" }: Props) => {
                   type="email"
                   name="email"
                   placeholder="tu@email.com"
-                  className="input w-full rounded-3xl p-4"
+                  className="input w-full rounded-3xl p-6"
                   value={formData.email}
                   onChange={handleChange}
                   required
@@ -139,7 +139,7 @@ export const AuthPage = ({ authType = "login" }: Props) => {
                     type={showPassword ? "text" : "password"}
                     name="password"
                     placeholder="••••••••"
-                    className="input w-full rounded-3xl p-4"
+                    className="input w-full rounded-3xl p-6"
                     value={formData.password}
                     onChange={handleChange}
                     required
@@ -203,7 +203,7 @@ export const AuthPage = ({ authType = "login" }: Props) => {
                       type={showSecondPassword ? "text" : "password"}
                       name="secondPassword"
                       placeholder="••••••••"
-                      className="input w-full rounded-3xl p-4"
+                      className="input w-full rounded-3xl p-6"
                       value={formData.secondPassword}
                       onChange={handleChange}
                       required
@@ -259,7 +259,7 @@ export const AuthPage = ({ authType = "login" }: Props) => {
               <div className="form-control mt-6">
                 <button
                   type="submit"
-                  className="btn btn-primary w-full rounded-3xl p-4"
+                  className="btn btn-primary w-full rounded-3xl p-6"
                   disabled={isLoading}
                 >
                   {isLoading ? (
@@ -275,7 +275,7 @@ export const AuthPage = ({ authType = "login" }: Props) => {
 
             <Link
               to={secondaryActionLink}
-              className="btn btn-secondary w-full rounded-3xl p-4"
+              className="btn btn-secondary w-full rounded-3xl p-6"
               tabIndex={-1}
             >
               {secondaryActionText}

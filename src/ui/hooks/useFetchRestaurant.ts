@@ -6,6 +6,7 @@ import { CreateRestaurant } from "../../core/modules/restaurant/use-cases/Create
 import { useTablesContext } from "../contexts/tables.context";
 import { useRestaurantContext } from "../contexts/restaurant.context";
 import { GetRestaurantById } from "../../core/modules/restaurant/use-cases/GetRestaurantById";
+import { getErrorMessage } from "../../core/utils/error-messages";
 
 export const useFetchRestaurant = () => {
   const { setRestaurantId, setBranchId } = useAuthContext();
@@ -38,13 +39,12 @@ export const useFetchRestaurant = () => {
           setTables(response.data.tables);
           return { success: true, data: response.data };
         } else {
-          const errorMessage = "Error al crear el restaurante";
+          const errorMessage = getErrorMessage(null, "createRestaurant");
           setError(errorMessage);
           return { success: false, error: errorMessage };
         }
       } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : "Error al crear el restaurante";
+        const errorMessage = getErrorMessage(err, "createRestaurant");
         setError(errorMessage);
         return { success: false, error: errorMessage };
       } finally {
@@ -69,15 +69,12 @@ export const useFetchRestaurant = () => {
           setRestaurant(restaurant);
           return { success: true, data: restaurant };
         } else {
-          const errorMessage = "Error al obtener el restaurante";
+          const errorMessage = getErrorMessage(null, "fetchRestaurant");
           setError(errorMessage);
           return { success: false, error: errorMessage };
         }
       } catch (err) {
-        const errorMessage =
-          err instanceof Error
-            ? err.message
-            : "Error al obtener el restaurante";
+        const errorMessage = getErrorMessage(err, "fetchRestaurant");
         setError(errorMessage);
         return { success: false, error: errorMessage };
       } finally {

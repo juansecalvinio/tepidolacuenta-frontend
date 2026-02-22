@@ -3,6 +3,7 @@ import { getRestaurantRepository } from "../../core/modules/restaurant/infrastru
 import { useRestaurantContext } from "../contexts/restaurant.context";
 import { GetBranchesByRestaurant } from "../../core/modules/restaurant/use-cases/GetBranchesByRestaurant";
 import type { Branch } from "../../core/modules/restaurant/domain/models/Restaurant";
+import { getErrorMessage } from "../../core/utils/error-messages";
 
 export const useFetchBranches = () => {
   const {
@@ -35,14 +36,12 @@ export const useFetchBranches = () => {
 
           return { success: true, data: response.data, activeBranch };
         } else {
-          const errorMessage =
-            "Error al obtener las sucursales del restaurante";
+          const errorMessage = getErrorMessage(null, "fetchBranches");
           setError(errorMessage);
           return { success: false, error: errorMessage };
         }
       } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : "Error al crear el restaurante";
+        const errorMessage = getErrorMessage(err, "fetchBranches");
         setError(errorMessage);
         return { success: false, error: errorMessage };
       } finally {

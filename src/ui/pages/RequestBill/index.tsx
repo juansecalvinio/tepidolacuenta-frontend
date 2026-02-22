@@ -125,15 +125,15 @@ export const RequestBill = () => {
           disabled={isRequested}
           className={`
           flex items-center justify-center
-          w-70 h-70
+          w-50 h-50
           rounded-full
           text-neutral text-4xl font-extrabold
           transition-all
           disabled:cursor-not-allowed
           ${
             isRequested
-              ? "bg-linear-to-br from-lime-300 to-green-500 ring-4 ring-lime-900/70 shadow-[0_0_25px_rgba(34,197,94,0.5)]"
-              : "bg-linear-to-br from-lime-300 to-green-500 ring-4 ring-lime-900/70 shadow-[0_0_25px_rgba(34,197,94,0.5)] active:translate-y-1 hover:cursor-pointer"
+              ? "bg-linear-to-br from-green-300 to-green-500 ring-4 ring-green-900/70 shadow-[0_0_25px_rgba(34,197,94,0.5)]"
+              : "bg-linear-to-br from-orange-300 to-orange-400 ring-4 ring-orange-900/70 shadow-[0_0_25px_rgba(197, 175, 34, 0.5)] active:translate-y-1 hover:cursor-pointer"
           }
           `}
         >
@@ -147,8 +147,10 @@ export const RequestBill = () => {
 
       {error && <ErrorMessage message={error} />}
 
-      <footer className="pb-8 pt-4">
-        <AuthLogo />
+      <footer className="pb-8 pt-4 flex items-center justify-center">
+        <h1 className="text-xl sm:text-2xl font-light tracking-tighter cursor-pointer hover:opacity-80 transition-opacity">
+          tepidolacuenta
+        </h1>
       </footer>
     </div>
   );

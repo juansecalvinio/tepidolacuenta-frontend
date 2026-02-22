@@ -7,24 +7,24 @@
   name: "white";
   default: true;
   prefersdark: true;
-  color-scheme: "light";
+  color-scheme: "dark";
   --color-base-100: oklch(98% 0 0);
   --color-base-200: oklch(97% 0 0);
   --color-base-300: oklch(92% 0 0);
-  --color-base-content: oklch(14% 0 0);
-  --color-primary: oklch(89% 0.196 126.665);
+  --color-base-content: oklch(20% 0 0);
+  --color-primary: oklch(83% 0.128 66.29);
   --color-primary-content: oklch(14% 0 0);
   --color-secondary: oklch(0% 0 0);
-  --color-secondary-content: oklch(89% 0.196 126.665);
-  --color-accent: oklch(96% 0.067 122.328);
-  --color-accent-content: oklch(64% 0.2 131.684);
-  --color-neutral: oklch(20% 0 0);
-  --color-neutral-content: oklch(100% 0 0);
-  --color-info: oklch(82% 0.111 230.318);
+  --color-secondary-content: oklch(83% 0.128 66.29);
+  --color-accent: oklch(70% 0.04 256.788);
+  --color-accent-content: oklch(98% 0.003 247.858);
+  --color-neutral: oklch(92% 0 0);
+  --color-neutral-content: oklch(20% 0 0);
+  --color-info: oklch(88% 0.059 254.128);
   --color-info-content: oklch(14% 0 0);
-  --color-success: oklch(87% 0.15 154.449);
+  --color-success: oklch(89% 0.196 126.665);
   --color-success-content: oklch(14% 0 0);
-  --color-warning: oklch(94% 0.129 101.54);
+  --color-warning: oklch(87% 0.169 91.605);
   --color-warning-content: oklch(14% 0 0);
   --color-error: oklch(80% 0.114 19.571);
   --color-error-content: oklch(14% 0 0);
@@ -37,7 +37,6 @@
   --depth: 1;
   --noise: 1;
 }
-
 
 @plugin "daisyui/theme" {
   name: "black";
@@ -48,19 +47,19 @@
   --color-base-200: oklch(26% 0 0);
   --color-base-300: oklch(37% 0 0);
   --color-base-content: oklch(97% 0 0);
-  --color-primary: oklch(89% 0.196 126.665);
+  --color-primary: oklch(83% 0.128 66.29);
   --color-primary-content: oklch(14% 0 0);
   --color-secondary: oklch(0% 0 0);
-  --color-secondary-content: oklch(89% 0.196 126.665);
-  --color-accent: oklch(96% 0.067 122.328);
-  --color-accent-content: oklch(64% 0.2 131.684);
+  --color-secondary-content: oklch(83% 0.128 66.29);
+  --color-accent: oklch(70% 0.04 256.788);
+  --color-accent-content: oklch(98% 0.003 247.858);
   --color-neutral: oklch(14% 0 0);
   --color-neutral-content: oklch(100% 0 0);
-  --color-info: oklch(82% 0.111 230.318);
+  --color-info: oklch(88% 0.059 254.128);
   --color-info-content: oklch(14% 0 0);
-  --color-success: oklch(87% 0.15 154.449);
+  --color-success: oklch(89% 0.196 126.665);
   --color-success-content: oklch(14% 0 0);
-  --color-warning: oklch(94% 0.129 101.54);
+  --color-warning: oklch(87% 0.169 91.605);
   --color-warning-content: oklch(14% 0 0);
   --color-error: oklch(80% 0.114 19.571);
   --color-error-content: oklch(14% 0 0);
@@ -74,16 +73,13 @@
   --noise: 1;
 }
 
-
-
-
 /* Tokens semánticos por tema */
 [data-theme="white"] {
-  --color-brand: var(--color-lime-600);
+  --color-brand: var(--color-orange-400);
 }
 
 [data-theme="black"] {
-  --color-brand: var(--color-lime-300);
+  --color-brand: var(--color-orange-300);
 }
 
 @theme {

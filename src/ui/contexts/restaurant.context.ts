@@ -8,12 +8,14 @@ import type {
 interface RestaurantContext {
   restaurant: Restaurant | null;
   activeBranch: Branch | null;
+  branches: Branch[] | null;
   isLoading: boolean;
   hasError: boolean;
   error: string | null;
   isRequested: boolean;
   setRestaurant: (restaurant: Restaurant | null) => void;
   setActiveBranch: (branch: Branch | null) => void;
+  setBranches: (branches: Branch[] | null) => void;
   setIsLoading: (isLoading: boolean) => void;
   setHasError: (hasError: boolean) => void;
   setError: (error: string | null) => void;
@@ -26,6 +28,7 @@ export const useRestaurantContext = create<RestaurantContext>()(
       (set) => ({
         restaurant: null,
         activeBranch: null,
+        branches: null,
         isLoading: false,
         hasError: false,
         error: null,
@@ -38,6 +41,10 @@ export const useRestaurantContext = create<RestaurantContext>()(
         setActiveBranch: (branch) =>
           set({
             activeBranch: branch,
+          }),
+        setBranches: (branches) =>
+          set({
+            branches,
           }),
         setIsLoading: (isLoading) =>
           set({

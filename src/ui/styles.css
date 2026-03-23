@@ -171,3 +171,12 @@ body {
 .animate-fade-out {
   animation: fade-out 0.3s ease-in;
 }
+
+@media print {
+  header {
+    display: none !important;
+  }
+  main {
+    background: white !important;
+  }
+}

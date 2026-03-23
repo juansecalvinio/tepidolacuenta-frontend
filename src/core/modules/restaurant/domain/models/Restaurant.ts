@@ -13,7 +13,9 @@ export interface Restaurant {
 export interface Branch {
   id: string;
   restaurantId: string;
+  name: string;
   address: string;
+  description: string;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -54,4 +56,30 @@ export interface GetBranchesByRestaurantResponse {
   success: boolean;
   message: string;
   data: Branch[];
+}
+
+export type CreateBranchResponse = GetBranchesByRestaurantResponse;
+
+export interface CreateBranchRequest {
+  restaurantId: string;
+  name: string;
+  address: string;
+  description: string;
+}
+
+export interface UpdateBranchRequest {
+  name: string;
+  address: string;
+  description: string;
+}
+
+export interface UpdateBranchResponse {
+  success: boolean;
+  message: string;
+  data: Branch;
+}
+
+export interface DeleteBranchResponse {
+  success: boolean;
+  message: string;
 }

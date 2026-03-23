@@ -2,12 +2,16 @@ import { useCallback } from "react";
 import { useAuthContext } from "../contexts/auth.context";
 import { Login } from "../../core/modules/auth/use-cases/Login";
 import { Register } from "../../core/modules/auth/use-cases/Register";
+import { ForgotPassword } from "../../core/modules/auth/use-cases/ForgotPassword";
+import { ResetPassword } from "../../core/modules/auth/use-cases/ResetPassword";
 import { getAuthRepository } from "../../core/modules/auth/infrastructure/factories/AuthRepositoryFactory";
 import { getRestaurantRepository } from "../../core/modules/restaurant/infrastructure/repositories/RestaurantRepositoryFactory";
 import { GetRestaurants } from "../../core/modules/restaurant/use-cases/GetRestaurants";
 import type {
   LoginRequest,
   RegisterRequest,
+  ForgotPasswordRequest,
+  ResetPasswordRequest,
 } from "../../core/modules/auth/domain/models/Auth";
 import { getErrorMessage } from "../../core/utils/error-messages";
 
@@ -124,6 +128,60 @@ export const useFetchAuth = () => {
     [authRepository, setLoading, setError, clearError],
   );
 
+  const forgotPassword = useCallback(
+    async (request: ForgotPasswordRequest) => {
+      try {
+        setLoading(true);
+        clearError();
+
+        const forgotPasswordUseCase = ForgotPassword(authRepository);
+        const response = await forgotPasswordUseCase(request);
+
+        if (response.success) {
+          return { success: true, message: response.message };
+        } else {
+          const errorMessage = getErrorMessage(null, "forgotPassword");
+          setError(errorMessage);
+          return { success: false, message: errorMessage };
+        }
+      } catch (err) {
+        const errorMessage = getErrorMessage(err, "forgotPassword");
+        setError(errorMessage);
+        return { success: false, message: errorMessage };
+      } finally {
+        setLoading(false);
+      }
+    },
+    [authRepository, setLoading, setError, clearError],
+  );
+
+  const resetPassword = useCallback(
+    async (request: ResetPasswordRequest) => {
+      try {
+        setLoading(true);
+        clearError();
+
+        const resetPasswordUseCase = ResetPassword(authRepository);
+        const response = await resetPasswordUseCase(request);
+
+        if (response.success) {
+          return { success: true, message: response.message };
+        } else {
+          const errorMessage = getErrorMessage(null, "resetPassword");
+          setError(errorMessage);
+          return { success: false, message: errorMessage };
+        }
+      } catch (err) {
+        const errorMessage = getErrorMessage(err, "resetPassword");
+        setError(errorMessage);
+        return { success: false, message: errorMessage };
+      } finally {
+        setLoading(false);
+      }
+    },
+    [authRepository, setLoading, setError, clearError],
+  );
+
   const logout = useCallback(() => {
     // Clear token from sessionStorage
     sessionStorage.removeItem("auth-token");
@@ -141,6 +199,8 @@ export const useFetchAuth = () => {
     // Actions
     login,
     register,
+    forgotPassword,
+    resetPassword,
     logout,
     clearError,
   };

@@ -51,7 +51,7 @@ export const useFetchRestaurant = () => {
         setIsLoading(false);
       }
     },
-    [repository, setRestaurantId, setIsLoading, setError, setHasError],
+    [repository, setRestaurantId, setRestaurant, setBranchId, setActiveBranch, setTables, setIsLoading, setError, setHasError],
   );
 
   const fetchRestaurant = useCallback(

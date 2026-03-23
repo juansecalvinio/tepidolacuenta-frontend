@@ -1,12 +1,13 @@
+import { memo } from "react";
 import type { BillRequest } from "../../../core/modules/bill-request/domain/models/BillRequest";
 import { TimeUtils } from "../../utils/time.utils";
 
 interface Props {
   request: BillRequest;
-  onClick: () => void;
+  onMarkAsAttended: (requestId: string) => void;
 }
 
-export const PendingRequestCard = ({ request, onClick }: Props) => {
+export const PendingRequestCard = memo(({ request, onMarkAsAttended }: Props) => {
   return (
     <div key={request.id} className="card bg-base-100 border-2 border-base-300">
       <div className="card-body p-4">
@@ -23,11 +24,11 @@ export const PendingRequestCard = ({ request, onClick }: Props) => {
               </div>
             </div>
           </div>
-          <button className="btn btn-primary" onClick={onClick}>
+          <button className="btn btn-primary" onClick={() => onMarkAsAttended(request.id)}>
             Entregar cuenta
           </button>
         </div>
       </div>
     </div>
   );
-};
+});

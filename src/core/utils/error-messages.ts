@@ -8,7 +8,11 @@ export type FetchOperation =
   | "fetchBranches"
   | "fetchRequests"
   | "markAttended"
-  | "createBillRequest";
+  | "createBillRequest"
+  | "forgotPassword"
+  | "resetPassword"
+  | "updateBranch"
+  | "deleteBranch";
 
 const SERVERS_DOWN =
   "En este momento los servidores no están disponibles. Por favor, reintentá más tarde.";
@@ -85,6 +89,23 @@ const byStatus: Record<FetchOperation, Partial<Record<number, string>>> = {
     400: "Los datos de la solicitud no son válidos.",
     409: "Ya existe una solicitud activa para esta mesa.",
   },
+  forgotPassword: {
+    400: "El correo ingresado no es válido.",
+  },
+  resetPassword: {
+    400: "El enlace de recuperación no es válido o ya expiró.",
+    404: "El enlace de recuperación no es válido o ya expiró.",
+  },
+  updateBranch: {
+    401: SESSION_EXPIRED,
+    403: "No tenés permisos para modificar esta sucursal.",
+    404: "La sucursal no fue encontrada.",
+  },
+  deleteBranch: {
+    401: SESSION_EXPIRED,
+    403: "No tenés permisos para eliminar esta sucursal.",
+    404: "La sucursal no fue encontrada.",
+  },
 };
 
 const defaultMessages: Record<FetchOperation, string> = {
@@ -104,6 +125,14 @@ const defaultMessages: Record<FetchOperation, string> = {
     "No pudimos marcar la solicitud como atendida. Por favor, reintentá más tarde.",
   createBillRequest:
     "No pudimos enviar tu solicitud. Por favor, reintentá más tarde.",
+  forgotPassword:
+    "No pudimos procesar tu solicitud. Por favor, reintentá más tarde.",
+  resetPassword:
+    "No pudimos restablecer tu contraseña. Por favor, reintentá más tarde.",
+  updateBranch:
+    "No pudimos modificar la sucursal. Por favor, reintentá más tarde.",
+  deleteBranch:
+    "No pudimos eliminar la sucursal. Por favor, reintentá más tarde.",
 };
 
 /**

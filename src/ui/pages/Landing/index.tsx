@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import { useAuth } from "../../hooks/useAuth";
@@ -6,13 +5,6 @@ import { useAuth } from "../../hooks/useAuth";
 export const Landing = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", "black");
-    return () => {
-      document.documentElement.setAttribute("data-theme", "white");
-    };
-  }, []);
 
   const handleGetStarted = () => {
     if (isAuthenticated) {

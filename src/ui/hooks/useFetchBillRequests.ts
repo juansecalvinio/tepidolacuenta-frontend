@@ -36,7 +36,7 @@ export const useFetchBillRequests = () => {
     } finally {
       setLoading(false);
     }
-  }, [repository, setRequests, setLoading, setError, clearError]);
+  }, [repository, restaurantId, setRequests, setLoading, setError, clearError]);
 
   const markAsAttended = useCallback(
     async (requestId: string) => {
@@ -78,7 +78,7 @@ export const useFetchBillRequests = () => {
         setLoading(false);
       }
     },
-    [repository, setIsRequested, setError, clearError]
+    [repository, setIsRequested, setLoading, setError, clearError]
   );
 
   return {

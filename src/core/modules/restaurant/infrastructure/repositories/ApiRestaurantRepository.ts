@@ -1,10 +1,15 @@
 import { api } from "../../../../api/http-client";
 import type {
+  CreateBranchRequest,
+  CreateBranchResponse,
   CreateRestaurantRequest,
   CreateRestaurantResponse,
+  DeleteBranchResponse,
   GetBranchesByRestaurantResponse,
   GetRestaurantByIdResponse,
   GetRestaurantsResponse,
+  UpdateBranchRequest,
+  UpdateBranchResponse,
 } from "../../domain/models/Restaurant";
 import type { RestaurantRepository } from "../../domain/repositories/RestaurantRepository";
 
@@ -15,6 +20,28 @@ export class ApiRestaurantRepository implements RestaurantRepository {
     return await api.post<CreateRestaurantResponse>(
       "/api/v1/setup/restaurant",
       request,
+    );
+  }
+
+  async createBranch(
+    request: CreateBranchRequest,
+  ): Promise<CreateBranchResponse> {
+    return await api.post<CreateBranchResponse>("/api/v1/branches", request);
+  }
+
+  async updateBranch(
+    branchId: string,
+    request: UpdateBranchRequest,
+  ): Promise<UpdateBranchResponse> {
+    return await api.put<UpdateBranchResponse>(
+      `/api/v1/branches/${branchId}`,
+      request,
+    );
+  }
+
+  async deleteBranch(branchId: string): Promise<DeleteBranchResponse> {
+    return await api.delete<DeleteBranchResponse>(
+      `/api/v1/branches/${branchId}`,
     );
   }
 

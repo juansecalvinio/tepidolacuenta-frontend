@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { useTables } from "../../hooks/useTables";
 import { useBillRequests } from "../../hooks/useBillRequests";
@@ -20,11 +20,12 @@ export const Dashboard = () => {
   const { fetchBranchesByRestaurant } = useFetchBranches();
   const { fetchTables } = useFetchTables();
   const { restaurant, activeBranch } = useRestaurants();
-  const { tables } = useTables();
+  const { tables, isLoading: isTablesLoading } = useTables();
   const { requests, pendingCount } = useBillRequests();
   const { fetchPendingRequests, markAsAttended } = useFetchBillRequests();
   const { removeRequest } = useBillRequestContext();
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const isInitialLoadComplete = useRef(false);
 
   useWebSocketNotifications({
     restaurantId: restaurantId || "",
@@ -33,23 +34,35 @@ export const Dashboard = () => {
 
   useEffect(() => {
     const fetchInitialData = async () => {
-      await fetchRestaurant(restaurantId!);
-      await fetchBranchesByRestaurant(restaurantId!);
-      await fetchTables();
-      await fetchPendingRequests();
+      await Promise.all([
+        fetchRestaurant(restaurantId!),
+        fetchBranchesByRestaurant(restaurantId!),
+        fetchTables(),
+        fetchPendingRequests(),
+      ]);
       setIsInitialLoading(false);
+      isInitialLoadComplete.current = true;
     };
 
     fetchInitialData();
   }, [restaurantId]);
 
-  const handleMarkAsAttended = async (requestId: string) => {
-    removeRequest(requestId);
-    const result = await markAsAttended(requestId);
-    if (!result?.success) {
-      await fetchPendingRequests();
-    }
-  };
+  useEffect(() => {
+    if (!isInitialLoadComplete.current) return;
+    fetchTables();
+    fetchPendingRequests();
+  }, [activeBranch?.id]);
+
+  const handleMarkAsAttended = useCallback(
+    async (requestId: string) => {
+      removeRequest(requestId);
+      const result = await markAsAttended(requestId);
+      if (!result?.success) {
+        await fetchPendingRequests();
+      }
+    },
+    [removeRequest, markAsAttended, fetchPendingRequests],
+  );
 
   const pendingRequests: BillRequest[] =
     requests?.filter((req) => req.status === "pending") ?? [];
@@ -67,17 +80,10 @@ export const Dashboard = () => {
 
   return (
     <div className="p-4 max-w-2xl mx-auto">
-      <div className="mb-6">
+      <div className="flex items-baseline justify-between mb-6">
         <h1 className="text-3xl sm:text-4xl font-bold mb-2">
           {restaurant?.name || "Tu restaurante"}
         </h1>
-        <select
-          defaultValue={activeBranch?.address || "Sucursal"}
-          className="select select-md border-base-300"
-          disabled
-        >
-          <option>{activeBranch?.address || "Sucursal"}</option>
-        </select>
       </div>
 
       <div className="flex flex-col md:flex-row justify-start gap-4 mb-6">
@@ -87,7 +93,32 @@ export const Dashboard = () => {
               Mesas totales
             </div>
             <div className="flex items-center justify-between">
-              <div className="text-4xl font-black">{tables.length}</div>
+              {isTablesLoading ? (
+                <span className="loading loading-spinner"></span>
+              ) : (
+                <div className="text-4xl font-black">{tables.length}</div>
+              )}
+              {tables.length === 0 && (
+                <button
+                  className="btn btn-square btn-sm"
+                  onClick={() => navigate("/dashboard/tables/add-tables")}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="size-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 4.5v15m7.5-7.5h-15"
+                    />
+                  </svg>
+                </button>
+              )}
               {tables.length > 0 && (
                 <button
                   className="btn btn-square btn-sm"
@@ -160,7 +191,7 @@ export const Dashboard = () => {
             <PendingRequestCard
               key={request.id}
               request={request}
-              onClick={() => handleMarkAsAttended(request.id)}
+              onMarkAsAttended={handleMarkAsAttended}
             />
           ))}
         </div>

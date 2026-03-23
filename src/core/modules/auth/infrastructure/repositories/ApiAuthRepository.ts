@@ -4,6 +4,10 @@ import type {
   RegisterRequest,
   LoginRequest,
   LoginResponse,
+  ForgotPasswordRequest,
+  ForgotPasswordResponse,
+  ResetPasswordRequest,
+  ResetPasswordResponse,
 } from "../../domain/models/Auth";
 import type { AuthRepository } from "../../domain/repositories/AuthRepository";
 
@@ -14,5 +18,13 @@ export const ApiAuthRepository: AuthRepository = {
 
   async login(user: LoginRequest): Promise<LoginResponse> {
     return await api.post<LoginResponse>("/api/v1/auth/login", user);
+  },
+
+  async forgotPassword(request: ForgotPasswordRequest): Promise<ForgotPasswordResponse> {
+    return await api.post<ForgotPasswordResponse>("/api/v1/auth/forgot-password", request);
+  },
+
+  async resetPassword(request: ResetPasswordRequest): Promise<ResetPasswordResponse> {
+    return await api.post<ResetPasswordResponse>("/api/v1/auth/reset-password", request);
   },
 };

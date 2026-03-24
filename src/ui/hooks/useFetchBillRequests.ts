@@ -15,6 +15,7 @@ export const useFetchBillRequests = () => {
     updateRequest,
     setLoading,
     setIsRequested,
+    setIsDuplicateRequest,
     setError,
     clearError,
   } = useBillRequestContext();
@@ -71,6 +72,10 @@ export const useFetchBillRequests = () => {
           setIsRequested(true);
         }
       } catch (err) {
+        if (err instanceof Error && err.message.includes("HTTP error 409")) {
+          setIsDuplicateRequest(true);
+          return { success: false, error: "duplicate" };
+        }
         const errorMessage = getErrorMessage(err, "createBillRequest");
         setError(errorMessage);
         return { success: false, error: errorMessage };

@@ -4,6 +4,7 @@ export interface BillRequest {
   tableNumber: number;
   restaurantId: string;
   status: BillRequestStatus;
+  paymentMethod: PaymentMethod;
   createdAt: string;
   updatedAt?: string;
 }
@@ -24,12 +25,15 @@ export interface MarkBillRequestAsAttendedResponse {
   request: BillRequest;
 }
 
+export type PaymentMethod = "cash" | "debit_card" | "credit_card";
+
 export interface CreateBillRequestBody {
   restaurantId: string;
   branchId: string;
   tableId: string;
   tableNumber: number;
   hash: string;
+  paymentMethod: PaymentMethod;
 }
 
 export interface CreateBillRequestResponse {

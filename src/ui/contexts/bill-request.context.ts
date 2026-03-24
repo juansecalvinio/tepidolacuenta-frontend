@@ -5,6 +5,7 @@ interface BillRequestContext {
   requests: BillRequest[];
   isLoading: boolean;
   isRequested: boolean;
+  isDuplicateRequest: boolean;
   error: string | null;
 
   setRequests: (requests: BillRequest[]) => void;
@@ -13,6 +14,7 @@ interface BillRequestContext {
   removeRequest: (requestId: string) => void;
   setLoading: (isLoading: boolean) => void;
   setIsRequested: (isRequested: boolean) => void;
+  setIsDuplicateRequest: (isDuplicateRequest: boolean) => void;
   setError: (error: string | null) => void;
   clearError: () => void;
 }
@@ -21,6 +23,7 @@ export const useBillRequestContext = create<BillRequestContext>((set) => ({
   requests: [],
   isLoading: false,
   isRequested: false,
+  isDuplicateRequest: false,
   error: null,
 
   setRequests: (requests) => set({ requests }),
@@ -40,6 +43,7 @@ export const useBillRequestContext = create<BillRequestContext>((set) => ({
     })),
   setLoading: (isLoading) => set({ isLoading }),
   setIsRequested: (isRequested) => set({ isRequested }),
+  setIsDuplicateRequest: (isDuplicateRequest) => set({ isDuplicateRequest }),
   setError: (error) => set({ error }),
   clearError: () => set({ error: null }),
 }));

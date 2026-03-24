@@ -1,7 +1,7 @@
 import { useBillRequestContext } from "../contexts/bill-request.context";
 
 export const useBillRequests = () => {
-  const { requests, isRequested, isLoading, error } = useBillRequestContext();
+  const { requests, isRequested, isDuplicateRequest, isLoading, error } = useBillRequestContext();
 
   let pendingCount: number = 0;
 
@@ -13,6 +13,7 @@ export const useBillRequests = () => {
     requests,
     isLoading,
     isRequested,
+    isDuplicateRequest,
     error,
     pendingCount,
   };

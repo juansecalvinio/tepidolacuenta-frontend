@@ -45,7 +45,7 @@ export const AvatarMenu = ({ items }: Props) => {
       case "theme":
         return {
           ...item,
-          pathD: theme === "white" ? themeSvgPathWhite : themeSvgPathBlack,
+          pathD: theme === "white" ? themeSvgPathBlack : themeSvgPathWhite,
           onClick: handleThemeChange,
         };
       case "logout":

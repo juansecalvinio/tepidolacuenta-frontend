@@ -25,10 +25,12 @@ export const Header = () => {
         tepidolacuenta
       </h1>
 
-      <BranchSelector />
+      <div className="flex items-center justify-between gap-4">
+        <BranchSelector />
 
-      <div className="flex items-center gap-2 sm:gap-4">
-        {user && <AvatarMenu items={avatarMenuItemsData} />}
+        <div className="flex items-center gap-2 sm:gap-4">
+          {user && <AvatarMenu items={avatarMenuItemsData} />}
+        </div>
       </div>
     </header>
   );

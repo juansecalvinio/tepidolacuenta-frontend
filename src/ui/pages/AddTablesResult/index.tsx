@@ -6,7 +6,7 @@ export const AddTablesResult = () => {
   const { quantity, status } = location.state || {};
 
   return (
-    <div className="p-4 max-w-2xl mx-auto mt-12">
+    <div className="p-4 max-w-3xl mx-auto mt-12">
       <div className="flex flex-col items-center gap-8">
         {status === "success" && (
           <svg

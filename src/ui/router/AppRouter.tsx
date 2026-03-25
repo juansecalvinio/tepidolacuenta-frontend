@@ -1,7 +1,7 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { Landing } from "../pages/Landing";
 import { RequestBill } from "../pages/RequestBill";
-import { Dashboard } from "../pages/Dashboard";
+import { NewDashboard } from "../pages/NewDashboard";
 import { Onboarding } from "../pages/Onboarding";
 import { MainLayout } from "../layouts/MainLayout";
 import { ProtectedRoute } from "../components/ProtectedRoute";
@@ -16,6 +16,8 @@ import { AddBranch } from "../pages/AddBranch";
 import { AddBranchResult } from "../pages/AddBranchResult";
 import { AddTables } from "../pages/AddTables";
 import { AddTablesResult } from "../pages/AddTablesResult";
+import { Plans } from "../pages/Plans";
+import { Subscription } from "../pages/Subscription";
 
 function AppRouter() {
   return (
@@ -48,9 +50,13 @@ function AppRouter() {
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <NewDashboard />
             </ProtectedRoute>
           }
+        />
+        <Route
+          path="/dashboard/new"
+          element={<Navigate to="/dashboard" replace />}
         />
         <Route
           path="/dashboard/tables"
@@ -105,6 +111,22 @@ function AppRouter() {
           element={
             <ProtectedRoute>
               <AddBranchResult />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/plans"
+          element={
+            <ProtectedRoute>
+              <Plans />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/subscription"
+          element={
+            <ProtectedRoute>
+              <Subscription />
             </ProtectedRoute>
           }
         />

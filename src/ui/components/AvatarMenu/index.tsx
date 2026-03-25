@@ -54,14 +54,14 @@ export const AvatarMenu = ({ items }: Props) => {
   });
 
   return (
-    <div className="dropdown">
+    <div className="dropdown dropdown-end">
       <div
-        className="avatar avatar-online avatar-placeholder hover:cursor-pointer"
+        className="avatar avatar-placeholder hover:cursor-pointer"
         role="button"
         tabIndex={0}
       >
-        <div className="bg-base-300 border-base-300 border-2 w-12 rounded-full">
-          <span>{user?.email.substring(0, 2).toUpperCase()}</span>
+        <div className="bg-base-300 border-base-300 border-2 w-8 rounded-full">
+          <p>{user?.email.substring(0, 2).toUpperCase()}</p>
         </div>
       </div>
 

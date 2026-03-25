@@ -1,7 +1,9 @@
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import { useNotifications } from "../contexts/notification.context";
 import type { BillRequestWsResponse } from "../../core/modules/bill-request-ws/domain/models/BillRequestWs";
 import { useFetchBillRequests } from "./useFetchBillRequests";
+
+export type WsStatus = "connecting" | "connected" | "reconnecting" | "disconnected";
 
 interface Props {
   restaurantId: string;
@@ -14,6 +16,7 @@ const globalRecentNotifications = new Set<string>();
 export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
   const { addNotification } = useNotifications();
   const { fetchPendingRequests } = useFetchBillRequests();
+  const [wsStatus, setWsStatus] = useState<WsStatus>("connecting");
 
   // Limpiar baseUrl de protocolos existentes
   const baseUrl = (import.meta.env.VITE_WS_BASE_URL || "localhost:8080")
@@ -55,6 +58,7 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
         wsRef.current = ws;
         isConnectingRef.current = false;
         reconnectAttemptsRef.current = 0; // Reset intentos cuando conecta exitosamente
+        setWsStatus("connected");
       };
 
       ws.onmessage = (event) => {
@@ -148,6 +152,7 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
             }/${maxReconnectAttempts})`,
           );
 
+          setWsStatus("reconnecting");
           reconnectAttemptsRef.current += 1;
           reconnectTimeoutRef.current = setTimeout(() => {
             connectWebSocket();
@@ -156,6 +161,7 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
           console.error(
             "❌ Máximo número de intentos de reconexión alcanzado. Por favor, recarga la página.",
           );
+          setWsStatus("disconnected");
         }
       };
 
@@ -187,4 +193,6 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
       wsRef.current = null;
     };
   }, [restaurantId, token, connectWebSocket]);
+
+  return { wsStatus };
 };

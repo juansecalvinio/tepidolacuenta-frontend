@@ -48,8 +48,8 @@ export const AddBranch = () => {
   };
 
   return (
-    <div className="p-4 max-w-2xl mx-auto">
-      <h2 className="text-3xl text-center font-bold mb-6">
+    <div className="p-4 max-w-3xl mx-auto">
+      <h2 className="text-xl text-center font-bold mb-6">
         Agregar nueva sucursal
       </h2>
 
@@ -65,7 +65,7 @@ export const AddBranch = () => {
               type="text"
               name="address"
               placeholder="Dirección de la sucursal"
-              className="input input-lg w-full"
+              className="input w-full"
               value={formData.address}
               onChange={handleChange}
               required
@@ -83,7 +83,7 @@ export const AddBranch = () => {
               type="text"
               name="name"
               placeholder="Nombre de la sucursal"
-              className="input input-lg w-full"
+              className="input w-full"
               value={formData.name}
               onChange={handleChange}
               required

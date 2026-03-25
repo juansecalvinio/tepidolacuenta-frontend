@@ -12,6 +12,7 @@ import { useBillRequestContext } from "../../contexts/bill-request.context";
 import { useRestaurants } from "../../hooks/useRestaurants";
 import { useFetchBranches } from "../../hooks/useFetchBranches";
 import { useFetchRestaurant } from "../../hooks/useFetchRestaurant";
+import { TrialBanner } from "../../components/TrialBanner";
 
 export const Dashboard = () => {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ export const Dashboard = () => {
   const { fetchTables } = useFetchTables();
   const { restaurant, activeBranch } = useRestaurants();
   const { tables, isLoading: isTablesLoading } = useTables();
-  const { requests, pendingCount } = useBillRequests();
+  const { requests } = useBillRequests();
   const { fetchPendingRequests, markAsAttended } = useFetchBillRequests();
   const { removeRequest } = useBillRequestContext();
   const [isInitialLoading, setIsInitialLoading] = useState(true);
@@ -64,8 +65,13 @@ export const Dashboard = () => {
     [removeRequest, markAsAttended, fetchPendingRequests],
   );
 
+  const activeBranchTableIds = new Set(tables.map((t) => t.id));
   const pendingRequests: BillRequest[] =
-    requests?.filter((req) => req.status === "pending") ?? [];
+    requests?.filter(
+      (req) =>
+        req.status === "pending" && activeBranchTableIds.has(req.tableId),
+    ) ?? [];
+  const pendingCount = pendingRequests.length;
 
   if (isInitialLoading) {
     return (
@@ -79,7 +85,8 @@ export const Dashboard = () => {
   }
 
   return (
-    <div className="p-4 max-w-2xl mx-auto">
+    <div className="p-4 max-w-3xl mx-auto">
+      <TrialBanner />
       <div className="flex items-baseline justify-between mb-6">
         <h1 className="text-3xl sm:text-4xl font-bold mb-2">
           {restaurant?.name || "Tu restaurante"}

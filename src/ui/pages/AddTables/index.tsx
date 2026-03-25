@@ -41,8 +41,8 @@ export const AddTables = () => {
   };
 
   return (
-    <div className="p-4 max-w-2xl mx-auto">
-      <h2 className="text-2xl text-center font-bold mb-6">
+    <div className="p-4 max-w-3xl mx-auto">
+      <h2 className="text-xl text-center font-bold mb-6">
         Agregar mesas a {activeBranch?.address || "tu sucursal"}
       </h2>
 
@@ -50,7 +50,7 @@ export const AddTables = () => {
         <div className="bg-base-100 border-2 border-base-300 p-4 rounded-xl">
           <div className="form-control flex items-baseline justify-between gap-2 w-full">
             <label className="label">
-              <span className="label-text text-base-content text-xl">
+              <span className="label-text text-base-content text-lg">
                 Cantidad de mesas
               </span>
             </label>
@@ -58,7 +58,7 @@ export const AddTables = () => {
               type="text"
               name="quantity"
               placeholder="1"
-              className="input input-bordered text-center text-2xl font-bold"
+              className="input input-bordered text-center text-lg font-bold"
               value={quantity}
               onChange={handleQuantityChange}
               disabled={isLoading}

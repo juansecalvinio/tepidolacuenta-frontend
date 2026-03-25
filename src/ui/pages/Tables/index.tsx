@@ -47,15 +47,23 @@ export const Tables = () => {
 
   if (isLoading) {
     return (
-      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-3 bg-base-200">
-        <span className="loading loading-spinner loading-lg"></span>
-        <p className="font-light text-center">Estamos cargando tus mesas...</p>
+      <div className="p-4 max-w-3xl mx-auto space-y-4 pt-6">
+        <div className="h-8 w-40 bg-base-300 rounded-lg animate-pulse" />
+        <div className="h-10 w-full bg-base-300 rounded-xl animate-pulse" />
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div
+              key={i}
+              className="h-40 bg-base-300 rounded-xl animate-pulse"
+            />
+          ))}
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="p-4 max-w-2xl mx-auto">
+    <div className="p-4 max-w-3xl mx-auto">
       {/* Sección visible solo al imprimir */}
       <div className="hidden print:block">
         <div className="grid grid-cols-3 gap-6">
@@ -78,83 +86,96 @@ export const Tables = () => {
           qrCode={modalTableQRCode || ""}
           onClose={handleCloseModal}
         />
-        <div className="flex flex-col sm:flex-row items-center justify-between">
+
+        {/* Header: título + menú */}
+        <div className="flex items-center justify-between mb-3">
           <h2 className="text-2xl font-bold">QRs de las mesas</h2>
+          <TablesMenu />
+        </div>
 
-          <div className="flex items-center gap-4">
-            <label className="input input-md max-w-40">
+        {/* Búsqueda: ancho completo en mobile */}
+        <label className="input input-sm w-full mb-6">
+          <svg
+            className="h-4 w-4 opacity-50 shrink-0"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+          >
+            <g
+              strokeLinejoin="round"
+              strokeLinecap="round"
+              strokeWidth="2.5"
+              fill="none"
+              stroke="currentColor"
+            >
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.3-4.3"></path>
+            </g>
+          </svg>
+          <input
+            type="search"
+            className="grow"
+            placeholder="Buscar mesa por número..."
+            onChange={handleSearchField}
+          />
+        </label>
+
+        {filteredTables.length === 0 ? (
+          <div className="border border-base-300 rounded-xl bg-base-100">
+            <div className="p-8 flex flex-col items-center gap-2 text-center">
               <svg
-                className="h-[1em] opacity-50"
                 xmlns="http://www.w3.org/2000/svg"
+                fill="none"
                 viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-8 h-8 text-base-content/20"
               >
-                <g
-                  strokeLinejoin="round"
+                <path
                   strokeLinecap="round"
-                  strokeWidth="2.5"
-                  fill="none"
-                  stroke="currentColor"
-                >
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <path d="m21 21-4.3-4.3"></path>
-                </g>
+                  strokeLinejoin="round"
+                  d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+                />
               </svg>
-              <input
-                type="search"
-                className="grow"
-                placeholder="Buscar mesa"
-                onChange={handleSearchField}
-              />
-            </label>
-
-            <TablesMenu />
+              <p className="text-base-content/40 text-sm">
+                No se encontraron mesas
+              </p>
+            </div>
           </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-6">
-          {paginatedTables.map((table) => (
-            <TableQR
-              key={table.qrCode}
-              tableNumber={table.number}
-              qrCode={table.qrCode}
-              onClick={() => handleQRClick(table.number, table.qrCode)}
-            />
-          ))}
-        </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3">
+            {paginatedTables.map((table) => (
+              <TableQR
+                key={table.qrCode}
+                tableNumber={table.number}
+                qrCode={table.qrCode}
+                onClick={() => handleQRClick(table.number, table.qrCode)}
+              />
+            ))}
+          </div>
+        )}
 
         {totalPages > 1 && (
-          <div className="flex justify-center mt-6">
-            <div className="join">
-              <button
-                className="join-item btn"
-                onClick={() => setCurrentPage((p) => p - 1)}
-                disabled={currentPage === 1}
-              >
-                «
-              </button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (page) => (
-                  <button
-                    key={page}
-                    className={`join-item btn ${currentPage === page ? "btn-active" : ""}`}
-                    onClick={() => setCurrentPage(page)}
-                  >
-                    {page}
-                  </button>
-                ),
-              )}
-              <button
-                className="join-item btn"
-                onClick={() => setCurrentPage((p) => p + 1)}
-                disabled={currentPage === totalPages}
-              >
-                »
-              </button>
-            </div>
+          <div className="flex items-center justify-center gap-3 mt-6">
+            <button
+              className="btn btn-sm btn-ghost"
+              onClick={() => setCurrentPage((p) => p - 1)}
+              disabled={currentPage === 1}
+            >
+              ← Anterior
+            </button>
+            <span className="text-sm text-base-content/50">
+              {currentPage} / {totalPages}
+            </span>
+            <button
+              className="btn btn-sm btn-ghost"
+              onClick={() => setCurrentPage((p) => p + 1)}
+              disabled={currentPage === totalPages}
+            >
+              Siguiente →
+            </button>
           </div>
         )}
       </div>
-      {/* fin print:hidden */}
     </div>
   );
 };

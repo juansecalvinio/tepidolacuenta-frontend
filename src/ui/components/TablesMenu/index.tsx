@@ -12,15 +12,15 @@ export const TablesMenu = () => {
   };
 
   return (
-    <div className="dropdown">
-      <button className="btn rounded-full">
+    <div className="dropdown dropdown-end">
+      <button className="btn btn-sm btn-ghost btn-square">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="size-6"
+          className="size-5"
         >
           <path
             strokeLinecap="round"
@@ -31,19 +31,19 @@ export const TablesMenu = () => {
       </button>
 
       <div
-        className="dropdown-content card bg-base-100 card-border border-base-300 mt-2 min-w-50"
+        className="dropdown-content card bg-base-100 card-border border-base-300 mt-2 min-w-48 z-20"
         tabIndex={-1}
       >
         <ul className="menu w-full">
           <li>
-            <span onClick={handleAddTables}>
+            <button onClick={handleAddTables}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth="1.5"
                 stroke="currentColor"
-                className="size-5 opacity-30"
+                className="size-4 opacity-50"
               >
                 <path
                   strokeLinecap="round"
@@ -52,18 +52,17 @@ export const TablesMenu = () => {
                 />
               </svg>
               Agregar mesas
-            </span>
+            </button>
           </li>
-
           <li>
-            <span onClick={handlePrintQRs}>
+            <button onClick={handlePrintQRs}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="size-5 opacity-30"
+                className="size-4 opacity-50"
               >
                 <path
                   strokeLinecap="round"
@@ -72,7 +71,7 @@ export const TablesMenu = () => {
                 />
               </svg>
               Imprimir QRs
-            </span>
+            </button>
           </li>
         </ul>
       </div>

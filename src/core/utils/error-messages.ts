@@ -12,7 +12,11 @@ export type FetchOperation =
   | "forgotPassword"
   | "resetPassword"
   | "updateBranch"
-  | "deleteBranch";
+  | "deleteBranch"
+  | "fetchPlans"
+  | "fetchSubscription"
+  | "changePlan"
+  | "cancelSubscription";
 
 const SERVERS_DOWN =
   "En este momento los servidores no están disponibles. Por favor, reintentá más tarde.";
@@ -106,6 +110,20 @@ const byStatus: Record<FetchOperation, Partial<Record<number, string>>> = {
     403: "No tenés permisos para eliminar esta sucursal.",
     404: "La sucursal no fue encontrada.",
   },
+  fetchPlans: {
+    401: SESSION_EXPIRED,
+  },
+  fetchSubscription: {
+    401: SESSION_EXPIRED,
+  },
+  changePlan: {
+    401: SESSION_EXPIRED,
+    404: "La suscripción no fue encontrada.",
+  },
+  cancelSubscription: {
+    401: SESSION_EXPIRED,
+    404: "La suscripción no fue encontrada.",
+  },
 };
 
 const defaultMessages: Record<FetchOperation, string> = {
@@ -133,6 +151,14 @@ const defaultMessages: Record<FetchOperation, string> = {
     "No pudimos modificar la sucursal. Por favor, reintentá más tarde.",
   deleteBranch:
     "No pudimos eliminar la sucursal. Por favor, reintentá más tarde.",
+  fetchPlans:
+    "No pudimos cargar los planes. Por favor, reintentá más tarde.",
+  fetchSubscription:
+    "No pudimos cargar tu suscripción. Por favor, reintentá más tarde.",
+  changePlan:
+    "No pudimos cambiar el plan. Por favor, reintentá más tarde.",
+  cancelSubscription:
+    "No pudimos cancelar la suscripción. Por favor, reintentá más tarde.",
 };
 
 /**

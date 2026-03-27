@@ -172,6 +172,67 @@ body {
   animation: fade-out 0.3s ease-in;
 }
 
+/* Animaciones para ilustraciones de feedback */
+@keyframes receipt-line {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+@keyframes gentle-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes footstep {
+  0%, 100% { opacity: 0; transform: scale(0.85); }
+  25%, 65% { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .animate-receipt-line {
+    animation: receipt-line 1.8s ease-in-out infinite;
+  }
+  .animate-gentle-float {
+    animation: gentle-float 3s ease-in-out infinite;
+  }
+  .animate-footstep {
+    animation: footstep 1.6s ease-in-out infinite;
+  }
+}
+
+/* Animación breathing glow para el botón sello */
+@keyframes breathe {
+  0%, 100% {
+    box-shadow: 0 0 20px 0px rgba(200, 138, 42, 0.25);
+  }
+  50% {
+    box-shadow: 0 0 52px 10px rgba(200, 138, 42, 0.45);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .animate-breathe {
+    animation: breathe 2.8s ease-in-out infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-fade-out,
+  .animate-breathe,
+  .animate-receipt-line,
+  .animate-gentle-float,
+  .animate-footstep {
+    animation: none;
+  }
+  .animate-gradient,
+  .animate-gradient-fast,
+  .animate-gradient-slow,
+  .animate-text-gradient {
+    animation: none;
+  }
+}
+
 @media print {
   header {
     display: none !important;

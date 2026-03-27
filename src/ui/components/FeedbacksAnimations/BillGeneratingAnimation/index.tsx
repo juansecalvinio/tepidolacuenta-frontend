@@ -116,7 +116,9 @@ export const BillGeneratingAnimation = ({
         </p>
         <p className="text-sm leading-relaxed text-base-content/40">
           {isLoading && "Un momento por favor."}
-          {!isLoading && isRequested && "Enseguida te lo acercamos a la mesa."}
+          {!isLoading &&
+            isRequested &&
+            "Enseguida te acercamos la cuenta a la mesa."}
         </p>
       </div>
     </div>

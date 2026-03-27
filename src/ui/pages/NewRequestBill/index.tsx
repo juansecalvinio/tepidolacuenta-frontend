@@ -73,7 +73,7 @@ export const NewRequestBill = () => {
       : "Pedir la cuenta";
 
   return (
-    <div className="h-full flex justify-center bg-base-200">
+    <div className="h-dvh flex justify-center bg-base-200">
       <div className="w-full max-w-sm h-full flex flex-col bg-base-200">
         {/* Top bar */}
         <header className="flex items-center justify-center px-6 pt-8 pb-4">
@@ -83,7 +83,7 @@ export const NewRequestBill = () => {
         </header>
 
         {/* Contenido principal */}
-        <main className="flex-1 flex flex-col items-center justify-center px-6 gap-10">
+        <main className="flex-1 min-h-0 overflow-y-auto flex flex-col items-center justify-center px-6 gap-10">
           {/* Estado: solicitud duplicada */}
           {isDuplicateRequest && (
             <div
@@ -202,36 +202,38 @@ export const NewRequestBill = () => {
         >
           {/* Error inline */}
           {!isDuplicateRequest && error && (
-              <div
-                role="alert"
-                aria-live="assertive"
-                className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm animate-fade-in bg-error/10 border border-error/30 text-error"
+            <div
+              role="alert"
+              aria-live="assertive"
+              className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm animate-fade-in bg-error/10 border border-error/30 text-error"
+            >
+              <svg
+                aria-hidden="true"
+                className="w-4 h-4 shrink-0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                <svg
-                  aria-hidden="true"
-                  className="w-4 h-4 shrink-0"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 9v4m0 4h.01M12 3a9 9 0 100 18A9 9 0 0012 3z"
-                  />
-                </svg>
-                <span>{error}</span>
-              </div>
-            )}
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v4m0 4h.01M12 3a9 9 0 100 18A9 9 0 0012 3z"
+                />
+              </svg>
+              <span>{error}</span>
+            </div>
+          )}
 
-            {/* Botón sello */}
-            <button
-              onClick={handleClick}
-              disabled={isRequested || isDuplicateRequest || isLoading || !requestData}
-              aria-label={buttonLabel}
-              aria-busy={isLoading}
-              className={`
+          {/* Botón sello */}
+          <button
+            onClick={handleClick}
+            disabled={
+              isRequested || isDuplicateRequest || isLoading || !requestData
+            }
+            aria-label={buttonLabel}
+            aria-busy={isLoading}
+            className={`
                 w-full h-18 rounded-full
                 flex items-center justify-center gap-3
                 text-xl font-black tracking-tight
@@ -241,39 +243,39 @@ export const NewRequestBill = () => {
                 disabled:cursor-not-allowed
                 ${!isRequested && !isDuplicateRequest && !isLoading && requestData ? "animate-breathe" : ""}
               `}
-              style={
-                isRequested || isDuplicateRequest
-                  ? {
-                      background: "linear-gradient(135deg, #3A7A50, #4E9A65)",
-                      color: "#E8F5ED",
-                      boxShadow: "0 0 32px rgba(60, 140, 90, 0.25)",
-                    }
-                  : {
-                      background: "linear-gradient(135deg, #C88A2A, #D4A840)",
-                      color: "#0E0A04",
-                    }
-              }
-            >
-              {isLoading && <Spinner />}
-              {!isLoading && (isRequested || isDuplicateRequest) && (
-                <svg
-                  aria-hidden="true"
-                  className="w-5 h-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2.5}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              )}
-              <span>{buttonLabel}</span>
-            </button>
-          </div>
+            style={
+              isRequested || isDuplicateRequest
+                ? {
+                    background: "linear-gradient(135deg, #3A7A50, #4E9A65)",
+                    color: "#E8F5ED",
+                    boxShadow: "0 0 32px rgba(60, 140, 90, 0.25)",
+                  }
+                : {
+                    background: "linear-gradient(135deg, #C88A2A, #D4A840)",
+                    color: "#0E0A04",
+                  }
+            }
+          >
+            {isLoading && <Spinner />}
+            {!isLoading && (isRequested || isDuplicateRequest) && (
+              <svg
+                aria-hidden="true"
+                className="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2.5}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            )}
+            <span>{buttonLabel}</span>
+          </button>
+        </div>
 
         {/* Brand footer */}
         <footer className="py-4 flex items-center justify-center"></footer>

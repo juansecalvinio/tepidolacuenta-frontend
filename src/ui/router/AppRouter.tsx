@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Landing } from "../pages/Landing";
-import { RequestBill } from "../pages/RequestBill";
+import { NewRequestBill } from "../pages/NewRequestBill";
 import { NewDashboard } from "../pages/NewDashboard";
 import { Onboarding } from "../pages/Onboarding";
 import { MainLayout } from "../layouts/MainLayout";
@@ -25,7 +25,8 @@ function AppRouter() {
       <Route path="/" element={<Landing />} />
 
       {/* Ruta pública de solicitud de cuenta (QR) - sin layout */}
-      <Route path="/request" element={<RequestBill />} />
+      {/* TODO: temporalmente usando NewRequestBill para preview del nuevo diseño */}
+      <Route path="/request" element={<NewRequestBill />} />
 
       {/* Rutas de autenticación sin layout */}
       <Route path="/login" element={<AuthPage authType="login" />} />

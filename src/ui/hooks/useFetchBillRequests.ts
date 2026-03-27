@@ -7,6 +7,7 @@ import type { CreateBillRequestBody } from "../../core/modules/bill-request/doma
 import { CreateBillRequest } from "../../core/modules/bill-request/use-cases/CreateBillRequest";
 import { useAuth } from "./useAuth";
 import { getErrorMessage } from "../../core/utils/error-messages";
+import { HttpError } from "../../core/api/http-client";
 
 export const useFetchBillRequests = () => {
   const { restaurantId } = useAuth();
@@ -57,7 +58,7 @@ export const useFetchBillRequests = () => {
         return { success: false, error: errorMessage };
       }
     },
-    [repository, updateRequest, setError, clearError]
+    [repository, updateRequest, setError, clearError],
   );
 
   const createBillRequest = useCallback(
@@ -72,7 +73,7 @@ export const useFetchBillRequests = () => {
           setIsRequested(true);
         }
       } catch (err) {
-        if (err instanceof Error && err.message.includes("HTTP error 409")) {
+        if (err instanceof HttpError && err.status === 409) {
           setIsDuplicateRequest(true);
           return { success: false, error: "duplicate" };
         }
@@ -83,7 +84,7 @@ export const useFetchBillRequests = () => {
         setLoading(false);
       }
     },
-    [repository, setIsRequested, setLoading, setError, clearError]
+    [repository, setIsRequested, setLoading, setError, clearError],
   );
 
   return {

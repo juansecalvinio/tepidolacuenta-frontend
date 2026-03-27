@@ -6,6 +6,7 @@ import type { PaymentMethod } from "../../../core/modules/bill-request/domain/mo
 
 const Spinner = () => (
   <div
+    aria-hidden="true"
     className="
     flex items-center justify-center
     w-8 h-8
@@ -13,15 +14,17 @@ const Spinner = () => (
     border-t-white
     rounded-full
     animate-spin
+    motion-reduce:animate-none
     "
   />
 );
 
 const SuccessMessage = () => (
-  <div className="absolute bottom-24 left-0 right-0 max-w-md mx-auto px-4 animate-fade-in">
+  <div role="status" aria-live="polite" className="absolute bottom-24 left-0 right-0 max-w-md mx-auto px-4 animate-fade-in">
     <div className="bg-green-50 border border-green-200 text-green-800 rounded-lg p-4 shadow-md">
       <div className="flex items-start gap-3">
         <svg
+          aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
           className="shrink-0 h-6 w-6 text-green-500"
           fill="none"
@@ -48,8 +51,9 @@ const SuccessMessage = () => (
 );
 
 const ErrorMessage = ({ message }: { message: string }) => (
-  <div className="alert alert-soft alert-error absolute bottom-24 left-0 right-0 max-w-md mx-auto px-4 animate-fade-in">
+  <div role="alert" aria-live="assertive" className="alert alert-soft alert-error absolute bottom-24 left-0 right-0 max-w-md mx-auto px-4 animate-fade-in">
     <svg
+      aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       className="stroke-current shrink-0 h-6 w-6"
       fill="none"
@@ -119,15 +123,22 @@ export const RequestBill = () => {
     await createBillRequest({ ...requestData, paymentMethod });
   };
 
+  const buttonLabel = isLoading
+    ? "Cargando..."
+    : isRequested
+    ? "Cuenta pedida"
+    : "Pedir la cuenta";
+
   return (
     <div className="h-full flex flex-col bg-base-200 relative">
-      <div className="flex-1 flex flex-col items-center justify-center gap-10 px-6">
+      <main className="flex-1 flex flex-col items-center justify-center gap-10 px-6">
 
         {/* Duplicate request blocked state */}
         {isDuplicateRequest && (
-          <div className="w-full max-w-xs flex flex-col items-center gap-4 text-center">
+          <div role="status" aria-live="polite" className="w-full max-w-xs flex flex-col items-center gap-4 text-center">
             <div className="w-16 h-16 rounded-full bg-warning/15 flex items-center justify-center">
               <svg
+                aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 className="w-8 h-8 text-warning"
                 fill="none"
@@ -153,20 +164,32 @@ export const RequestBill = () => {
           </div>
         )}
 
+        {/* Invalid QR / missing params */}
+        {!requestData && !isDuplicateRequest && (
+          <div role="alert" className="w-full max-w-xs text-center">
+            <p className="text-sm text-base-content/50">
+              El código QR no es válido. Por favor, escaneá el código de tu mesa nuevamente.
+            </p>
+          </div>
+        )}
+
         {/* Payment method selector */}
         {!isRequested && !isDuplicateRequest && (
           <div className="w-full max-w-xs flex flex-col gap-3">
             <p className="text-base-content/40 text-xs tracking-widest uppercase text-center">
               ¿Cómo vas a pagar?
             </p>
-            <div className="rounded-2xl overflow-hidden border border-base-content/10">
+            <div role="radiogroup" aria-label="Método de pago" className="rounded-2xl overflow-hidden border border-base-content/10">
               {PAYMENT_OPTIONS.map((option, index) => (
                 <button
                   key={option.value}
+                  role="radio"
+                  aria-checked={paymentMethod === option.value}
                   onClick={() => setPaymentMethod(option.value)}
                   disabled={isLoading}
                   className={`
                     w-full flex items-center gap-4 px-5 py-4 transition-colors
+                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset
                     ${index > 0 ? "border-t border-base-content/10" : ""}
                     ${
                       paymentMethod === option.value
@@ -175,12 +198,13 @@ export const RequestBill = () => {
                     }
                   `}
                 >
-                  <span className="text-xl">{option.icon}</span>
+                  <span className="text-xl" aria-hidden="true">{option.icon}</span>
                   <span className="flex-1 text-left text-sm font-medium">
                     {option.label}
                   </span>
                   {paymentMethod === option.value && (
                     <svg
+                      aria-hidden="true"
                       xmlns="http://www.w3.org/2000/svg"
                       className="w-4 h-4 text-primary shrink-0"
                       fill="none"
@@ -201,16 +225,36 @@ export const RequestBill = () => {
           </div>
         )}
 
+        {/* Selected payment method (read-only after request) */}
+        {isRequested && (
+          <div className="w-full max-w-xs flex flex-col gap-3">
+            <p className="text-base-content/40 text-xs tracking-widest uppercase text-center">
+              Método de pago
+            </p>
+            <div className="rounded-2xl border border-base-content/10 px-5 py-4 flex items-center gap-4 bg-primary/15">
+              <span className="text-xl" aria-hidden="true">
+                {PAYMENT_OPTIONS.find((o) => o.value === paymentMethod)?.icon}
+              </span>
+              <span className="flex-1 text-sm font-medium text-base-content">
+                {PAYMENT_OPTIONS.find((o) => o.value === paymentMethod)?.label}
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* Main button */}
         {!isDuplicateRequest && <button
           onClick={handleClick}
-          disabled={isRequested}
+          disabled={isRequested || isLoading || !requestData}
+          aria-label={buttonLabel}
+          aria-busy={isLoading}
           className={`
             flex items-center justify-center
             w-50 h-50
             rounded-full
             text-neutral text-4xl font-extrabold
             transition-all
+            focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-offset-4 focus-visible:ring-primary
             disabled:cursor-not-allowed
             ${
               isRequested
@@ -224,16 +268,16 @@ export const RequestBill = () => {
           {!isLoading && isRequested && "Cuenta pedida"}
         </button>}
 
-      </div>
+      </main>
 
       {isRequested && <SuccessMessage />}
 
       {error && <ErrorMessage message={error} />}
 
-      <footer className="pb-8 pt-4 flex items-center justify-center">
-        <h1 className="text-xl sm:text-2xl font-light tracking-tighter cursor-pointer hover:opacity-80 transition-opacity">
+      <footer className="pb-[calc(2rem+env(safe-area-inset-bottom))] pt-4 flex items-center justify-center">
+        <span className="text-xl sm:text-2xl font-light tracking-tighter cursor-pointer hover:opacity-80 transition-opacity">
           tepidolacuenta
-        </h1>
+        </span>
       </footer>
     </div>
   );

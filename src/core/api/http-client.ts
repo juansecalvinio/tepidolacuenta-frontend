@@ -1,3 +1,12 @@
+export class HttpError extends Error {
+  status: number;
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = "HttpError";
+    this.status = status;
+  }
+}
+
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
 interface HttpClientOptions {
@@ -61,7 +70,7 @@ export class HttpClient {
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(errorText || `HTTP error ${response.status}`);
+      throw new HttpError(errorText || `HTTP error ${response.status}`, response.status);
     }
 
     if (response.status === 204) return null as unknown as TResponse;

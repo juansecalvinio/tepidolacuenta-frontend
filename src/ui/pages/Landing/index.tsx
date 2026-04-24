@@ -1,6 +1,12 @@
+import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import { useAuth } from "../../hooks/useAuth";
+import { useSubscription } from "../../hooks/useSubscription";
+import { useFetchSubscription } from "../../hooks/useFetchSubscription";
+import type { Plan } from "../../../core/modules/subscription/domain/models/Subscription";
+import { PriceUtils } from "../../utils/price.utils";
+
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
@@ -12,6 +18,7 @@ const QrCodeIcon = () => (
     strokeWidth={1.5}
     stroke="currentColor"
     className="w-6 h-6"
+    aria-hidden="true"
   >
     <path
       strokeLinecap="round"
@@ -34,6 +41,7 @@ const BellIcon = () => (
     strokeWidth={1.5}
     stroke="currentColor"
     className="w-6 h-6"
+    aria-hidden="true"
   >
     <path
       strokeLinecap="round"
@@ -51,6 +59,7 @@ const BuildingStorefrontIcon = () => (
     strokeWidth={1.5}
     stroke="currentColor"
     className="w-6 h-6"
+    aria-hidden="true"
   >
     <path
       strokeLinecap="round"
@@ -68,6 +77,7 @@ const ChartBarIcon = () => (
     strokeWidth={1.5}
     stroke="currentColor"
     className="w-6 h-6"
+    aria-hidden="true"
   >
     <path
       strokeLinecap="round"
@@ -85,6 +95,7 @@ const CheckIcon = () => (
     strokeWidth={2}
     stroke="currentColor"
     className="w-4 h-4 shrink-0"
+    aria-hidden="true"
   >
     <path
       strokeLinecap="round"
@@ -144,38 +155,7 @@ const STEPS = [
   },
 ];
 
-type LandingPlan = {
-  id: string;
-  name: string;
-  price: number;
-  maxTables: number;
-  maxBranches: number;
-  trialDays: number;
-  isRecommended: boolean;
-};
-
-const PLANS: LandingPlan[] = [
-  {
-    id: "initial",
-    name: "Inicial",
-    price: 49.999,
-    maxTables: 10,
-    maxBranches: 1,
-    trialDays: 30,
-    isRecommended: false,
-  },
-  {
-    id: "professional",
-    name: "Profesional",
-    price: 99.999,
-    maxTables: -1,
-    maxBranches: -1,
-    trialDays: 30,
-    isRecommended: true,
-  },
-];
-
-const getPlanFeatures = (plan: LandingPlan): string[] => {
+const getPlanFeatures = (plan: Plan): string[] => {
   const tables =
     plan.maxTables === -1
       ? "Mesas ilimitadas"
@@ -196,19 +176,21 @@ const getPlanFeatures = (plan: LandingPlan): string[] => {
 
 const PlanCard = ({
   plan,
+  isRecommended,
   onSelect,
 }: {
-  plan: LandingPlan;
+  plan: Plan;
+  isRecommended: boolean;
   onSelect: () => void;
 }) => (
   <div
-    className={`relative flex flex-col w-full rounded-2xl ${
-      plan.isRecommended
-        ? "border-2 border-primary bg-base-100"
+    className={`relative flex flex-col w-full rounded-2xl transition-shadow ${
+      isRecommended
+        ? "border-2 border-primary bg-base-100 md:shadow-lg"
         : "border border-base-300 bg-base-100"
     }`}
   >
-    {plan.isRecommended && (
+    {isRecommended && (
       <div className="absolute -top-3 left-1/2 -translate-x-1/2">
         <span className="badge badge-primary badge-sm font-semibold px-3">
           Recomendado
@@ -218,7 +200,9 @@ const PlanCard = ({
     <div className="flex flex-col flex-1 p-6">
       <h3 className="font-host text-xl font-bold mb-3">{plan.name}</h3>
       <div className="mb-1">
-        <span className="font-host text-4xl font-black">${plan.price}</span>
+        <span className="font-host text-4xl font-black">
+          $ {PriceUtils.getFormattedPrice(plan.price)}
+        </span>
         <span className="text-sm opacity-60">/mes</span>
       </div>
       {plan.trialDays > 0 && (
@@ -237,10 +221,10 @@ const PlanCard = ({
         ))}
       </ul>
       <button
-        className={`btn w-full ${plan.isRecommended ? "btn-primary" : "btn-neutral"}`}
+        className={`btn w-full ${isRecommended ? "btn-primary" : "btn-neutral"}`}
         onClick={onSelect}
       >
-        Empezar gratis
+        Empezar Gratis
       </button>
     </div>
   </div>
@@ -251,10 +235,20 @@ const PlanCard = ({
 export const Landing = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const { plans, isLoading } = useSubscription();
+  const { fetchPlans } = useFetchSubscription();
+
+  useEffect(() => {
+    fetchPlans();
+  }, []);
 
   const handleGetStarted = () => {
     navigate(isAuthenticated ? "/dashboard" : "/register");
   };
+
+  const sortedPlans = [...plans].sort((a, b) => a.price - b.price);
+  const recommendedId = sortedPlans[Math.floor((sortedPlans.length - 1) / 2)]?.id;
+  const trialDays = sortedPlans[0]?.trialDays ?? 30;
 
   return (
     <div className="min-h-screen bg-base-100 text-base-content overflow-x-hidden">
@@ -272,9 +266,8 @@ export const Landing = () => {
 
       {/* ── Hero ───────────────────────────────────────────────────────────── */}
       <section className="relative flex flex-col items-center justify-center min-h-[calc(100vh-3.5rem)] px-4 text-center overflow-hidden">
-        {/* Ambient glow */}
-        <div aria-hidden className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-primary/10 rounded-full blur-3xl" />
+        <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-175 h-87.5 bg-primary/10 rounded-full blur-3xl" />
         </div>
 
         <motion.div
@@ -283,7 +276,7 @@ export const Landing = () => {
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="relative max-w-3xl"
         >
-          <h1 className="font-host text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-[1.05] mb-6">
+          <h1 className="font-host text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-[1.05] mb-6 text-balance">
             Pedir la cuenta
             <span className="text-primary block">ahora es más simple</span>
           </h1>
@@ -296,14 +289,14 @@ export const Landing = () => {
               onClick={handleGetStarted}
               className="btn btn-primary btn-lg"
             >
-              Empezar gratis
+              Empezar Gratis
             </button>
             <a href="#planes" className="btn btn-ghost btn-lg">
               Ver planes →
             </a>
           </div>
           <p className="text-xs text-base-content/35 mt-5">
-            30 días de prueba gratis
+            {trialDays} días de prueba gratis
           </p>
         </motion.div>
       </section>
@@ -312,7 +305,7 @@ export const Landing = () => {
       <section className="py-24 px-4 border-t border-base-300/40">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="font-host text-3xl sm:text-4xl font-bold tracking-tight mb-3">
+            <h2 className="font-host text-3xl sm:text-4xl font-bold tracking-tight mb-3 text-balance">
               Todo lo que necesitás
             </h2>
             <p className="text-base-content/50 text-lg max-w-md mx-auto">
@@ -352,7 +345,7 @@ export const Landing = () => {
       <section className="py-24 px-4 border-t border-base-300/40 bg-base-200/20">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="font-host text-3xl sm:text-4xl font-bold tracking-tight mb-3">
+            <h2 className="font-host text-3xl sm:text-4xl font-bold tracking-tight mb-3 text-balance">
               Tres pasos y ya
             </h2>
             <p className="text-base-content/50 text-lg">
@@ -390,7 +383,7 @@ export const Landing = () => {
       <section id="planes" className="py-24 px-4 border-t border-base-300/40">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="font-host text-3xl sm:text-4xl font-bold tracking-tight mb-3">
+            <h2 className="font-host text-3xl sm:text-4xl font-bold tracking-tight mb-3 text-balance">
               Planes
             </h2>
             <p className="text-base-content/50 text-lg">
@@ -398,30 +391,43 @@ export const Landing = () => {
             </p>
           </div>
 
-          <div className="flex flex-col md:flex-row gap-4 items-stretch">
-            {PLANS.map((plan) => (
-              <PlanCard key={plan.id} plan={plan} onSelect={handleGetStarted} />
-            ))}
-          </div>
+          {isLoading && plans.length === 0 ? (
+            <div className="flex justify-center py-12">
+              <span className="loading loading-spinner loading-lg"></span>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+              {sortedPlans.map((plan) => (
+                <PlanCard
+                  key={plan.id}
+                  plan={plan}
+                  isRecommended={plan.id === recommendedId}
+                  onSelect={handleGetStarted}
+                />
+              ))}
+            </div>
+          )}
 
-          <p className="text-center text-sm text-base-content/35 mt-6">
-            Todos los planes incluyen {PLANS[0].trialDays} días de prueba
-            gratis. Cancelás cuando quieras.
-          </p>
+          {plans.length > 0 && (
+            <p className="text-center text-sm text-base-content/35 mt-6">
+              Todos los planes incluyen {trialDays} días de prueba gratis.
+              Cancelás cuando quieras.
+            </p>
+          )}
         </div>
       </section>
 
       {/* ── Final CTA ──────────────────────────────────────────────────────── */}
       <section className="py-24 px-4 border-t border-base-300/40 bg-base-200/20">
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="font-host text-3xl sm:text-4xl font-bold tracking-tight mb-4">
+          <h2 className="font-host text-3xl sm:text-4xl font-bold tracking-tight mb-4 text-balance">
             Empezá a usarlo hoy
           </h2>
           <p className="text-base-content/50 text-lg mb-8">
-            30 días gratis. Cancelás cuando quieras.
+            {trialDays} días gratis. Cancelás cuando quieras.
           </p>
           <button onClick={handleGetStarted} className="btn btn-primary btn-lg">
-            Crear cuenta gratis
+            Crear Cuenta Gratis
           </button>
         </div>
       </section>

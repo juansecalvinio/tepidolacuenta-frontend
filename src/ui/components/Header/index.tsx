@@ -17,7 +17,7 @@ export const Header = () => {
   };
 
   return (
-    <header className="flex items-center justify-between gap-4 w-full max-w-4xl p-4 min-h-12">
+    <header className="flex flex-col items-center sm:flex-row justify-between gap-4 w-full max-w-4xl p-4 min-h-12">
       <h1
         className="text-brand text-xl sm:text-2xl font-light tracking-tighter cursor-pointer hover:opacity-80 transition-opacity"
         onClick={handleLogoClick}
@@ -29,7 +29,12 @@ export const Header = () => {
         <BranchSelector />
 
         <div className="flex items-center gap-2 sm:gap-4">
-          {user && <AvatarMenu items={avatarMenuItemsData} />}
+          {/* AvatarMenu oculto temporalmente */}
+          {user && (
+            <div className="hidden">
+              <AvatarMenu items={avatarMenuItemsData} />
+            </div>
+          )}
         </div>
       </div>
     </header>

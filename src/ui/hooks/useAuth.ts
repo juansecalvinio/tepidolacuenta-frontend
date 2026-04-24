@@ -1,9 +1,5 @@
 import { useAuthContext } from "../contexts/auth.context";
 
-/**
- * Hook simple para acceder al estado de autenticación
- * sin la lógica de fetching (login/register)
- */
 export const useAuth = () => {
   const { user, token, restaurantId, branchId, isAuthenticated, logout } =
     useAuthContext();
@@ -15,5 +11,7 @@ export const useAuth = () => {
     branchId,
     isAuthenticated,
     logout,
+    isOwner: user?.role === "owner",
+    isEmployee: user?.role === "employee",
   };
 };

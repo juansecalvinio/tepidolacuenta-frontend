@@ -143,7 +143,7 @@ export const Restaurant = () => {
                       {branch.address}
                     </span>
                     {activeBranch?.id === branch.id && (
-                      <span className="badge badge-success badge-xs">
+                      <span className="badge badge-soft badge-success badge-xs">
                         Activa
                       </span>
                     )}

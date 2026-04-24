@@ -12,6 +12,12 @@ import type {
 } from "../../domain/models/Subscription";
 import type { SubscriptionRepository } from "../../domain/repositories/SubscriptionRepository";
 
+interface ApiEnvelope<T> {
+  success: boolean;
+  message: string;
+  data: T;
+}
+
 export class ApiSubscriptionRepository implements SubscriptionRepository {
   async getPlans(): Promise<GetPlansResponse> {
     return await api.get<GetPlansResponse>("/api/v1/public/plans");
@@ -22,31 +28,49 @@ export class ApiSubscriptionRepository implements SubscriptionRepository {
   }
 
   async getSubscriptions(): Promise<GetSubscriptionsResponse> {
-    return await api.get<GetSubscriptionsResponse>("/api/v1/subscriptions");
-  }
-
-  async getSubscriptionById(subscriptionId: string): Promise<GetSubscriptionByIdResponse> {
-    return await api.get<GetSubscriptionByIdResponse>(`/api/v1/subscriptions/${subscriptionId}`);
-  }
-
-  async getSubscriptionByRestaurant(restaurantId: string): Promise<GetSubscriptionByRestaurantResponse> {
-    return await api.get<GetSubscriptionByRestaurantResponse>(
-      `/api/v1/subscriptions/restaurant/${restaurantId}`,
+    const response = await api.get<ApiEnvelope<GetSubscriptionsResponse>>(
+      "/api/v1/subscriptions",
     );
+    return response.data;
   }
 
-  async createSubscription(request: CreateSubscriptionRequest): Promise<CreateSubscriptionResponse> {
-    return await api.post<CreateSubscriptionResponse>("/api/v1/subscriptions", request);
+  async getSubscriptionById(
+    subscriptionId: string,
+  ): Promise<GetSubscriptionByIdResponse> {
+    const response = await api.get<ApiEnvelope<GetSubscriptionByIdResponse>>(
+      `/api/v1/subscriptions/${subscriptionId}`,
+    );
+    return response.data;
+  }
+
+  async getSubscriptionByRestaurant(
+    restaurantId: string,
+  ): Promise<GetSubscriptionByRestaurantResponse> {
+    const response = await api.get<
+      ApiEnvelope<GetSubscriptionByRestaurantResponse>
+    >(`/api/v1/subscriptions/restaurant/${restaurantId}`);
+    return response.data;
+  }
+
+  async createSubscription(
+    request: CreateSubscriptionRequest,
+  ): Promise<CreateSubscriptionResponse> {
+    const response = await api.post<ApiEnvelope<CreateSubscriptionResponse>>(
+      "/api/v1/subscriptions",
+      request,
+    );
+    return response.data;
   }
 
   async updateSubscription(
     subscriptionId: string,
     request: UpdateSubscriptionRequest,
   ): Promise<UpdateSubscriptionResponse> {
-    return await api.put<UpdateSubscriptionResponse>(
+    const response = await api.put<ApiEnvelope<UpdateSubscriptionResponse>>(
       `/api/v1/subscriptions/${subscriptionId}`,
       request,
     );
+    return response.data;
   }
 
   async cancelSubscription(subscriptionId: string): Promise<void> {

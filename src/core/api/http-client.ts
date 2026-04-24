@@ -62,7 +62,6 @@ export class HttpClient {
     }
 
     let response = await fetch(input, init);
-    console.log("🚀 ~ HttpClient ~ request ~ response:", response);
 
     if (this.interceptResponse) {
       response = await this.interceptResponse(response);
@@ -70,7 +69,10 @@ export class HttpClient {
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new HttpError(errorText || `HTTP error ${response.status}`, response.status);
+      throw new HttpError(
+        errorText || `HTTP error ${response.status}`,
+        response.status,
+      );
     }
 
     if (response.status === 204) return null as unknown as TResponse;

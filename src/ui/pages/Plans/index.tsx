@@ -1,11 +1,11 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { useSubscription } from "../../hooks/useSubscription";
 import { useFetchSubscription } from "../../hooks/useFetchSubscription";
+import { useFetchPayment } from "../../hooks/useFetchPayment";
 import { useAuth } from "../../hooks/useAuth";
 import type { Plan } from "../../../core/modules/subscription/domain/models/Subscription";
+import { PriceUtils } from "../../utils/price.utils";
 
-const RECOMMENDED_PLAN_NAME = "Profesional";
 
 const PlanFeature = ({ label }: { label: string }) => (
   <li className="flex items-center gap-2">
@@ -16,6 +16,7 @@ const PlanFeature = ({ label }: { label: string }) => (
       strokeWidth={2}
       stroke="currentColor"
       className="w-4 h-4 text-success shrink-0"
+      aria-hidden="true"
     >
       <path
         strokeLinecap="round"
@@ -46,10 +47,10 @@ const getPlanFeatures = (plan: Plan): string[] => {
 };
 
 export const Plans = () => {
-  const navigate = useNavigate();
   const { restaurantId } = useAuth();
   const { plans, subscription, activePlan, isLoading } = useSubscription();
-  const { fetchPlans, fetchSubscription, changePlan } = useFetchSubscription();
+  const { fetchPlans, fetchSubscription } = useFetchSubscription();
+  const { createPreference } = useFetchPayment();
 
   useEffect(() => {
     fetchPlans();
@@ -57,12 +58,17 @@ export const Plans = () => {
   }, [restaurantId]);
 
   const handleSelectPlan = async (plan: Plan) => {
-    if (!subscription) return;
+    if (!subscription || !restaurantId) return;
     if (activePlan?.id === plan.id) return;
 
-    await changePlan(subscription.id, { planId: plan.id, status: "active" });
-    navigate("/dashboard/subscription");
+    const result = await createPreference({ restaurantId, planId: plan.id });
+    if (result.success && result.data) {
+      window.location.href = result.data.paymentUrl;
+    }
   };
+
+  const sortedPlans = [...plans].sort((a, b) => a.price - b.price);
+  const recommendedId = sortedPlans[Math.floor((sortedPlans.length - 1) / 2)]?.id;
 
   if (isLoading && plans.length === 0) {
     return (
@@ -73,25 +79,25 @@ export const Plans = () => {
   }
 
   return (
-    <div className="p-4 max-w-3xl mx-auto">
+    <div className="p-4 max-w-4xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-1">Planes</h1>
+        <h1 className="text-3xl font-bold mb-1 text-balance">Planes</h1>
         <p className="opacity-60">
           Elegí el plan que mejor se adapta a tu negocio.
         </p>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4">
-        {plans.map((plan) => {
-          const isRecommended = plan.name === RECOMMENDED_PLAN_NAME;
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+        {sortedPlans.map((plan) => {
+          const isRecommended = plan.id === recommendedId;
           const isCurrent = activePlan?.id === plan.id;
 
           return (
             <div
               key={plan.id}
-              className={`card card-border w-full relative ${
+              className={`card card-border w-full relative transition-shadow ${
                 isRecommended
-                  ? "border-primary border-2 bg-base-100"
+                  ? "border-primary border-2 bg-base-100 md:shadow-lg"
                   : "border-base-300 bg-base-100"
               }`}
             >
@@ -108,7 +114,7 @@ export const Plans = () => {
 
                 <div className="my-2">
                   <span className="text-4xl font-black">
-                    ${plan.price.toFixed(2)}
+                    $ {PriceUtils.getFormattedPrice(plan.price)}
                   </span>
                   <span className="text-sm opacity-60">/mes</span>
                 </div>
@@ -137,9 +143,9 @@ export const Plans = () => {
                       disabled={isLoading}
                     >
                       {isLoading ? (
-                        <span className="loading loading-spinner loading-sm" />
+                        <span className="loading loading-spinner loading-sm" aria-label="Cargando…" />
                       ) : (
-                        "Elegir plan"
+                        "Elegir Plan"
                       )}
                     </button>
                   )}

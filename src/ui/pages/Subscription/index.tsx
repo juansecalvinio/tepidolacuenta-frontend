@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSubscription } from "../../hooks/useSubscription";
 import { useFetchSubscription } from "../../hooks/useFetchSubscription";
 import { useAuth } from "../../hooks/useAuth";
+import { PriceUtils } from "../../utils/price.utils";
 
 const STATUS_LABELS: Record<string, string> = {
   trialing: "Período de prueba",
@@ -23,21 +24,25 @@ const STATUS_BADGE: Record<string, string> = {
 export const Subscription = () => {
   const navigate = useNavigate();
   const { restaurantId } = useAuth();
+
   const {
     subscription,
-    activePlan,
+    currentPlan,
     isLoading,
     trialDaysRemaining,
     isTrialing,
   } = useSubscription();
-  const { fetchPlans, fetchSubscription, cancelSubscription } =
-    useFetchSubscription();
+
+  const { fetchSubscription, cancelSubscription } = useFetchSubscription();
+
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
 
   useEffect(() => {
-    fetchPlans();
-    if (restaurantId) fetchSubscription(restaurantId);
-  }, [restaurantId]);
+    if (!restaurantId) return;
+    if (subscription !== null) return;
+
+    fetchSubscription(restaurantId);
+  }, [restaurantId, subscription, fetchSubscription]);
 
   const handleCancel = async () => {
     if (!subscription) return;
@@ -81,11 +86,11 @@ export const Subscription = () => {
                 <div>
                   <p className="text-sm opacity-60 mb-1">Plan actual</p>
                   <h2 className="text-2xl font-bold">
-                    {activePlan?.name ?? "—"}
+                    {currentPlan?.name ?? "—"}
                   </h2>
-                  {activePlan && (
+                  {currentPlan && (
                     <p className="text-sm opacity-60 mt-1">
-                      ${activePlan.price.toFixed(2)}/mes
+                      $ {PriceUtils.getFormattedPrice(currentPlan.price)}/mes
                     </p>
                   )}
                 </div>
@@ -122,22 +127,22 @@ export const Subscription = () => {
                 </div>
               )}
 
-              {activePlan && (
+              {currentPlan && (
                 <div className="mt-4 grid grid-cols-2 gap-3">
                   <div className="p-3 bg-base-200 rounded-lg">
                     <p className="text-xs opacity-60 mb-1">Mesas</p>
                     <p className="font-bold">
-                      {activePlan.maxTables === -1
+                      {currentPlan.maxTables === -1
                         ? "Ilimitadas"
-                        : activePlan.maxTables}
+                        : currentPlan.maxTables}
                     </p>
                   </div>
                   <div className="p-3 bg-base-200 rounded-lg">
                     <p className="text-xs opacity-60 mb-1">Sucursales</p>
                     <p className="font-bold">
-                      {activePlan.maxBranches === -1
+                      {currentPlan.maxBranches === -1
                         ? "Ilimitadas"
-                        : activePlan.maxBranches}
+                        : currentPlan.maxBranches}
                     </p>
                   </div>
                 </div>

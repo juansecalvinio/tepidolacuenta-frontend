@@ -5,7 +5,13 @@ import { GetPlans } from "../../core/modules/subscription/use-cases/GetPlans";
 import { GetSubscriptionByRestaurant } from "../../core/modules/subscription/use-cases/GetSubscriptionByRestaurant";
 import { UpdateSubscription } from "../../core/modules/subscription/use-cases/UpdateSubscription";
 import { CancelSubscription } from "../../core/modules/subscription/use-cases/CancelSubscription";
-import type { Plan, UpdateSubscriptionRequest } from "../../core/modules/subscription/domain/models/Subscription";
+import { CreateSubscription } from "../../core/modules/subscription/use-cases/CreateSubscription";
+import { GetPlanById } from "../../core/modules/subscription/use-cases/GetPlanById";
+import type {
+  Plan,
+  UpdateSubscriptionRequest,
+  CreateSubscriptionRequest,
+} from "../../core/modules/subscription/domain/models/Subscription";
 import { getErrorMessage } from "../../core/utils/error-messages";
 
 function isNotFoundError(err: unknown): boolean {
@@ -23,6 +29,7 @@ export const useFetchSubscription = () => {
     setPlans,
     setSubscription,
     updateSubscription,
+    setCurrentPlan,
     setLoading,
     setError,
     clearError,
@@ -35,7 +42,9 @@ export const useFetchSubscription = () => {
     try {
       const useCase = GetPlans(repository);
       const response = await useCase();
-      const plans = Array.isArray(response) ? response : ((response as { data?: Plan[] }).data ?? []);
+      const plans = Array.isArray(response)
+        ? response
+        : ((response as { data?: Plan[] }).data ?? []);
       setPlans(plans);
       return { success: true, data: plans };
     } catch (err) {
@@ -53,6 +62,9 @@ export const useFetchSubscription = () => {
         const useCase = GetSubscriptionByRestaurant(repository);
         const subscription = await useCase(restaurantId);
         setSubscription(subscription);
+        if (subscription.plan) {
+          setCurrentPlan(subscription.plan);
+        }
         return { success: true, data: subscription };
       } catch (err) {
         if (isNotFoundError(err)) {
@@ -66,7 +78,7 @@ export const useFetchSubscription = () => {
         setLoading(false);
       }
     },
-    [repository, setSubscription, setLoading, setError, clearError],
+    [repository, setSubscription, setCurrentPlan, setLoading, setError, clearError],
   );
 
   const changePlan = useCallback(
@@ -109,10 +121,52 @@ export const useFetchSubscription = () => {
     [repository, updateSubscription, setLoading, setError, clearError],
   );
 
+  const createSubscription = useCallback(
+    async (request: CreateSubscriptionRequest) => {
+      setLoading(true);
+      clearError();
+      try {
+        const useCase = CreateSubscription(repository);
+        const subscription = await useCase(request);
+        setSubscription(subscription);
+        return { success: true, data: subscription };
+      } catch (err) {
+        const errorMessage = getErrorMessage(err, "createSubscription");
+        setError(errorMessage);
+        return { success: false, error: errorMessage };
+      } finally {
+        setLoading(false);
+      }
+    },
+    [repository, setSubscription, setLoading, setError, clearError],
+  );
+
+  const fetchPlanById = useCallback(
+    async (planId: string) => {
+      setLoading(true);
+      clearError();
+      try {
+        const useCase = GetPlanById(repository);
+        const plan = await useCase(planId);
+        setCurrentPlan(plan);
+        return { success: true, data: plan };
+      } catch (err) {
+        const errorMessage = getErrorMessage(err, "fetchPlanById");
+        setError(errorMessage);
+        return { success: false, error: errorMessage };
+      } finally {
+        setLoading(false);
+      }
+    },
+    [repository, setCurrentPlan, setLoading, setError, clearError],
+  );
+
   return {
     fetchPlans,
     fetchSubscription,
+    fetchPlanById,
     changePlan,
     cancelSubscription,
+    createSubscription,
   };
 };

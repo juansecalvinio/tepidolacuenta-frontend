@@ -7,7 +7,7 @@ export const MainLayout = () => {
     <main className="h-full bg-base-200">
       <div className="max-w-3xl mx-auto relative">
         <Header />
-        <div className="pb-20 md:pb-0">
+        <div className="pb-20">
           <Outlet />
         </div>
       </div>

@@ -2,6 +2,8 @@ import { api } from "../../../../api/http-client";
 import type {
   RegisterResponse,
   RegisterRequest,
+  RegisterEmployeeRequest,
+  RegisterEmployeeResponse,
   LoginRequest,
   LoginResponse,
   ForgotPasswordRequest,
@@ -14,6 +16,10 @@ import type { AuthRepository } from "../../domain/repositories/AuthRepository";
 export const ApiAuthRepository: AuthRepository = {
   async register(user: RegisterRequest): Promise<RegisterResponse> {
     return await api.post<RegisterResponse>("/api/v1/auth/register", user);
+  },
+
+  async registerEmployee(user: RegisterEmployeeRequest): Promise<RegisterEmployeeResponse> {
+    return await api.post<RegisterEmployeeResponse>("/api/v1/auth/register/employee", user);
   },
 
   async login(user: LoginRequest): Promise<LoginResponse> {

@@ -3,14 +3,23 @@ import { useNavigate } from "react-router-dom";
 import { useRestaurants } from "../../hooks/useRestaurants";
 import { useFetchTables } from "../../hooks/useFetchTables";
 import { useTables } from "../../hooks/useTables";
+import { useSubscription } from "../../hooks/useSubscription";
+import { PlanLimitReached } from "../../components/PlanLimitReached";
 
 export const AddTables = () => {
   const navigate = useNavigate();
   const { createTables } = useFetchTables();
   const { activeBranch } = useRestaurants();
-  const { isLoading } = useTables();
+  const { tables, isLoading } = useTables();
+  const { currentPlan } = useSubscription();
 
   const [quantity, setQuantity] = useState(1);
+
+  const maxTables = currentPlan?.maxTables ?? -1;
+  const currentCount = tables.length;
+  const isAtLimit = maxTables !== -1 && currentCount >= maxTables;
+  const wouldExceedLimit = maxTables !== -1 && currentCount + quantity > maxTables;
+  const remaining = maxTables !== -1 ? maxTables - currentCount : null;
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuantity(+e.target.value);
@@ -40,11 +49,34 @@ export const AddTables = () => {
     }
   };
 
+  if (isAtLimit) {
+    return (
+      <div className="p-4 max-w-3xl mx-auto">
+        <h2 className="text-xl text-center font-bold mb-6">
+          Agregar mesas a {activeBranch?.address || "tu sucursal"}
+        </h2>
+        <PlanLimitReached
+          title="Límite de mesas alcanzado"
+          description={`Tu plan actual permite hasta ${maxTables} ${maxTables === 1 ? "mesa" : "mesas"}. Actualizá tu plan para poder agregar más.`}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="p-4 max-w-3xl mx-auto">
       <h2 className="text-xl text-center font-bold mb-6">
         Agregar mesas a {activeBranch?.address || "tu sucursal"}
       </h2>
+
+      {wouldExceedLimit && remaining !== null && (
+        <div role="alert" className="alert alert-soft alert-warning mb-4">
+          <span>
+            Con esa cantidad superarías el límite de tu plan. Solo podés
+            agregar <strong>{remaining} {remaining === 1 ? "mesa" : "mesas"}</strong> más.
+          </span>
+        </div>
+      )}
 
       <form onSubmit={onSubmit}>
         <div className="bg-base-100 border-2 border-base-300 p-4 rounded-xl">
@@ -76,7 +108,7 @@ export const AddTables = () => {
           <button
             type="submit"
             className="btn btn-primary flex-1"
-            disabled={quantity < 1 || isLoading}
+            disabled={quantity < 1 || isLoading || wouldExceedLimit}
           >
             {isLoading ? (
               <span className="loading loading-spinner"></span>

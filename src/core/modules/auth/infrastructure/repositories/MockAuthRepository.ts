@@ -3,6 +3,7 @@ import type { AuthRepository } from "../../domain/repositories/AuthRepository";
 import type {
   LoginResponse,
   RegisterResponse,
+  RegisterEmployeeResponse,
   ForgotPasswordResponse,
   ResetPasswordResponse,
 } from "../../domain/models/Auth";
@@ -13,6 +14,24 @@ export const MockAuthRepository: AuthRepository = {
   register: async function (): Promise<RegisterResponse> {
     await mockDelay();
     return Promise.resolve(mockRegisterResponse as RegisterResponse);
+  },
+  registerEmployee: async function (): Promise<RegisterEmployeeResponse> {
+    await mockDelay();
+    return Promise.resolve({
+      success: true,
+      message: "Empleado registrado correctamente.",
+      data: {
+        token: "mock-employee-token",
+        user: {
+          id: "mock-employee-id",
+          email: "empleado@mock.com",
+          role: "employee",
+          restaurantId: "mock-restaurant-id",
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+      },
+    });
   },
   login: async function (): Promise<LoginResponse> {
     await mockDelay();

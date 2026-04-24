@@ -1,22 +1,37 @@
-import { useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, type FormEvent } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useFetchRestaurant } from "../../hooks/useFetchRestaurant";
+import { useFetchSubscription } from "../../hooks/useFetchSubscription";
 import { useTables } from "../../hooks/useTables";
 import { AuthLogo } from "../../components/AuthLogo";
+import type { Plan } from "../../../core/modules/subscription/domain/models/Subscription";
 
 export const Onboarding = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const selectedPlan = location.state?.plan as Plan | undefined;
+
   const { createRestaurant } = useFetchRestaurant();
-  const { isLoading, error } = useTables();
+  const { createSubscription } = useFetchSubscription();
+  const { error } = useTables();
 
   const [restaurantName, setRestaurantName] = useState<string>("");
   const [cuit, setCuit] = useState<string>("");
   const [address, setAddress] = useState<string>("");
   const [quantity, setQuantity] = useState<string>("");
   const [validationError, setValidationError] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!selectedPlan) {
+      navigate("/dashboard/select-plan", { replace: true });
+    }
+  }, []);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!selectedPlan) return;
 
     // Validar nombre del restaurante
     if (!restaurantName.trim()) {
@@ -46,7 +61,18 @@ export const Onboarding = () => {
       return;
     }
 
+    if (
+      selectedPlan.maxTables !== -1 &&
+      numQuantity > selectedPlan.maxTables
+    ) {
+      setValidationError(
+        `Tu plan permite hasta ${selectedPlan.maxTables} ${selectedPlan.maxTables === 1 ? "mesa" : "mesas"}`,
+      );
+      return;
+    }
+
     setValidationError("");
+    setIsSubmitting(true);
 
     const restaurantResult = await createRestaurant({
       name: restaurantName.trim(),
@@ -59,12 +85,25 @@ export const Onboarding = () => {
       setValidationError(
         restaurantResult.error || "Error al crear el restaurante",
       );
+      setIsSubmitting(false);
       return;
     }
 
-    if (restaurantResult.success) {
-      navigate("/dashboard");
+    const subResult = await createSubscription({
+      restaurantId: restaurantResult.data.restaurant.id,
+      planId: selectedPlan.id,
+      startTrial: true,
+    });
+
+    if (!subResult.success) {
+      setValidationError(
+        subResult.error || "Error al activar el plan seleccionado",
+      );
+      setIsSubmitting(false);
+      return;
     }
+
+    navigate("/dashboard");
   };
 
   const handleRestaurantNameChange = (
@@ -95,6 +134,11 @@ export const Onboarding = () => {
     setValidationError("");
   };
 
+  const maxTablesHint =
+    selectedPlan && selectedPlan.maxTables !== -1
+      ? `Tu plan permite hasta ${selectedPlan.maxTables} ${selectedPlan.maxTables === 1 ? "mesa" : "mesas"}`
+      : null;
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-start bg-base-100 p-4 mt-4">
       <div className="w-full max-w-md">
@@ -105,6 +149,19 @@ export const Onboarding = () => {
             <h2 className="text-2xl font-bold text-center mb-2">
               Configura tu local
             </h2>
+
+            {selectedPlan && (
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <span className="badge badge-primary badge-sm">
+                  {selectedPlan.name}
+                </span>
+                {selectedPlan.trialDays > 0 && (
+                  <span className="text-xs opacity-60">
+                    {selectedPlan.trialDays} días de prueba gratis
+                  </span>
+                )}
+              </div>
+            )}
 
             {(error || validationError) && (
               <div className="alert alert-soft alert-error mb-4">
@@ -137,7 +194,7 @@ export const Onboarding = () => {
                   className="input input-bordered w-full"
                   value={restaurantName}
                   onChange={handleRestaurantNameChange}
-                  disabled={isLoading}
+                  disabled={isSubmitting}
                   autoFocus
                 />
               </div>
@@ -153,8 +210,7 @@ export const Onboarding = () => {
                   className="input input-bordered w-full"
                   value={address}
                   onChange={handleAddressChange}
-                  disabled={isLoading}
-                  autoFocus
+                  disabled={isSubmitting}
                 />
               </div>
 
@@ -171,13 +227,18 @@ export const Onboarding = () => {
                   className="input input-bordered w-full"
                   value={cuit}
                   onChange={handleCuitChange}
-                  disabled={isLoading}
+                  disabled={isSubmitting}
                 />
               </div>
 
               <div className="form-control mt-4">
                 <label className="label">
                   <span className="label-text">Cantidad de mesas</span>
+                  {maxTablesHint && (
+                    <span className="label-text-alt opacity-60">
+                      {maxTablesHint}
+                    </span>
+                  )}
                 </label>
                 <input
                   type="number"
@@ -186,20 +247,17 @@ export const Onboarding = () => {
                   className="input input-bordered text-center text-2xl font-bold w-full"
                   value={quantity}
                   onChange={handleQuantityChange}
-                  disabled={isLoading}
+                  disabled={isSubmitting}
                 />
-                {/* <label className="label">
-                  <span className="label-text-alt">Mínimo 1, máximo 100</span>
-                </label> */}
               </div>
 
               <div className="form-control mt-6">
                 <button
                   type="submit"
                   className="btn btn-primary w-full"
-                  disabled={isLoading}
+                  disabled={isSubmitting}
                 >
-                  {isLoading ? (
+                  {isSubmitting ? (
                     <span className="loading loading-spinner"></span>
                   ) : (
                     "Comenzar"

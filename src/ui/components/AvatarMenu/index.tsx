@@ -40,6 +40,8 @@ export const AvatarMenu = ({ items }: Props) => {
         return { ...item, onClick: () => navigate("/dashboard") };
       case "profile":
         return { ...item, onClick: () => navigate("/dashboard/profile") };
+      case "plan":
+        return { ...item, onClick: () => navigate("/dashboard/subscription") };
       case "restaurant":
         return { ...item, onClick: () => navigate("/dashboard/restaurant") };
       case "theme":

@@ -3,11 +3,18 @@ import { useNavigate } from "react-router-dom";
 import type { CreateBranchRequest } from "../../../core/modules/restaurant/domain/models/Restaurant";
 import { useFetchBranches } from "../../hooks/useFetchBranches";
 import { useRestaurants } from "../../hooks/useRestaurants";
+import { useSubscription } from "../../hooks/useSubscription";
+import { PlanLimitReached } from "../../components/PlanLimitReached";
 
 export const AddBranch = () => {
   const navigate = useNavigate();
   const { createBranch } = useFetchBranches();
-  const { restaurant, isLoading } = useRestaurants();
+  const { restaurant, branches, isLoading } = useRestaurants();
+  const { currentPlan } = useSubscription();
+
+  const maxBranches = currentPlan?.maxBranches ?? -1;
+  const currentCount = branches?.length ?? 0;
+  const isAtLimit = maxBranches !== -1 && currentCount >= maxBranches;
 
   const [formData, setFormData] = useState<CreateBranchRequest>({
     restaurantId: restaurant?.id || "",
@@ -32,7 +39,6 @@ export const AddBranch = () => {
     e.preventDefault();
 
     const createBranchResult = await createBranch(formData);
-    console.log("🚀 ~ onSubmit ~ createBranchResult:", createBranchResult);
 
     if (!createBranchResult.success) {
       navigate("/dashboard/restaurant/add-branch/result", {
@@ -46,6 +52,20 @@ export const AddBranch = () => {
       });
     }
   };
+
+  if (isAtLimit) {
+    return (
+      <div className="p-4 max-w-3xl mx-auto">
+        <h2 className="text-xl text-center font-bold mb-6">
+          Agregar nueva sucursal
+        </h2>
+        <PlanLimitReached
+          title="Límite de sucursales alcanzado"
+          description={`Tu plan actual permite hasta ${maxBranches} ${maxBranches === 1 ? "sucursal" : "sucursales"}. Actualizá tu plan para poder agregar más.`}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 max-w-3xl mx-auto">
@@ -115,7 +135,11 @@ export const AddBranch = () => {
           >
             Cancelar
           </button>
-          <button type="submit" className="btn btn-primary flex-1">
+          <button
+            type="submit"
+            className="btn btn-primary flex-1"
+            disabled={isLoading}
+          >
             {isLoading ? (
               <span className="loading loading-spinner"></span>
             ) : (

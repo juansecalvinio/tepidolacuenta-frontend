@@ -5,11 +5,13 @@ import { NewDashboard } from "../pages/NewDashboard";
 import { Onboarding } from "../pages/Onboarding";
 import { MainLayout } from "../layouts/MainLayout";
 import { ProtectedRoute } from "../components/ProtectedRoute";
+import { OwnerRoute } from "../components/OwnerRoute";
 import { Tables } from "../pages/Tables";
 import { AuthPage } from "../pages/Auth";
 import { AuthCallback } from "../pages/AuthCallback";
 import { ForgotPassword } from "../pages/ForgotPassword";
 import { ResetPassword } from "../pages/ResetPassword";
+import { RoleSelection } from "../pages/RoleSelection";
 import { Profile } from "../pages/Profile";
 import { Restaurant } from "../pages/Restaurant";
 import { AddBranch } from "../pages/AddBranch";
@@ -18,6 +20,10 @@ import { AddTables } from "../pages/AddTables";
 import { AddTablesResult } from "../pages/AddTablesResult";
 import { Plans } from "../pages/Plans";
 import { Subscription } from "../pages/Subscription";
+import { SelectPlan } from "../pages/SelectPlan";
+import { PaymentSuccess } from "../pages/PaymentSuccess";
+import { PaymentFailure } from "../pages/PaymentFailure";
+import { PaymentPending } from "../pages/PaymentPending";
 
 function AppRouter() {
   return (
@@ -31,17 +37,52 @@ function AppRouter() {
       {/* Rutas de autenticación sin layout */}
       <Route path="/login" element={<AuthPage authType="login" />} />
       <Route path="/register" element={<AuthPage authType="register" />} />
+      <Route path="/register/role" element={<RoleSelection />} />
       <Route path="/auth/callback" element={<AuthCallback />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
 
-      {/* Ruta de setup (sin layout, sin verificación de mesas) */}
+      {/* Rutas de setup: solo owners (sin layout) */}
       <Route
         path="/dashboard/onboarding"
         element={
-          <ProtectedRoute>
+          <OwnerRoute>
             <Onboarding />
-          </ProtectedRoute>
+          </OwnerRoute>
+        }
+      />
+      <Route
+        path="/dashboard/select-plan"
+        element={
+          <OwnerRoute>
+            <SelectPlan />
+          </OwnerRoute>
+        }
+      />
+
+      {/* Rutas de resultado de pago: solo owners (sin layout) */}
+      <Route
+        path="/payment/success"
+        element={
+          <OwnerRoute>
+            <PaymentSuccess />
+          </OwnerRoute>
+        }
+      />
+      <Route
+        path="/payment/failure"
+        element={
+          <OwnerRoute>
+            <PaymentFailure />
+          </OwnerRoute>
+        }
+      />
+      <Route
+        path="/payment/pending"
+        element={
+          <OwnerRoute>
+            <PaymentPending />
+          </OwnerRoute>
         }
       />
 
@@ -70,17 +111,17 @@ function AppRouter() {
         <Route
           path="/dashboard/tables/add-tables"
           element={
-            <ProtectedRoute>
+            <OwnerRoute>
               <AddTables />
-            </ProtectedRoute>
+            </OwnerRoute>
           }
         />
         <Route
           path="/dashboard/tables/add-tables/result"
           element={
-            <ProtectedRoute>
+            <OwnerRoute>
               <AddTablesResult />
-            </ProtectedRoute>
+            </OwnerRoute>
           }
         />
         <Route
@@ -94,41 +135,41 @@ function AppRouter() {
         <Route
           path="/dashboard/restaurant"
           element={
-            <ProtectedRoute>
+            <OwnerRoute>
               <Restaurant />
-            </ProtectedRoute>
+            </OwnerRoute>
           }
         />
         <Route
           path="/dashboard/restaurant/add-branch"
           element={
-            <ProtectedRoute>
+            <OwnerRoute>
               <AddBranch />
-            </ProtectedRoute>
+            </OwnerRoute>
           }
         />
         <Route
           path="/dashboard/restaurant/add-branch/result"
           element={
-            <ProtectedRoute>
+            <OwnerRoute>
               <AddBranchResult />
-            </ProtectedRoute>
+            </OwnerRoute>
           }
         />
         <Route
           path="/dashboard/plans"
           element={
-            <ProtectedRoute>
+            <OwnerRoute>
               <Plans />
-            </ProtectedRoute>
+            </OwnerRoute>
           }
         />
         <Route
           path="/dashboard/subscription"
           element={
-            <ProtectedRoute>
+            <OwnerRoute>
               <Subscription />
-            </ProtectedRoute>
+            </OwnerRoute>
           }
         />
       </Route>

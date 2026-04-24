@@ -1,7 +1,10 @@
 import { useEffect, useRef, useCallback, useState } from "react";
 import { useNotifications } from "../contexts/notification.context";
 import type { BillRequestWsResponse } from "../../core/modules/bill-request-ws/domain/models/BillRequestWs";
+import type { PaymentApprovedWsMessage } from "../../core/modules/payment/domain/models/Payment";
 import { useFetchBillRequests } from "./useFetchBillRequests";
+
+type WsMessage = BillRequestWsResponse | PaymentApprovedWsMessage;
 
 export type WsStatus = "connecting" | "connected" | "reconnecting" | "disconnected";
 
@@ -64,15 +67,23 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
       ws.onmessage = (event) => {
         try {
           console.log("📨 Mensaje recibido del WebSocket:", event.data);
-          const data = JSON.parse(event.data) as BillRequestWsResponse;
-          console.log("✅ Datos parseados:", data);
-          console.log(`🍽️ Mesa ${data.tableNumber} - Estado: ${data.status}`);
+          const data = JSON.parse(event.data) as WsMessage;
+
+          // Ignorar eventos de pago — los manejan las páginas de resultado
+          if ("type" in data && data.type === "payment.approved") {
+            console.log("💳 Evento payment.approved recibido en dashboard (ignorado)");
+            return;
+          }
+
+          const billData = data as BillRequestWsResponse;
+          console.log("✅ Datos parseados:", billData);
+          console.log(`🍽️ Mesa ${billData.tableNumber} - Estado: ${billData.status}`);
 
           // Mostrar notificación solo si es un pedido nuevo (pending)
-          if (data.status === "pending") {
+          if (billData.status === "pending") {
             // Crear una clave única usando timestamp para deduplicar con precisión
             const timestamp = Math.floor(Date.now() / 1000); // Timestamp en segundos
-            const notificationKey = `${data.tableNumber}-${data.id || data.tableNumber}-${timestamp}`;
+            const notificationKey = `${billData.tableNumber}-${billData.id || billData.tableNumber}-${timestamp}`;
 
             // Si ya se mostró recientemente, ignorar
             if (globalRecentNotifications.has(notificationKey)) {
@@ -83,8 +94,8 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
             globalRecentNotifications.add(notificationKey);
 
             addNotification(
-              data.tableNumber,
-              `¡La mesa ${data.tableNumber} pidió la cuenta!`,
+              billData.tableNumber,
+              `¡La mesa ${billData.tableNumber} pidió la cuenta!`,
             );
 
             // Limpiar la entrada después de 5 segundos

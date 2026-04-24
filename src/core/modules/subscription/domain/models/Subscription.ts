@@ -19,6 +19,7 @@ export interface Subscription {
   userId: string;
   restaurantId: string;
   planId: string;
+  plan?: Plan;
   status: SubscriptionStatus;
   trialStartedAt: string | null;
   trialEndsAt: string | null;

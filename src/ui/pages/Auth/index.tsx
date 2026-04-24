@@ -16,7 +16,7 @@ export const AuthPage = ({ authType = "login" }: Props) => {
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { login, register, isLoading, error, clearError } = useFetchAuth();
+  const { login, isLoading, error, clearError } = useFetchAuth();
 
   const googleError =
     searchParams.get("error") === "google_auth_failed"
@@ -45,29 +45,15 @@ export const AuthPage = ({ authType = "login" }: Props) => {
     setFormError("");
 
     if (authType === "register") {
-      // Validar que las contraseñas coincidan
       if (formData.password !== formData.secondPassword) {
         setFormError("Las contraseñas no coinciden");
         return;
       }
-
-      // 1. Registrar usuario
-      const registerResult = await register(formData);
-
-      if (!registerResult.success) {
-        return;
-      }
-
-      // 2. Auto-login con las mismas credenciales
-      const loginResult = await login({
-        email: formData.email,
-        password: formData.password,
+      // No llamamos a la API todavía — el usuario elige su rol en el siguiente paso
+      navigate("/register/role", {
+        state: { email: formData.email, password: formData.password },
       });
-
-      if (loginResult.success) {
-        // 3. Redirigir al onboarding
-        navigate("/dashboard/onboarding");
-      }
+      return;
     }
 
     if (authType === "login") {
@@ -325,7 +311,7 @@ export const AuthPage = ({ authType = "login" }: Props) => {
                         formData.password !== formData.secondPassword))
                   }
                 >
-                  {isLoading ? (
+                  {isLoading && authType === "login" ? (
                     <span className="loading loading-spinner"></span>
                   ) : (
                     submitButtonText

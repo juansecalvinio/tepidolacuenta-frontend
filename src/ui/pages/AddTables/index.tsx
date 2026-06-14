@@ -79,7 +79,7 @@ export const AddTables = () => {
       )}
 
       <form onSubmit={onSubmit}>
-        <div className="bg-base-100 border-2 border-base-300 p-4 rounded-xl">
+        <div className="bg-base-100 border border-base-300 p-4 rounded-xl">
           <div className="form-control flex items-baseline justify-between gap-2 w-full">
             <label className="label">
               <span className="label-text text-base-content text-lg">
@@ -100,7 +100,7 @@ export const AddTables = () => {
         <div className="flex w-full gap-4 items-center mt-6">
           <button
             type="button"
-            className="btn btn-neutral flex-1"
+            className="btn btn-ghost flex-1"
             onClick={onCancel}
           >
             Cancelar

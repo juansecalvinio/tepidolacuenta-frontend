@@ -38,7 +38,7 @@ export const ResetPassword = () => {
       <div className="min-h-screen flex flex-col items-center justify-center bg-base-200 p-4 py-8">
         <div className="w-full max-w-sm">
           <AuthLogo />
-          <div className="card w-full bg-base-100 border-base-300 border-2">
+          <div className="card w-full bg-base-100 border-base-300 border">
             <div className="card-body p-6 text-center">
               <h2 className="font-display text-xl font-semibold mb-2">Enlace inválido</h2>
               <p className="text-sm text-base-content/60">
@@ -61,7 +61,7 @@ export const ResetPassword = () => {
       <div className="w-full max-w-sm">
         <AuthLogo />
 
-        <div className="card w-full bg-base-100 border-base-300 border-2">
+        <div className="card w-full bg-base-100 border-base-300 border">
           <div className="card-body p-6">
             <h2 className="font-display text-xl font-semibold mb-1">Nueva contraseña</h2>
             <p className="text-sm text-base-content/60 mb-2">

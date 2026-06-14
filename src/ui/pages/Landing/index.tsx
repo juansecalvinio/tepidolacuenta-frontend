@@ -219,7 +219,7 @@ const PlanCard = ({
     <div className="flex flex-col flex-1 p-6">
       <h3 className="font-display text-xl font-semibold mb-3">{plan.name}</h3>
       <div className="mb-1">
-        <span className="font-display text-4xl font-semibold tracking-tight">
+        <span className="font-display text-4xl font-semibold tracking-tight whitespace-nowrap tabular-nums">
           $ {PriceUtils.getFormattedPrice(plan.price)}
         </span>
         <span className="text-sm opacity-60">/mes</span>
@@ -240,7 +240,7 @@ const PlanCard = ({
         ))}
       </ul>
       <button
-        className={`btn w-full ${isRecommended ? "btn-primary" : "btn-neutral"}`}
+        className={`btn w-full ${isRecommended ? "btn-primary" : "btn-secondary"}`}
         onClick={onSelect}
       >
         Empezar Gratis

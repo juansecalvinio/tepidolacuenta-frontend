@@ -39,7 +39,7 @@ export const PlanCard = ({
       <h3 className="font-display text-xl font-semibold">{plan.name}</h3>
 
       <div className="my-2">
-        <span className="font-host text-4xl font-black">
+        <span className="font-host text-3xl font-black whitespace-nowrap tabular-nums">
           $ {PriceUtils.getFormattedPrice(plan.price)}
         </span>
         <span className="text-sm opacity-60">/mes</span>
@@ -67,7 +67,7 @@ export const PlanCard = ({
           </button>
         ) : (
           <button
-            className={`btn w-full ${isRecommended ? "btn-primary" : "btn-neutral"}`}
+            className={`btn w-full ${isRecommended ? "btn-primary" : "btn-secondary"}`}
             onClick={() => onSelect(plan)}
             disabled={loading}
           >

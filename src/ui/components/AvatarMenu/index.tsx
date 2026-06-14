@@ -42,7 +42,7 @@ export const AvatarMenu = ({ items }: Props) => {
         tabIndex={0}
         aria-label="Menú de usuario"
       >
-        <div className="bg-base-300 border-base-300 border-2 w-8 rounded-full">
+        <div className="bg-base-300 border-base-300 border w-8 rounded-full">
           <p>{user?.email.substring(0, 2).toUpperCase()}</p>
         </div>
       </div>

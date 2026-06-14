@@ -36,7 +36,7 @@ export const Profile = () => {
     <div className="p-4 max-w-3xl mx-auto">
       <h2 className="font-display text-2xl font-semibold mb-6">Tu perfil</h2>
 
-      <div className="bg-base-100 border-2 border-base-300 rounded-xl overflow-hidden">
+      <div className="bg-base-100 border border-base-300 rounded-xl overflow-hidden">
         {/* Avatar + email */}
         <div className="p-4 flex items-center gap-4 border-b border-base-300">
           <div className="avatar avatar-placeholder shrink-0">
@@ -69,26 +69,26 @@ export const Profile = () => {
         <>
           <h2 className="font-display text-2xl font-semibold my-6">Suscripción</h2>
 
-          <div className="bg-base-100 border-2 border-base-300 rounded-xl overflow-hidden flex items-center justify-between">
-            <div className="p-4">
+          <div className="bg-base-100 border border-base-300 rounded-xl flex items-center justify-between gap-4 p-4">
+            <div className="min-w-0">
               <p className="text-xs text-base-content/40 uppercase tracking-wider mb-1">
                 Plan actual
               </p>
-              <p className="text-base font-semibold">{subscription?.plan?.name}</p>
+              <p className="text-base font-semibold truncate">
+                {subscription?.plan?.name}
+              </p>
             </div>
-            <span className="p-4">
-              <button
-                className="btn btn-sm btn-secondary hover:bg-primary/10 transition-colors"
-                onClick={() => navigate("/dashboard/plans")}
-              >
-                Modificar
-              </button>
-            </span>
+            <button
+              className="btn btn-sm btn-secondary shrink-0"
+              onClick={() => navigate("/dashboard/plans")}
+            >
+              Modificar
+            </button>
           </div>
 
           <h2 className="font-display text-2xl font-semibold my-6">Equipo</h2>
 
-          <div className="bg-base-100 border-2 border-base-300 rounded-xl overflow-hidden">
+          <div className="bg-base-100 border border-base-300 rounded-xl overflow-hidden">
             <div className="p-4 border-b border-base-300">
               <p className="text-sm text-base-content/60">
                 Generá un código de invitación para que un empleado pueda registrarse. El código expira a los 7 días y es de un solo uso.
@@ -145,7 +145,7 @@ export const Profile = () => {
 
       <div className="mt-8">
         <button
-          className="btn btn-error btn-outline w-full"
+          className="btn btn-outline w-full"
           onClick={() => {
             logout();
             navigate("/");

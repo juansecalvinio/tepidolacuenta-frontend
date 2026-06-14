@@ -83,7 +83,7 @@ export const AuthPage = ({ authType = "login" }: Props) => {
         <AuthLogo />
 
         {/* Form Card */}
-        <div className="card w-full bg-base-100 border-base-300 border-2">
+        <div className="card w-full bg-base-100 border-base-300 border">
           <div className="card-body p-6">
             <h2 className="font-display text-xl font-semibold mb-2">
               {authType === "login" ? "Iniciar sesión" : "Crear cuenta"}

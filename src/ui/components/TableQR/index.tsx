@@ -9,7 +9,7 @@ interface Props {
 export const TableQR = ({ tableNumber, qrCode, onClick }: Props) => {
   return (
     <div
-      className="card bg-base-100 border-2 border-base-300 hover:cursor-pointer"
+      className="card bg-base-100 border border-base-300 hover:cursor-pointer"
       onClick={onClick}
     >
       <div className="card-body p-4 flex flex-col items-center justify-between">

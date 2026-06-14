@@ -24,7 +24,7 @@ export const PendingRequestCard = memo(
     return (
       <div
         key={request.id}
-        className="card bg-base-100 border-2 border-base-300"
+        className="card bg-base-100 border border-base-300"
       >
         <div className="card-body p-4">
           <div className="flex flex-col sm:flex-row justify-items-normal sm:items-center justify-between gap-4">

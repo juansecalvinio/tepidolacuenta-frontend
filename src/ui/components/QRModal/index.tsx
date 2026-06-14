@@ -39,6 +39,7 @@ export const QRModal = ({ title, qrCode, show, onClose }: Props) => {
           <button
             className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
             onClick={closeModal}
+            aria-label="Cerrar"
           >
             ✕
           </button>

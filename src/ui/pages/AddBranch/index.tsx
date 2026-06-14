@@ -74,7 +74,7 @@ export const AddBranch = () => {
       </h2>
 
       <form onSubmit={onSubmit}>
-        <div className="bg-base-100 border-2 border-base-300 p-4 rounded-xl">
+        <div className="bg-base-100 border border-base-300 p-4 rounded-xl">
           <div className="form-control">
             <label className="label">
               <span className="label-text text-base-content mb-2">
@@ -130,7 +130,7 @@ export const AddBranch = () => {
         <div className="flex w-full gap-4 items-center mt-6">
           <button
             type="button"
-            className="btn btn-neutral flex-1"
+            className="btn btn-ghost flex-1"
             onClick={onCancel}
           >
             Cancelar

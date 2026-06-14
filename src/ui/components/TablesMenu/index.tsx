@@ -13,7 +13,7 @@ export const TablesMenu = () => {
 
   return (
     <div className="dropdown dropdown-end">
-      <button className="btn btn-sm btn-ghost btn-square">
+      <button className="btn btn-sm btn-ghost btn-square" aria-label="Opciones">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"

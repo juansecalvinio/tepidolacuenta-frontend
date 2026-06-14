@@ -353,6 +353,7 @@ export const NewDashboard = () => {
               <button
                 className="btn btn-square btn-xs btn-ghost opacity-40 hover:opacity-100 transition-opacity"
                 onClick={() => navigate("/dashboard/tables")}
+                aria-label="Ver mesas"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

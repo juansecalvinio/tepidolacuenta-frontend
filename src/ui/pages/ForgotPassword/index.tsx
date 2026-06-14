@@ -26,7 +26,7 @@ export const ForgotPassword = () => {
       <div className="w-full max-w-sm">
         <AuthLogo />
 
-        <div className="card w-full bg-base-100 border-base-300 border-2">
+        <div className="card w-full bg-base-100 border-base-300 border">
           <div className="card-body p-6">
             {submitted ? (
               <div className="text-center py-2">

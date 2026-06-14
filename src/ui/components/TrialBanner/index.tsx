@@ -42,7 +42,7 @@ export const TrialBanner = () => {
           </p>
         </div>
         <button
-          className="btn btn-sm btn-neutral"
+          className="btn btn-sm btn-secondary"
           onClick={() => navigate("/dashboard/plans")}
         >
           Ver planes
@@ -83,7 +83,7 @@ export const TrialBanner = () => {
         </p>
       </div>
       <button
-        className="btn btn-sm btn-neutral"
+        className="btn btn-sm btn-secondary"
         onClick={() => navigate("/dashboard/plans")}
       >
         Ver planes

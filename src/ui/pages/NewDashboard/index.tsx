@@ -235,7 +235,7 @@ export const NewDashboard = () => {
       {/* Header */}
       <div className="flex items-start justify-between gap-3 mb-6">
         <div className="flex-1 min-w-0">
-          <h1 className="font-host text-3xl sm:text-4xl font-bold leading-tight truncate">
+          <h1 className="font-display text-3xl sm:text-4xl font-semibold leading-tight truncate">
             {restaurant?.name || "Tu restaurante"}
           </h1>
           {activeBranch && (
@@ -404,7 +404,7 @@ export const NewDashboard = () => {
 
       {/* Sección de solicitudes */}
       <div className="mb-3">
-        <h2 className="font-host text-lg font-bold">
+        <h2 className="font-display text-lg font-semibold">
           {filteredPendingCount > 0
             ? filteredPendingCount === 1
               ? "1 solicitud pendiente"

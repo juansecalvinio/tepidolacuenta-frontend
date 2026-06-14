@@ -36,7 +36,7 @@ export const PlanCard = ({
     )}
 
     <div className="card-body p-6">
-      <h3 className="font-host text-xl font-bold">{plan.name}</h3>
+      <h3 className="font-display text-xl font-semibold">{plan.name}</h3>
 
       <div className="my-2">
         <span className="font-host text-4xl font-black">

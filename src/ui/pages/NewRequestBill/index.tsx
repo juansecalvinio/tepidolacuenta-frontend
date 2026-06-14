@@ -77,7 +77,7 @@ export const NewRequestBill = () => {
       <div className="w-full max-w-sm h-full flex flex-col bg-base-200">
         {/* Top bar */}
         <header className="flex items-center justify-center px-6 pt-8 pb-4">
-          <h1 className="text-brand text-xl sm:text-2xl font-light tracking-tighter cursor-pointer hover:opacity-80 transition-opacity">
+          <h1 className="font-display text-xl sm:text-2xl font-semibold tracking-tight cursor-pointer hover:opacity-80 transition-opacity">
             tepidolacuenta
           </h1>
         </header>

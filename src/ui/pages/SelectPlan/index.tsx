@@ -52,7 +52,7 @@ export const SelectPlan = () => {
         <AuthLogo />
 
         <div className="mb-8 text-center">
-          <h1 className="font-host text-3xl font-bold mb-1 text-balance">
+          <h1 className="font-display text-3xl font-semibold mb-1 text-balance">
             Elegí tu plan
           </h1>
           <p className="opacity-60">

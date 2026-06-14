@@ -89,7 +89,7 @@ export const Tables = () => {
 
         {/* Header: título + menú */}
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-2xl font-bold">QRs de las mesas</h2>
+          <h2 className="font-display text-2xl font-semibold">QRs de las mesas</h2>
           <TablesMenu />
         </div>
 

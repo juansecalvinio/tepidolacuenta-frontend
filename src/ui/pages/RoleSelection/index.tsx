@@ -108,7 +108,7 @@ export const RoleSelection = () => {
 
         <div className="card w-full bg-base-100 border-base-300 border-2">
           <div className="card-body p-6">
-            <h2 className="text-xl font-semibold mb-1">¿Cómo querés continuar?</h2>
+            <h2 className="font-display text-xl font-semibold mb-1">¿Cómo querés continuar?</h2>
             <p className="text-sm text-base-content/60 mb-4">
               Elegí una opción para configurar tu cuenta.
             </p>

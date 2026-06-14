@@ -147,7 +147,7 @@ export const Onboarding = () => {
 
         <div className="card w-full bg-base-100 shadow-xl">
           <div className="card-body p-6">
-            <h2 className="font-host text-2xl font-bold text-center mb-2">
+            <h2 className="font-display text-2xl font-semibold text-center mb-2">
               Configura tu local
             </h2>
 

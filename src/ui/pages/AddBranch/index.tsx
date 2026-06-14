@@ -56,7 +56,7 @@ export const AddBranch = () => {
   if (isAtLimit) {
     return (
       <div className="p-4 max-w-3xl mx-auto">
-        <h2 className="text-xl text-center font-bold mb-6">
+        <h2 className="font-display text-xl text-center font-semibold mb-6">
           Agregar nueva sucursal
         </h2>
         <PlanLimitReached
@@ -69,7 +69,7 @@ export const AddBranch = () => {
 
   return (
     <div className="p-4 max-w-3xl mx-auto">
-      <h2 className="text-xl text-center font-bold mb-6">
+      <h2 className="font-display text-xl text-center font-semibold mb-6">
         Agregar nueva sucursal
       </h2>
 

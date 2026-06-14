@@ -59,7 +59,7 @@ export const PaymentPending = () => {
             </svg>
           </div>
           <div>
-            <h1 className="font-host text-2xl font-bold mb-2">¡Pago aprobado!</h1>
+            <h1 className="font-display text-2xl font-semibold mb-2">¡Pago aprobado!</h1>
             <p className="opacity-60 text-sm">
               Tu suscripción fue activada correctamente. Redirigiendo al
               dashboard...
@@ -92,7 +92,7 @@ export const PaymentPending = () => {
         </div>
 
         <div>
-          <h1 className="font-host text-2xl font-bold mb-2">Pago en proceso</h1>
+          <h1 className="font-display text-2xl font-semibold mb-2">Pago en proceso</h1>
           <p className="opacity-60 text-sm">
             Tu pago está siendo procesado. Te notificaremos cuando se confirme.
             Podés cerrar esta pantalla y volver más tarde.

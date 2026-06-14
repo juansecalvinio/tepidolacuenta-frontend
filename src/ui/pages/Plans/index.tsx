@@ -41,7 +41,7 @@ export const Plans = () => {
   return (
     <div className="p-4 max-w-4xl mx-auto">
       <div className="mb-8">
-        <h1 className="font-host text-3xl font-bold mb-1 text-balance">Planes</h1>
+        <h1 className="font-display text-3xl font-semibold mb-1 text-balance">Planes</h1>
         <p className="opacity-60">
           Elegí el plan que mejor se adapta a tu negocio.
         </p>

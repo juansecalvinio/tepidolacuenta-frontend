@@ -61,7 +61,7 @@ export const Subscription = () => {
   return (
     <div className="p-4 max-w-3xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-1">Suscripción</h1>
+        <h1 className="font-display text-3xl font-semibold mb-1">Suscripción</h1>
         <p className="opacity-60">Administrá tu plan actual.</p>
       </div>
 
@@ -85,7 +85,7 @@ export const Subscription = () => {
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="text-sm opacity-60 mb-1">Plan actual</p>
-                  <h2 className="text-2xl font-bold">
+                  <h2 className="font-display text-2xl font-semibold">
                     {currentPlan?.name ?? "—"}
                   </h2>
                   {currentPlan && (

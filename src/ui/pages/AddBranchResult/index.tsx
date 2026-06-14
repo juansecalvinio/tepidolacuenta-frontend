@@ -43,7 +43,7 @@ export const AddBranchResult = () => {
         )}
 
         <div className="flex flex-col items-center">
-          <h2 className="text-3xl text-center font-bold mb-2">
+          <h2 className="font-display text-3xl text-center font-semibold mb-2">
             {status === "success"
               ? "Creaste una nueva sucursal"
               : "No se pudo crear la sucursal"}

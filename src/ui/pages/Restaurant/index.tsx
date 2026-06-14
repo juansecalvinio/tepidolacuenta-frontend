@@ -75,7 +75,7 @@ export const Restaurant = () => {
 
   return (
     <div className="p-4 max-w-3xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6">Información de tu local</h2>
+      <h2 className="font-display text-2xl font-semibold mb-6">Información de tu local</h2>
 
       <div className="bg-base-100 border-2 border-base-300 rounded-xl overflow-hidden">
         {/* Header del local */}
@@ -205,7 +205,7 @@ export const Restaurant = () => {
       {/* Modal editar */}
       <dialog ref={editModalRef} className="modal">
         <div className="modal-box w-full max-w-sm">
-          <h3 className="font-bold text-lg mb-4">Editar sucursal</h3>
+          <h3 className="font-display font-semibold text-lg mb-4">Editar sucursal</h3>
 
           {formError && (
             <div className="alert alert-error alert-soft mb-4">
@@ -292,7 +292,7 @@ export const Restaurant = () => {
       {/* Modal eliminar */}
       <dialog ref={deleteModalRef} className="modal">
         <div className="modal-box w-full max-w-sm">
-          <h3 className="font-bold text-lg mb-2">Eliminar sucursal</h3>
+          <h3 className="font-display font-semibold text-lg mb-2">Eliminar sucursal</h3>
           <p className="text-base-content/70 mb-2">
             ¿Estás seguro que querés eliminar{" "}
             <span className="font-semibold text-base-content">

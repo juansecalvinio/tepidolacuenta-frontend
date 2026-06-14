@@ -84,7 +84,7 @@ export const PaymentSuccess = () => {
           <>
             <span className="loading loading-spinner loading-lg text-primary" />
             <div>
-              <h1 className="font-host text-2xl font-bold mb-2">Procesando tu pago</h1>
+              <h1 className="font-display text-2xl font-semibold mb-2">Procesando tu pago</h1>
               <p className="opacity-60 text-sm">
                 Estamos confirmando tu pago con MercadoPago. Esto puede tardar
                 unos segundos...
@@ -112,7 +112,7 @@ export const PaymentSuccess = () => {
               </svg>
             </div>
             <div>
-              <h1 className="font-host text-2xl font-bold mb-2">¡Pago aprobado!</h1>
+              <h1 className="font-display text-2xl font-semibold mb-2">¡Pago aprobado!</h1>
               <p className="opacity-60 text-sm">
                 Tu suscripción fue activada correctamente. Redirigiendo al
                 dashboard...
@@ -141,7 +141,7 @@ export const PaymentSuccess = () => {
               </svg>
             </div>
             <div>
-              <h1 className="font-host text-2xl font-bold mb-2">
+              <h1 className="font-display text-2xl font-semibold mb-2">
                 No pudimos verificar tu pago
               </h1>
               <p className="opacity-60 text-sm mb-4">

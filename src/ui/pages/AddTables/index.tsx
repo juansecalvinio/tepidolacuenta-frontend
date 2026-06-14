@@ -52,7 +52,7 @@ export const AddTables = () => {
   if (isAtLimit) {
     return (
       <div className="p-4 max-w-3xl mx-auto">
-        <h2 className="text-xl text-center font-bold mb-6">
+        <h2 className="font-display text-xl text-center font-semibold mb-6">
           Agregar mesas a {activeBranch?.address || "tu sucursal"}
         </h2>
         <PlanLimitReached
@@ -65,7 +65,7 @@ export const AddTables = () => {
 
   return (
     <div className="p-4 max-w-3xl mx-auto">
-      <h2 className="text-xl text-center font-bold mb-6">
+      <h2 className="font-display text-xl text-center font-semibold mb-6">
         Agregar mesas a {activeBranch?.address || "tu sucursal"}
       </h2>
 

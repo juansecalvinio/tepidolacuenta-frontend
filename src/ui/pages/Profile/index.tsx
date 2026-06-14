@@ -34,7 +34,7 @@ export const Profile = () => {
 
   return (
     <div className="p-4 max-w-3xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6">Tu perfil</h2>
+      <h2 className="font-display text-2xl font-semibold mb-6">Tu perfil</h2>
 
       <div className="bg-base-100 border-2 border-base-300 rounded-xl overflow-hidden">
         {/* Avatar + email */}
@@ -67,7 +67,7 @@ export const Profile = () => {
 
       {isOwner && (
         <>
-          <h2 className="text-2xl font-bold my-6">Suscripción</h2>
+          <h2 className="font-display text-2xl font-semibold my-6">Suscripción</h2>
 
           <div className="bg-base-100 border-2 border-base-300 rounded-xl overflow-hidden flex items-center justify-between">
             <div className="p-4">
@@ -86,7 +86,7 @@ export const Profile = () => {
             </span>
           </div>
 
-          <h2 className="text-2xl font-bold my-6">Equipo</h2>
+          <h2 className="font-display text-2xl font-semibold my-6">Equipo</h2>
 
           <div className="bg-base-100 border-2 border-base-300 rounded-xl overflow-hidden">
             <div className="p-4 border-b border-base-300">

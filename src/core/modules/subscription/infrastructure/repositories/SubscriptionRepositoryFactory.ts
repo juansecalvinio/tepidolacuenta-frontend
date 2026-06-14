@@ -1,6 +1,9 @@
 import type { SubscriptionRepository } from "../../domain/repositories/SubscriptionRepository";
 import { ApiSubscriptionRepository } from "./ApiSubscriptionRepository";
 
+let instance: SubscriptionRepository | null = null;
+
 export const getSubscriptionRepository = (): SubscriptionRepository => {
-  return new ApiSubscriptionRepository();
+  instance ??= new ApiSubscriptionRepository();
+  return instance;
 };

@@ -1,4 +1,4 @@
-import type { User } from "../../auth/domain/models/User";
+import type { User } from "../../../auth/domain/models/User";
 
 export interface GenerateInvitationRequest {
   restaurantId: string;

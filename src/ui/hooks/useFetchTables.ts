@@ -11,8 +11,9 @@ export const useFetchTables = () => {
   const { activeBranch } = useRestaurantContext();
   const repository = getTableRepository();
 
-  const fetchTables = useCallback(async () => {
-    if (!activeBranch?.id) {
+  const fetchTables = useCallback(async (branchId?: string) => {
+    const effectiveBranchId = branchId || activeBranch?.id;
+    if (!effectiveBranchId) {
       setError("No se encontró el ID de la sucursal");
       return { success: false, error: "No se encontró el ID de la sucursal" };
     }
@@ -22,7 +23,7 @@ export const useFetchTables = () => {
 
     try {
       const getTablesUseCase = GetTables(repository);
-      const response = await getTablesUseCase(activeBranch.id);
+      const response = await getTablesUseCase(effectiveBranchId);
       setTables(response.data);
       return { success: true, data: response.data };
     } catch (err) {

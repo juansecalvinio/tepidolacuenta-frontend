@@ -40,8 +40,8 @@ export const useFetchSubscription = () => {
   const fetchPlans = useCallback(async () => {
     clearError();
     try {
-      const useCase = GetPlans(repository);
-      const response = await useCase();
+      const execute = GetPlans(repository);
+      const response = await execute();
       const plans = Array.isArray(response)
         ? response
         : ((response as { data?: Plan[] }).data ?? []);
@@ -59,8 +59,8 @@ export const useFetchSubscription = () => {
       setLoading(true);
       clearError();
       try {
-        const useCase = GetSubscriptionByRestaurant(repository);
-        const subscription = await useCase(restaurantId);
+        const execute = GetSubscriptionByRestaurant(repository);
+        const subscription = await execute(restaurantId);
         setSubscription(subscription);
         if (subscription.plan) {
           setCurrentPlan(subscription.plan);
@@ -86,8 +86,8 @@ export const useFetchSubscription = () => {
       setLoading(true);
       clearError();
       try {
-        const useCase = UpdateSubscription(repository);
-        const updated = await useCase(subscriptionId, request);
+        const execute = UpdateSubscription(repository);
+        const updated = await execute(subscriptionId, request);
         setSubscription(updated);
         return { success: true, data: updated };
       } catch (err) {
@@ -106,8 +106,8 @@ export const useFetchSubscription = () => {
       setLoading(true);
       clearError();
       try {
-        const useCase = CancelSubscription(repository);
-        await useCase(subscriptionId);
+        const execute = CancelSubscription(repository);
+        await execute(subscriptionId);
         updateSubscription({ status: "canceled" });
         return { success: true };
       } catch (err) {
@@ -126,8 +126,8 @@ export const useFetchSubscription = () => {
       setLoading(true);
       clearError();
       try {
-        const useCase = CreateSubscription(repository);
-        const subscription = await useCase(request);
+        const execute = CreateSubscription(repository);
+        const subscription = await execute(request);
         setSubscription(subscription);
         return { success: true, data: subscription };
       } catch (err) {
@@ -146,8 +146,8 @@ export const useFetchSubscription = () => {
       setLoading(true);
       clearError();
       try {
-        const useCase = GetPlanById(repository);
-        const plan = await useCase(planId);
+        const execute = GetPlanById(repository);
+        const plan = await execute(planId);
         setCurrentPlan(plan);
         return { success: true, data: plan };
       } catch (err) {

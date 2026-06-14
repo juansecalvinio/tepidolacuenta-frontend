@@ -4,6 +4,7 @@ import { useFetchRestaurant } from "../../hooks/useFetchRestaurant";
 import { useFetchSubscription } from "../../hooks/useFetchSubscription";
 import { useTables } from "../../hooks/useTables";
 import { AuthLogo } from "../../components/AuthLogo";
+import { Alert } from "../../components/Alert";
 import type { Plan } from "../../../core/modules/subscription/domain/models/Subscription";
 
 export const Onboarding = () => {
@@ -26,7 +27,7 @@ export const Onboarding = () => {
     if (!selectedPlan) {
       navigate("/dashboard/select-plan", { replace: true });
     }
-  }, []);
+  }, [selectedPlan, navigate]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -146,7 +147,7 @@ export const Onboarding = () => {
 
         <div className="card w-full bg-base-100 shadow-xl">
           <div className="card-body p-6">
-            <h2 className="text-2xl font-bold text-center mb-2">
+            <h2 className="font-host text-2xl font-bold text-center mb-2">
               Configura tu local
             </h2>
 
@@ -164,22 +165,7 @@ export const Onboarding = () => {
             )}
 
             {(error || validationError) && (
-              <div className="alert alert-soft alert-error mb-4">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="stroke-current shrink-0 h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                <span>{error || validationError}</span>
-              </div>
+              <Alert className="mb-4">{error || validationError}</Alert>
             )}
 
             <form onSubmit={handleSubmit}>

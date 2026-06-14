@@ -7,7 +7,7 @@ interface Props {
 export const AvatarMenuItem = ({ item }: Props) => {
   return (
     <li>
-      <span onClick={item.onClick}>
+      <button type="button" onClick={item.onClick}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -15,11 +15,12 @@ export const AvatarMenuItem = ({ item }: Props) => {
           strokeWidth="1.5"
           stroke="currentColor"
           className="size-5 opacity-30"
+          aria-hidden="true"
         >
           <path strokeLinecap="round" strokeLinejoin="round" d={item.pathD} />
         </svg>
         {item.label}
-      </span>
+      </button>
     </li>
   );
 };

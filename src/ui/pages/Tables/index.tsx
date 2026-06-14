@@ -43,7 +43,7 @@ export const Tables = () => {
 
   useEffect(() => {
     fetchTables();
-  }, []);
+  }, [fetchTables]);
 
   if (isLoading) {
     return (

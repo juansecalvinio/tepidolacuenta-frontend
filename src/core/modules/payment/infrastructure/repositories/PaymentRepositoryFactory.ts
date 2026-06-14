@@ -1,6 +1,9 @@
 import type { PaymentRepository } from "../../domain/repositories/PaymentRepository";
 import { ApiPaymentRepository } from "./ApiPaymentRepository";
 
+let instance: PaymentRepository | null = null;
+
 export const getPaymentRepository = (): PaymentRepository => {
-  return new ApiPaymentRepository();
+  instance ??= new ApiPaymentRepository();
+  return instance;
 };

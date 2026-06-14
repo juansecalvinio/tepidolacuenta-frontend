@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { useTables } from "../../hooks/useTables";
@@ -158,32 +158,43 @@ export const NewDashboard = () => {
 
   useEffect(() => {
     const fetchInitialData = async () => {
-      await Promise.all([
-        fetchRestaurant(restaurantId!),
+      const [branchesResult] = await Promise.all([
         fetchBranchesByRestaurant(restaurantId!),
-        fetchTables(),
+        fetchRestaurant(restaurantId!),
         fetchPendingRequests(),
         ...(isOwner ? [fetchSubscription(restaurantId!)] : []),
       ]);
+
+      const activeBranchId = branchesResult?.success ? branchesResult.activeBranch?.id : undefined;
+      await fetchTables(activeBranchId);
+
       setIsInitialLoading(false);
       if (isOwner) setHasCheckedSubscription(true);
       isInitialLoadComplete.current = true;
     };
 
     fetchInitialData();
-  }, [restaurantId]);
+  }, [
+    restaurantId,
+    isOwner,
+    fetchBranchesByRestaurant,
+    fetchRestaurant,
+    fetchPendingRequests,
+    fetchSubscription,
+    fetchTables,
+  ]);
 
   useEffect(() => {
     if (isOwner && hasCheckedSubscription && subscription === null) {
       navigate("/dashboard/select-plan", { replace: true });
     }
-  }, [isOwner, hasCheckedSubscription, subscription]);
+  }, [isOwner, hasCheckedSubscription, subscription, navigate]);
 
   useEffect(() => {
     if (!isInitialLoadComplete.current) return;
     fetchTables();
     fetchPendingRequests();
-  }, [activeBranch?.id]);
+  }, [activeBranch?.id, fetchTables, fetchPendingRequests]);
 
   const handleMarkAsAttended = useCallback(
     async (requestId: string) => {
@@ -196,16 +207,21 @@ export const NewDashboard = () => {
     [removeRequest, markAsAttended, fetchPendingRequests],
   );
 
-  // Filtramos por mesas de la sucursal activa, luego ordenamos de más antigua a más reciente
-  const activeBranchTableIds = new Set(tables.map((t) => t.id));
-  const pendingRequests: BillRequest[] = (
-    requests?.filter(
-      (req) =>
-        req.status === "pending" && activeBranchTableIds.has(req.tableId),
-    ) ?? []
-  ).sort(
-    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-  );
+  // Filtramos por mesas de la sucursal activa, luego ordenamos de más antigua a
+  // más reciente. Memoizado para no recalcular en cada re-render (p. ej. el tick
+  // de 30s que actualiza los labels de tiempo).
+  const pendingRequests = useMemo<BillRequest[]>(() => {
+    const activeBranchTableIds = new Set(tables.map((t) => t.id));
+    return (
+      requests?.filter(
+        (req) =>
+          req.status === "pending" && activeBranchTableIds.has(req.tableId),
+      ) ?? []
+    ).sort(
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+    );
+  }, [tables, requests]);
   const filteredPendingCount = pendingRequests.length;
 
   if (isInitialLoading) {

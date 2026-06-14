@@ -36,7 +36,7 @@ export const PaymentFailure = () => {
         </div>
 
         <div>
-          <h1 className="text-2xl font-bold mb-2">El pago no se procesó</h1>
+          <h1 className="font-host text-2xl font-bold mb-2">El pago no se procesó</h1>
           <p className="opacity-60 text-sm">
             Tu pago no pudo ser procesado. Podés intentarlo nuevamente con otro
             método de pago.

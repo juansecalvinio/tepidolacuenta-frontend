@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSound } from "../../hooks/useSound";
 
 interface NotificationAlertProps {
@@ -28,6 +28,16 @@ export const NotificationAlert = ({
     play();
   }, [play]);
 
+  const handleClose = useCallback(() => {
+    setIsClosing(true);
+    // Después de la animación (0.3s), ocultar completamente
+    setTimeout(() => {
+      setIsVisible(false);
+      setIsClosing(false);
+      onClose(id);
+    }, 300);
+  }, [id, onClose]);
+
   useEffect(() => {
     if (!isVisible || !autoClose) return;
 
@@ -46,17 +56,7 @@ export const NotificationAlert = ({
       clearInterval(interval);
       clearTimeout(timer);
     };
-  }, [isVisible, autoClose, duration]);
-
-  const handleClose = () => {
-    setIsClosing(true);
-    // Después de la animación (0.3s), ocultar completamente
-    setTimeout(() => {
-      setIsVisible(false);
-      setIsClosing(false);
-      onClose(id);
-    }, 300);
-  };
+  }, [isVisible, autoClose, duration, handleClose]);
 
   if (!isVisible && !isClosing) {
     return null;

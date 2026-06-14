@@ -4,6 +4,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { useFetchPayment } from "../../hooks/useFetchPayment";
 import { usePaymentWebSocket } from "../../hooks/usePaymentWebSocket";
 import type { PaymentApprovedWsMessage } from "../../../core/modules/payment/domain/models/Payment";
+import { logger } from "../../utils/logger";
 
 type Stage = "processing" | "approved" | "error";
 
@@ -27,7 +28,7 @@ export const PaymentSuccess = () => {
   const storedRestaurantId = getStoredRestaurantId() ?? restaurantId;
 
   const handleApproved = (payment: PaymentApprovedWsMessage["payment"]) => {
-    console.log("✅ Pago aprobado via WebSocket:", payment.id);
+    logger.debug("✅ Pago aprobado via WebSocket:", payment.id);
     clearPaymentStorage();
     setStage("approved");
     setTimeout(() => navigate("/dashboard"), REDIRECT_DELAY_MS);
@@ -58,7 +59,7 @@ export const PaymentSuccess = () => {
           latest.mpPreferenceId === storedPreferenceId;
 
         if (matchesPreference) {
-          console.log("✅ Pago aprobado via fallback HTTP:", latest.id);
+          logger.debug("✅ Pago aprobado via fallback HTTP:", latest.id);
           clearPaymentStorage();
           setStage("approved");
           setTimeout(() => navigate("/dashboard"), REDIRECT_DELAY_MS);
@@ -67,7 +68,14 @@ export const PaymentSuccess = () => {
     }, FALLBACK_DELAY_MS);
 
     return () => clearTimeout(timer);
-  }, [storedRestaurantId, storedPreferenceId, stage]);
+  }, [
+    storedRestaurantId,
+    storedPreferenceId,
+    stage,
+    fetchPaymentHistory,
+    clearPaymentStorage,
+    navigate,
+  ]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-base-100 p-4">
@@ -76,7 +84,7 @@ export const PaymentSuccess = () => {
           <>
             <span className="loading loading-spinner loading-lg text-primary" />
             <div>
-              <h1 className="text-2xl font-bold mb-2">Procesando tu pago</h1>
+              <h1 className="font-host text-2xl font-bold mb-2">Procesando tu pago</h1>
               <p className="opacity-60 text-sm">
                 Estamos confirmando tu pago con MercadoPago. Esto puede tardar
                 unos segundos...
@@ -104,7 +112,7 @@ export const PaymentSuccess = () => {
               </svg>
             </div>
             <div>
-              <h1 className="text-2xl font-bold mb-2">¡Pago aprobado!</h1>
+              <h1 className="font-host text-2xl font-bold mb-2">¡Pago aprobado!</h1>
               <p className="opacity-60 text-sm">
                 Tu suscripción fue activada correctamente. Redirigiendo al
                 dashboard...
@@ -133,7 +141,7 @@ export const PaymentSuccess = () => {
               </svg>
             </div>
             <div>
-              <h1 className="text-2xl font-bold mb-2">
+              <h1 className="font-host text-2xl font-bold mb-2">
                 No pudimos verificar tu pago
               </h1>
               <p className="opacity-60 text-sm mb-4">

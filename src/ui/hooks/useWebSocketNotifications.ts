@@ -1,4 +1,5 @@
 import { useEffect, useRef, useCallback, useState } from "react";
+import { logger } from "../utils/logger";
 import { useNotifications } from "../contexts/notification.context";
 import type { BillRequestWsResponse } from "../../core/modules/bill-request-ws/domain/models/BillRequestWs";
 import type { PaymentApprovedWsMessage } from "../../core/modules/payment/domain/models/Payment";
@@ -34,6 +35,8 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
   );
   const isConnectingRef = useRef(false);
   const hasInitializedRef = useRef(false); // Prevenir inicialización múltiple
+  // Ref para reconectar sin que el callback se referencie a sí mismo (evita TDZ).
+  const connectRef = useRef<() => void>(() => {});
   const maxReconnectAttempts = 10;
   const initialReconnectDelay = 1000; // 1 segundo
 
@@ -53,11 +56,11 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
     try {
       const protocol = window.location.protocol === "https:" ? "wss" : "ws";
       const url = `${protocol}://${baseUrl}/api/v1/requests/ws/${restaurantId}?token=${token}`;
-      console.log(`🔗 Conectando a: ${url}`);
+      logger.debug(`🔗 Conectando a: ${url}`);
       const ws = new WebSocket(url);
 
       ws.onopen = () => {
-        console.log("✅ Conectado al servidor de notificaciones");
+        logger.debug("✅ Conectado al servidor de notificaciones");
         wsRef.current = ws;
         isConnectingRef.current = false;
         reconnectAttemptsRef.current = 0; // Reset intentos cuando conecta exitosamente
@@ -66,18 +69,18 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
 
       ws.onmessage = (event) => {
         try {
-          console.log("📨 Mensaje recibido del WebSocket:", event.data);
+          logger.debug("📨 Mensaje recibido del WebSocket:", event.data);
           const data = JSON.parse(event.data) as WsMessage;
 
           // Ignorar eventos de pago — los manejan las páginas de resultado
           if ("type" in data && data.type === "payment.approved") {
-            console.log("💳 Evento payment.approved recibido en dashboard (ignorado)");
+            logger.debug("💳 Evento payment.approved recibido en dashboard (ignorado)");
             return;
           }
 
           const billData = data as BillRequestWsResponse;
-          console.log("✅ Datos parseados:", billData);
-          console.log(`🍽️ Mesa ${billData.tableNumber} - Estado: ${billData.status}`);
+          logger.debug("✅ Datos parseados:", billData);
+          logger.debug(`🍽️ Mesa ${billData.tableNumber} - Estado: ${billData.status}`);
 
           // Mostrar notificación solo si es un pedido nuevo (pending)
           if (billData.status === "pending") {
@@ -104,7 +107,7 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
             }, 5000);
 
             // Refrescar la lista de pedidos para mostrar el nuevo pedido
-            console.log("🔄 Refrescando lista de pedidos...");
+            logger.debug("🔄 Refrescando lista de pedidos...");
             fetchPendingRequests();
           }
         } catch (error) {
@@ -136,14 +139,14 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
         wsRef.current = null;
         isConnectingRef.current = false;
 
-        console.log("🔌 Desconexión WebSocket:");
-        console.log(
+        logger.debug("🔌 Desconexión WebSocket:");
+        logger.debug(
           "   Código:",
           event.code,
           "- Razón:",
           event.reason || "Sin razón",
         );
-        console.log(
+        logger.debug(
           "   ¿Limpio?:",
           event.wasClean ? "Sí" : "No (conexión interrumpida)",
         );
@@ -155,7 +158,7 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
           const maxDelay = 30000; // Máximo 30 segundos
           const actualDelay = Math.min(delay, maxDelay);
 
-          console.log(
+          logger.debug(
             `⏳ Reconectando en ${(actualDelay / 1000).toFixed(
               1,
             )}s... (Intento ${
@@ -166,7 +169,7 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
           setWsStatus("reconnecting");
           reconnectAttemptsRef.current += 1;
           reconnectTimeoutRef.current = setTimeout(() => {
-            connectWebSocket();
+            connectRef.current();
           }, actualDelay);
         } else {
           console.error(
@@ -182,7 +185,11 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
       isConnectingRef.current = false;
       return null;
     }
-  }, [restaurantId, token, addNotification, fetchPendingRequests]);
+  }, [restaurantId, token, baseUrl, addNotification, fetchPendingRequests]);
+
+  useEffect(() => {
+    connectRef.current = connectWebSocket;
+  }, [connectWebSocket]);
 
   useEffect(() => {
     // Solo conectar una sola vez por montaje

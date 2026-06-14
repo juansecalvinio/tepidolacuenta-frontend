@@ -3,6 +3,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { AvatarMenu } from "../AvatarMenu";
 import { avatarMenuItemsData } from "../../data/avatar-menu";
 import { BranchSelector } from "../../pages/BranchSelector";
+import { ToggleTheme } from "../ToggleTheme";
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -18,23 +19,22 @@ export const Header = () => {
 
   return (
     <header className="flex flex-col items-center sm:flex-row justify-between gap-4 w-full max-w-4xl p-4 min-h-12">
-      <h1
+      <button
+        type="button"
         className="text-brand text-xl sm:text-2xl font-light tracking-tighter cursor-pointer hover:opacity-80 transition-opacity"
         onClick={handleLogoClick}
+        aria-label="Ir al inicio"
       >
         tepidolacuenta
-      </h1>
+      </button>
 
       <div className="flex items-center justify-between gap-4">
         <BranchSelector />
 
         <div className="flex items-center gap-2 sm:gap-4">
-          {/* AvatarMenu oculto temporalmente */}
-          {user && (
-            <div className="hidden">
-              <AvatarMenu items={avatarMenuItemsData} />
-            </div>
-          )}
+          <ToggleTheme />
+
+          {user && <AvatarMenu items={avatarMenuItemsData} />}
         </div>
       </div>
     </header>

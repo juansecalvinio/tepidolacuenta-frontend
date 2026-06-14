@@ -1,8 +1,17 @@
+import { useShallow } from "zustand/react/shallow";
 import { useSubscriptionContext } from "../contexts/subscription.context";
 
 export const useSubscription = () => {
   const { plans, subscription, currentPlan, isLoading, error } =
-    useSubscriptionContext();
+    useSubscriptionContext(
+      useShallow((s) => ({
+        plans: s.plans,
+        subscription: s.subscription,
+        currentPlan: s.currentPlan,
+        isLoading: s.isLoading,
+        error: s.error,
+      })),
+    );
 
   const safePlans = Array.isArray(plans) ? plans : [];
   const activePlan =

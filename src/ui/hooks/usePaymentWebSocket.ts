@@ -20,7 +20,12 @@ export const usePaymentWebSocket = ({
   const maxReconnectAttempts = 10;
 
   const onPaymentApprovedRef = useRef(onPaymentApproved);
-  onPaymentApprovedRef.current = onPaymentApproved;
+  useEffect(() => {
+    onPaymentApprovedRef.current = onPaymentApproved;
+  }, [onPaymentApproved]);
+
+  // Ref para reconectar sin que `connect` se referencie a sí mismo (evita TDZ).
+  const connectRef = useRef<() => void>(() => {});
 
   const connect = useCallback(() => {
     if (!restaurantId || !token) return;
@@ -57,7 +62,7 @@ export const usePaymentWebSocket = ({
           30000,
         );
         reconnectAttemptsRef.current += 1;
-        reconnectTimeoutRef.current = setTimeout(connect, delay);
+        reconnectTimeoutRef.current = setTimeout(() => connectRef.current(), delay);
       }
     };
 
@@ -67,6 +72,7 @@ export const usePaymentWebSocket = ({
   }, [restaurantId, token, preferenceId]);
 
   useEffect(() => {
+    connectRef.current = connect;
     connect();
 
     return () => {

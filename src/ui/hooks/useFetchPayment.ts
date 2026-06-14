@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { logger } from "../utils/logger";
 import { usePaymentContext } from "../contexts/payment.context";
 import { getPaymentRepository } from "../../core/modules/payment/infrastructure/repositories/PaymentRepositoryFactory";
 import { CreatePaymentPreference } from "../../core/modules/payment/use-cases/CreatePaymentPreference";
@@ -21,9 +22,9 @@ export const useFetchPayment = () => {
       setLoading(true);
       clearError();
       try {
-        const useCase = CreatePaymentPreference(repository);
-        const response = await useCase(request);
-        console.log("🚀 ~ useFetchPayment ~ response:", response);
+        const execute = CreatePaymentPreference(repository);
+        const response = await execute(request);
+        logger.debug("🚀 ~ useFetchPayment ~ response:", response);
         localStorage.setItem(MP_PREFERENCE_KEY, response.preferenceId);
         localStorage.setItem(MP_RESTAURANT_KEY, request.restaurantId);
         return { success: true, data: response };
@@ -43,8 +44,8 @@ export const useFetchPayment = () => {
       setLoading(true);
       clearError();
       try {
-        const useCase = GetPayment(repository);
-        const payment = await useCase(paymentId);
+        const execute = GetPayment(repository);
+        const payment = await execute(paymentId);
         return { success: true, data: payment };
       } catch (err) {
         const errorMessage = getErrorMessage(err, "getPayment");
@@ -62,8 +63,8 @@ export const useFetchPayment = () => {
       setLoading(true);
       clearError();
       try {
-        const useCase = GetPaymentHistory(repository);
-        const payments = await useCase(restaurantId);
+        const execute = GetPaymentHistory(repository);
+        const payments = await execute(restaurantId);
         setPaymentHistory(payments);
         return { success: true, data: payments };
       } catch (err) {

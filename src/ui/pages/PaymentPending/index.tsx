@@ -4,6 +4,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { useFetchPayment } from "../../hooks/useFetchPayment";
 import { usePaymentWebSocket } from "../../hooks/usePaymentWebSocket";
 import type { PaymentApprovedWsMessage } from "../../../core/modules/payment/domain/models/Payment";
+import { logger } from "../../utils/logger";
 
 const REDIRECT_DELAY_MS = 2500;
 
@@ -19,7 +20,7 @@ export const PaymentPending = () => {
   const storedRestaurantId = getStoredRestaurantId() ?? restaurantId;
 
   const handleApproved = (payment: PaymentApprovedWsMessage["payment"]) => {
-    console.log("✅ Pago aprobado via WebSocket (pending):", payment.id);
+    logger.debug("✅ Pago aprobado via WebSocket (pending):", payment.id);
     clearPaymentStorage();
     setApproved(true);
     setTimeout(() => navigate("/dashboard"), REDIRECT_DELAY_MS);
@@ -58,7 +59,7 @@ export const PaymentPending = () => {
             </svg>
           </div>
           <div>
-            <h1 className="text-2xl font-bold mb-2">¡Pago aprobado!</h1>
+            <h1 className="font-host text-2xl font-bold mb-2">¡Pago aprobado!</h1>
             <p className="opacity-60 text-sm">
               Tu suscripción fue activada correctamente. Redirigiendo al
               dashboard...
@@ -91,7 +92,7 @@ export const PaymentPending = () => {
         </div>
 
         <div>
-          <h1 className="text-2xl font-bold mb-2">Pago en proceso</h1>
+          <h1 className="font-host text-2xl font-bold mb-2">Pago en proceso</h1>
           <p className="opacity-60 text-sm">
             Tu pago está siendo procesado. Te notificaremos cuando se confirme.
             Podés cerrar esta pantalla y volver más tarde.

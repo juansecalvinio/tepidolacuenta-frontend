@@ -1,33 +1,94 @@
+import { lazy, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { Landing } from "../pages/Landing";
-import { NewRequestBill } from "../pages/NewRequestBill";
-import { NewDashboard } from "../pages/NewDashboard";
-import { Onboarding } from "../pages/Onboarding";
 import { MainLayout } from "../layouts/MainLayout";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 import { OwnerRoute } from "../components/OwnerRoute";
-import { Tables } from "../pages/Tables";
-import { AuthPage } from "../pages/Auth";
-import { AuthCallback } from "../pages/AuthCallback";
-import { ForgotPassword } from "../pages/ForgotPassword";
-import { ResetPassword } from "../pages/ResetPassword";
-import { RoleSelection } from "../pages/RoleSelection";
-import { Profile } from "../pages/Profile";
-import { Restaurant } from "../pages/Restaurant";
-import { AddBranch } from "../pages/AddBranch";
-import { AddBranchResult } from "../pages/AddBranchResult";
-import { AddTables } from "../pages/AddTables";
-import { AddTablesResult } from "../pages/AddTablesResult";
-import { Plans } from "../pages/Plans";
-import { Subscription } from "../pages/Subscription";
-import { SelectPlan } from "../pages/SelectPlan";
-import { PaymentSuccess } from "../pages/PaymentSuccess";
-import { PaymentFailure } from "../pages/PaymentFailure";
-import { PaymentPending } from "../pages/PaymentPending";
+
+// Páginas cargadas de forma diferida (code-splitting por ruta).
+const Landing = lazy(() =>
+  import("../pages/Landing").then((m) => ({ default: m.Landing })),
+);
+const NewRequestBill = lazy(() =>
+  import("../pages/NewRequestBill").then((m) => ({ default: m.NewRequestBill })),
+);
+const NewDashboard = lazy(() =>
+  import("../pages/NewDashboard").then((m) => ({ default: m.NewDashboard })),
+);
+const Onboarding = lazy(() =>
+  import("../pages/Onboarding").then((m) => ({ default: m.Onboarding })),
+);
+const Tables = lazy(() =>
+  import("../pages/Tables").then((m) => ({ default: m.Tables })),
+);
+const AuthPage = lazy(() =>
+  import("../pages/Auth").then((m) => ({ default: m.AuthPage })),
+);
+const AuthCallback = lazy(() =>
+  import("../pages/AuthCallback").then((m) => ({ default: m.AuthCallback })),
+);
+const ForgotPassword = lazy(() =>
+  import("../pages/ForgotPassword").then((m) => ({ default: m.ForgotPassword })),
+);
+const ResetPassword = lazy(() =>
+  import("../pages/ResetPassword").then((m) => ({ default: m.ResetPassword })),
+);
+const RoleSelection = lazy(() =>
+  import("../pages/RoleSelection").then((m) => ({ default: m.RoleSelection })),
+);
+const Profile = lazy(() =>
+  import("../pages/Profile").then((m) => ({ default: m.Profile })),
+);
+const Restaurant = lazy(() =>
+  import("../pages/Restaurant").then((m) => ({ default: m.Restaurant })),
+);
+const AddBranch = lazy(() =>
+  import("../pages/AddBranch").then((m) => ({ default: m.AddBranch })),
+);
+const AddBranchResult = lazy(() =>
+  import("../pages/AddBranchResult").then((m) => ({
+    default: m.AddBranchResult,
+  })),
+);
+const AddTables = lazy(() =>
+  import("../pages/AddTables").then((m) => ({ default: m.AddTables })),
+);
+const AddTablesResult = lazy(() =>
+  import("../pages/AddTablesResult").then((m) => ({
+    default: m.AddTablesResult,
+  })),
+);
+const Plans = lazy(() =>
+  import("../pages/Plans").then((m) => ({ default: m.Plans })),
+);
+const Subscription = lazy(() =>
+  import("../pages/Subscription").then((m) => ({ default: m.Subscription })),
+);
+const SelectPlan = lazy(() =>
+  import("../pages/SelectPlan").then((m) => ({ default: m.SelectPlan })),
+);
+const PaymentSuccess = lazy(() =>
+  import("../pages/PaymentSuccess").then((m) => ({ default: m.PaymentSuccess })),
+);
+const PaymentFailure = lazy(() =>
+  import("../pages/PaymentFailure").then((m) => ({ default: m.PaymentFailure })),
+);
+const PaymentPending = lazy(() =>
+  import("../pages/PaymentPending").then((m) => ({ default: m.PaymentPending })),
+);
+
+const PageLoader = () => (
+  <div className="min-h-screen flex items-center justify-center bg-base-100">
+    <span
+      className="loading loading-spinner loading-lg text-primary"
+      aria-label="Cargando…"
+    />
+  </div>
+);
 
 function AppRouter() {
   return (
-    <Routes>
+    <Suspense fallback={<PageLoader />}>
+      <Routes>
       <Route path="/" element={<Landing />} />
 
       {/* Ruta pública de solicitud de cuenta (QR) - sin layout */}
@@ -172,8 +233,9 @@ function AppRouter() {
             </OwnerRoute>
           }
         />
-      </Route>
-    </Routes>
+        </Route>
+      </Routes>
+    </Suspense>
   );
 }
 

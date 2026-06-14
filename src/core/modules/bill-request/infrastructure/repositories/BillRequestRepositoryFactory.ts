@@ -2,9 +2,14 @@ import type { BillRequestRepository } from "../../domain/repositories/BillReques
 import { ApiBillRequestRepository } from "./ApiBillRequestRepository";
 import { MockBillRequestRepository } from "./MockBillRequestRepository";
 
+let instance: BillRequestRepository | null = null;
+
 export const getBillRequestRepository = (): BillRequestRepository => {
-  const useMock = import.meta.env.VITE_USE_MOCK === "true";
-  return useMock
-    ? new MockBillRequestRepository()
-    : new ApiBillRequestRepository();
+  if (!instance) {
+    const useMock = import.meta.env.VITE_USE_MOCK === "true";
+    instance = useMock
+      ? new MockBillRequestRepository()
+      : new ApiBillRequestRepository();
+  }
+  return instance;
 };

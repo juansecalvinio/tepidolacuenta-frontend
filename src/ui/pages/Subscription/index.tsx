@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSubscription } from "../../hooks/useSubscription";
 import { useFetchSubscription } from "../../hooks/useFetchSubscription";
 import { useAuth } from "../../hooks/useAuth";
+import { Alert } from "../../components/Alert";
 import { PriceUtils } from "../../utils/price.utils";
 
 const STATUS_LABELS: Record<string, string> = {
@@ -36,6 +37,7 @@ export const Subscription = () => {
   const { fetchSubscription, cancelSubscription } = useFetchSubscription();
 
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [cancelError, setCancelError] = useState("");
 
   useEffect(() => {
     if (!restaurantId) return;
@@ -46,8 +48,15 @@ export const Subscription = () => {
 
   const handleCancel = async () => {
     if (!subscription) return;
-    await cancelSubscription(subscription.id);
-    setShowCancelConfirm(false);
+    setCancelError("");
+    const result = await cancelSubscription(subscription.id);
+    if (result.success) {
+      setShowCancelConfirm(false);
+    } else {
+      setCancelError(
+        result.error || "No se pudo cancelar la suscripción. Intentá de nuevo.",
+      );
+    }
   };
 
   if (isLoading && !subscription) {
@@ -164,7 +173,10 @@ export const Subscription = () => {
                 {!showCancelConfirm ? (
                   <button
                     className="btn btn-ghost text-error w-full"
-                    onClick={() => setShowCancelConfirm(true)}
+                    onClick={() => {
+                      setCancelError("");
+                      setShowCancelConfirm(true);
+                    }}
                   >
                     Cancelar suscripción
                   </button>
@@ -177,6 +189,7 @@ export const Subscription = () => {
                       Perderás acceso al servicio al finalizar el período
                       actual.
                     </p>
+                    {cancelError && <Alert>{cancelError}</Alert>}
                     <div className="flex gap-2">
                       <button
                         className="btn btn-error btn-sm flex-1"
@@ -191,7 +204,10 @@ export const Subscription = () => {
                       </button>
                       <button
                         className="btn btn-ghost btn-sm flex-1"
-                        onClick={() => setShowCancelConfirm(false)}
+                        onClick={() => {
+                          setCancelError("");
+                          setShowCancelConfirm(false);
+                        }}
                       >
                         Volver
                       </button>

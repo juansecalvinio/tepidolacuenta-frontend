@@ -46,6 +46,10 @@ export const SelectPlan = () => {
   const sortedPlans = [...plans].sort((a, b) => a.price - b.price);
   const recommendedId = sortedPlans[Math.floor((sortedPlans.length - 1) / 2)]?.id;
 
+  // Con local existente se cobra (MercadoPago); sin local, el alta arranca con
+  // un trial. El CTA y el subtítulo lo comunican explícitamente.
+  const isPayFlow = !!restaurantId;
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-start bg-base-100 p-4 mt-4">
       <div className="w-full max-w-4xl">
@@ -56,7 +60,9 @@ export const SelectPlan = () => {
             Elegí tu plan
           </h1>
           <p className="opacity-60">
-            Comenzá con un período de prueba gratuito.
+            {isPayFlow
+              ? "Elegí un plan para continuar usando el servicio."
+              : "Comenzá con un período de prueba gratuito."}
           </p>
         </div>
 
@@ -68,7 +74,13 @@ export const SelectPlan = () => {
               key={plan.id}
               plan={plan}
               isRecommended={plan.id === recommendedId}
-              ctaLabel="Comenzar"
+              ctaLabel={
+                isPayFlow
+                  ? "Suscribirme"
+                  : plan.trialDays > 0
+                    ? "Empezar prueba gratis"
+                    : "Empezar"
+              }
               onSelect={handleSelectPlan}
               loading={isLoading}
             />

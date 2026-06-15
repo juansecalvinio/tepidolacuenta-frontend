@@ -9,8 +9,6 @@ import { useBillRequestContext } from "../../contexts/bill-request.context";
 import { useRestaurants } from "../../hooks/useRestaurants";
 import { useFetchBranches } from "../../hooks/useFetchBranches";
 import { useFetchRestaurant } from "../../hooks/useFetchRestaurant";
-import { useSubscription } from "../../hooks/useSubscription";
-import { useFetchSubscription } from "../../hooks/useFetchSubscription";
 import {
   useWebSocketNotifications,
   type WsStatus,
@@ -124,7 +122,7 @@ const LoadingSkeleton = () => (
 
 export const NewDashboard = () => {
   const navigate = useNavigate();
-  const { token, restaurantId, isOwner } = useAuth();
+  const { token, restaurantId } = useAuth();
   const { fetchRestaurant } = useFetchRestaurant();
   const { fetchBranchesByRestaurant } = useFetchBranches();
   const { fetchTables } = useFetchTables();
@@ -137,11 +135,7 @@ export const NewDashboard = () => {
   } = useBillRequests();
   const { fetchPendingRequests, markAsAttended } = useFetchBillRequests();
   const { removeRequest } = useBillRequestContext();
-  const { subscription } = useSubscription();
-  const { fetchSubscription } = useFetchSubscription();
-
   const [isInitialLoading, setIsInitialLoading] = useState(true);
-  const [hasCheckedSubscription, setHasCheckedSubscription] = useState(false);
   const isInitialLoadComplete = useRef(false);
 
   // Fuerza re-render cada 30s para mantener los labels de tiempo actualizados
@@ -162,33 +156,23 @@ export const NewDashboard = () => {
         fetchBranchesByRestaurant(restaurantId!),
         fetchRestaurant(restaurantId!),
         fetchPendingRequests(),
-        ...(isOwner ? [fetchSubscription(restaurantId!)] : []),
       ]);
 
       const activeBranchId = branchesResult?.success ? branchesResult.activeBranch?.id : undefined;
       await fetchTables(activeBranchId);
 
       setIsInitialLoading(false);
-      if (isOwner) setHasCheckedSubscription(true);
       isInitialLoadComplete.current = true;
     };
 
     fetchInitialData();
   }, [
     restaurantId,
-    isOwner,
     fetchBranchesByRestaurant,
     fetchRestaurant,
     fetchPendingRequests,
-    fetchSubscription,
     fetchTables,
   ]);
-
-  useEffect(() => {
-    if (isOwner && hasCheckedSubscription && subscription === null) {
-      navigate("/dashboard/select-plan", { replace: true });
-    }
-  }, [isOwner, hasCheckedSubscription, subscription, navigate]);
 
   useEffect(() => {
     if (!isInitialLoadComplete.current) return;

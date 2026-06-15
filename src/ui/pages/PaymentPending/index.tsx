@@ -1,44 +1,27 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
 import { useFetchPayment } from "../../hooks/useFetchPayment";
-import { usePaymentWebSocket } from "../../hooks/usePaymentWebSocket";
-import type { PaymentApprovedWsMessage } from "../../../core/modules/payment/domain/models/Payment";
-import { logger } from "../../utils/logger";
+import { usePaymentConfirmation } from "../../hooks/usePaymentConfirmation";
 
 const REDIRECT_DELAY_MS = 2500;
 
 export const PaymentPending = () => {
   const navigate = useNavigate();
-  const { token, restaurantId } = useAuth();
-  const { clearPaymentStorage, getStoredPreferenceId, getStoredRestaurantId } =
-    useFetchPayment();
+  const { clearPaymentStorage } = useFetchPayment();
+  const { status } = usePaymentConfirmation();
 
-  const [approved, setApproved] = useState(false);
+  useEffect(() => {
+    if (status !== "approved") return;
+    const timer = setTimeout(() => navigate("/dashboard"), REDIRECT_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [status, navigate]);
 
-  const storedPreferenceId = getStoredPreferenceId();
-  const storedRestaurantId = getStoredRestaurantId() ?? restaurantId;
-
-  const handleApproved = (payment: PaymentApprovedWsMessage["payment"]) => {
-    logger.debug("✅ Pago aprobado via WebSocket (pending):", payment.id);
-    clearPaymentStorage();
-    setApproved(true);
-    setTimeout(() => navigate("/dashboard"), REDIRECT_DELAY_MS);
-  };
-
-  usePaymentWebSocket({
-    restaurantId: storedRestaurantId,
-    token,
-    preferenceId: storedPreferenceId,
-    onPaymentApproved: handleApproved,
-  });
-
-  const handleDashboard = () => {
+  const goToDashboard = () => {
     clearPaymentStorage();
     navigate("/dashboard");
   };
 
-  if (approved) {
+  if (status === "approved") {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-base-100 p-4">
         <div className="w-full max-w-sm text-center space-y-6">
@@ -50,6 +33,7 @@ export const PaymentPending = () => {
               strokeWidth={2.5}
               stroke="currentColor"
               className="w-8 h-8 text-success"
+              aria-hidden="true"
             >
               <path
                 strokeLinecap="round"
@@ -59,10 +43,12 @@ export const PaymentPending = () => {
             </svg>
           </div>
           <div>
-            <h1 className="font-display text-2xl font-semibold mb-2">¡Pago aprobado!</h1>
+            <h1 className="font-display text-2xl font-semibold mb-2">
+              ¡Pago aprobado!
+            </h1>
             <p className="opacity-60 text-sm">
               Tu suscripción fue activada correctamente. Redirigiendo al
-              dashboard...
+              dashboard…
             </p>
           </div>
           <span className="loading loading-dots loading-sm text-primary" />
@@ -82,6 +68,7 @@ export const PaymentPending = () => {
             strokeWidth={2}
             stroke="currentColor"
             className="w-8 h-8 text-warning"
+            aria-hidden="true"
           >
             <path
               strokeLinecap="round"
@@ -92,19 +79,23 @@ export const PaymentPending = () => {
         </div>
 
         <div>
-          <h1 className="font-display text-2xl font-semibold mb-2">Pago en proceso</h1>
+          <h1 className="font-display text-2xl font-semibold mb-2">
+            Pago en proceso
+          </h1>
           <p className="opacity-60 text-sm">
             Tu pago está siendo procesado. Te notificaremos cuando se confirme.
             Podés cerrar esta pantalla y volver más tarde.
           </p>
         </div>
 
-        <div className="flex items-center justify-center gap-2 text-sm opacity-60">
-          <span className="loading loading-ring loading-xs" />
-          <span>Esperando confirmación...</span>
-        </div>
+        {status === "waiting" && (
+          <div className="flex items-center justify-center gap-2 text-sm opacity-60">
+            <span className="loading loading-ring loading-xs" />
+            <span>Esperando confirmación…</span>
+          </div>
+        )}
 
-        <button className="btn btn-ghost w-full" onClick={handleDashboard}>
+        <button className="btn btn-ghost w-full" onClick={goToDashboard}>
           Ir al dashboard
         </button>
       </div>

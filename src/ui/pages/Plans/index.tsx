@@ -54,7 +54,7 @@ export const Plans = () => {
             plan={plan}
             isRecommended={plan.id === recommendedId}
             isCurrent={activePlan?.id === plan.id}
-            ctaLabel="Elegir Plan"
+            ctaLabel="Suscribirme"
             onSelect={handleSelectPlan}
             loading={isLoading}
           />

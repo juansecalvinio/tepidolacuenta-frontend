@@ -8,7 +8,6 @@ import { CancelSubscription } from "../../core/modules/subscription/use-cases/Ca
 import { CreateSubscription } from "../../core/modules/subscription/use-cases/CreateSubscription";
 import { GetPlanById } from "../../core/modules/subscription/use-cases/GetPlanById";
 import type {
-  Plan,
   UpdateSubscriptionRequest,
   CreateSubscriptionRequest,
 } from "../../core/modules/subscription/domain/models/Subscription";
@@ -41,10 +40,7 @@ export const useFetchSubscription = () => {
     clearError();
     try {
       const execute = GetPlans(repository);
-      const response = await execute();
-      const plans = Array.isArray(response)
-        ? response
-        : ((response as { data?: Plan[] }).data ?? []);
+      const plans = await execute();
       setPlans(plans);
       return { success: true, data: plans };
     } catch (err) {

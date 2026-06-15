@@ -1,4 +1,5 @@
 import { api } from "../../../../api/http-client";
+import { unwrap, unwrapMaybe, type ApiEnvelope } from "../../../../api/envelope";
 import type {
   CreateSubscriptionRequest,
   CreateSubscriptionResponse,
@@ -12,26 +13,27 @@ import type {
 } from "../../domain/models/Subscription";
 import type { SubscriptionRepository } from "../../domain/repositories/SubscriptionRepository";
 
-interface ApiEnvelope<T> {
-  success: boolean;
-  message: string;
-  data: T;
-}
-
 export class ApiSubscriptionRepository implements SubscriptionRepository {
   async getPlans(): Promise<GetPlansResponse> {
-    return await api.get<GetPlansResponse>("/api/v1/public/plans");
+    // /public/plans puede venir directo o envuelto → normalizamos a Plan[]
+    const response = await api.get<GetPlansResponse | ApiEnvelope<GetPlansResponse>>(
+      "/api/v1/public/plans",
+    );
+    return unwrapMaybe(response);
   }
 
   async getPlanById(planId: string): Promise<GetPlanByIdResponse> {
-    return await api.get<GetPlanByIdResponse>(`/api/v1/public/plans/${planId}`);
+    const response = await api.get<
+      GetPlanByIdResponse | ApiEnvelope<GetPlanByIdResponse>
+    >(`/api/v1/public/plans/${planId}`);
+    return unwrapMaybe(response);
   }
 
   async getSubscriptions(): Promise<GetSubscriptionsResponse> {
     const response = await api.get<ApiEnvelope<GetSubscriptionsResponse>>(
       "/api/v1/subscriptions",
     );
-    return response.data;
+    return unwrap(response);
   }
 
   async getSubscriptionById(
@@ -40,7 +42,7 @@ export class ApiSubscriptionRepository implements SubscriptionRepository {
     const response = await api.get<ApiEnvelope<GetSubscriptionByIdResponse>>(
       `/api/v1/subscriptions/${subscriptionId}`,
     );
-    return response.data;
+    return unwrap(response);
   }
 
   async getSubscriptionByRestaurant(
@@ -49,7 +51,7 @@ export class ApiSubscriptionRepository implements SubscriptionRepository {
     const response = await api.get<
       ApiEnvelope<GetSubscriptionByRestaurantResponse>
     >(`/api/v1/subscriptions/restaurant/${restaurantId}`);
-    return response.data;
+    return unwrap(response);
   }
 
   async createSubscription(
@@ -59,7 +61,7 @@ export class ApiSubscriptionRepository implements SubscriptionRepository {
       "/api/v1/subscriptions",
       request,
     );
-    return response.data;
+    return unwrap(response);
   }
 
   async updateSubscription(
@@ -70,7 +72,7 @@ export class ApiSubscriptionRepository implements SubscriptionRepository {
       `/api/v1/subscriptions/${subscriptionId}`,
       request,
     );
-    return response.data;
+    return unwrap(response);
   }
 
   async cancelSubscription(subscriptionId: string): Promise<void> {

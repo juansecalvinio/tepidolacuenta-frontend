@@ -11,7 +11,9 @@ export type PaymentConfirmStatus = "waiting" | "approved" | "timeout";
 // historial de pagos. Reintentamos hasta confirmar `approved` o agotar el tiempo.
 const FIRST_POLL_MS = 1200;
 const POLL_INTERVAL_MS = 3000;
-const MAX_WAIT_MS = 45000;
+// Ventana amplia: el webhook de MP es asíncrono y puede tardar (sobre todo en
+// local con túneles). Corta apenas detecta `approved`; esto es solo el techo.
+const MAX_WAIT_MS = 120000;
 
 export const usePaymentConfirmation = () => {
   const { token, restaurantId } = useAuth();

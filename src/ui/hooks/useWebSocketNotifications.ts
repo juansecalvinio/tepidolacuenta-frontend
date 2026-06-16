@@ -54,7 +54,12 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
     isConnectingRef.current = true;
 
     try {
-      const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+      // localhost está exento de mixed-content: usamos ws:// aunque la página
+      // sea https (el backend local no expone wss). Para hosts públicos sí wss.
+      const isLocalHost =
+        baseUrl.startsWith("localhost") || baseUrl.startsWith("127.0.0.1");
+      const protocol =
+        window.location.protocol === "https:" && !isLocalHost ? "wss" : "ws";
       const url = `${protocol}://${baseUrl}/api/v1/requests/ws/${restaurantId}?token=${token}`;
       logger.debug(`🔗 Conectando a: ${url}`);
       const ws = new WebSocket(url);

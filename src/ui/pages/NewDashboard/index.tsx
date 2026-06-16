@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { useTables } from "../../hooks/useTables";
@@ -135,7 +135,6 @@ export const NewDashboard = () => {
   } = useBillRequests();
   const { fetchPendingRequests, markAsAttended } = useFetchBillRequests();
   const { removeRequest } = useBillRequestContext();
-
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const isInitialLoadComplete = useRef(false);
 
@@ -153,24 +152,33 @@ export const NewDashboard = () => {
 
   useEffect(() => {
     const fetchInitialData = async () => {
-      await Promise.all([
-        fetchRestaurant(restaurantId!),
+      const [branchesResult] = await Promise.all([
         fetchBranchesByRestaurant(restaurantId!),
-        fetchTables(),
+        fetchRestaurant(restaurantId!),
         fetchPendingRequests(),
       ]);
+
+      const activeBranchId = branchesResult?.success ? branchesResult.activeBranch?.id : undefined;
+      await fetchTables(activeBranchId);
+
       setIsInitialLoading(false);
       isInitialLoadComplete.current = true;
     };
 
     fetchInitialData();
-  }, [restaurantId]);
+  }, [
+    restaurantId,
+    fetchBranchesByRestaurant,
+    fetchRestaurant,
+    fetchPendingRequests,
+    fetchTables,
+  ]);
 
   useEffect(() => {
     if (!isInitialLoadComplete.current) return;
     fetchTables();
     fetchPendingRequests();
-  }, [activeBranch?.id]);
+  }, [activeBranch?.id, fetchTables, fetchPendingRequests]);
 
   const handleMarkAsAttended = useCallback(
     async (requestId: string) => {
@@ -183,16 +191,21 @@ export const NewDashboard = () => {
     [removeRequest, markAsAttended, fetchPendingRequests],
   );
 
-  // Filtramos por mesas de la sucursal activa, luego ordenamos de más antigua a más reciente
-  const activeBranchTableIds = new Set(tables.map((t) => t.id));
-  const pendingRequests: BillRequest[] = (
-    requests?.filter(
-      (req) =>
-        req.status === "pending" && activeBranchTableIds.has(req.tableId),
-    ) ?? []
-  ).sort(
-    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-  );
+  // Filtramos por mesas de la sucursal activa, luego ordenamos de más antigua a
+  // más reciente. Memoizado para no recalcular en cada re-render (p. ej. el tick
+  // de 30s que actualiza los labels de tiempo).
+  const pendingRequests = useMemo<BillRequest[]>(() => {
+    const activeBranchTableIds = new Set(tables.map((t) => t.id));
+    return (
+      requests?.filter(
+        (req) =>
+          req.status === "pending" && activeBranchTableIds.has(req.tableId),
+      ) ?? []
+    ).sort(
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+    );
+  }, [tables, requests]);
   const filteredPendingCount = pendingRequests.length;
 
   if (isInitialLoading) {
@@ -206,7 +219,7 @@ export const NewDashboard = () => {
       {/* Header */}
       <div className="flex items-start justify-between gap-3 mb-6">
         <div className="flex-1 min-w-0">
-          <h1 className="font-host text-3xl sm:text-4xl font-bold leading-tight truncate">
+          <h1 className="font-display text-3xl sm:text-4xl font-semibold leading-tight truncate">
             {restaurant?.name || "Tu restaurante"}
           </h1>
           {activeBranch && (
@@ -324,6 +337,7 @@ export const NewDashboard = () => {
               <button
                 className="btn btn-square btn-xs btn-ghost opacity-40 hover:opacity-100 transition-opacity"
                 onClick={() => navigate("/dashboard/tables")}
+                aria-label="Ver mesas"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -375,7 +389,7 @@ export const NewDashboard = () => {
 
       {/* Sección de solicitudes */}
       <div className="mb-3">
-        <h2 className="font-host text-lg font-bold">
+        <h2 className="font-display text-lg font-semibold">
           {filteredPendingCount > 0
             ? filteredPendingCount === 1
               ? "1 solicitud pendiente"

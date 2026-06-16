@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useSubscription } from "../../hooks/useSubscription";
 import { useFetchSubscription } from "../../hooks/useFetchSubscription";
 import { useAuth } from "../../hooks/useAuth";
+import { Alert } from "../../components/Alert";
+import { PriceUtils } from "../../utils/price.utils";
 
 const STATUS_LABELS: Record<string, string> = {
   trialing: "Período de prueba",
@@ -23,26 +25,38 @@ const STATUS_BADGE: Record<string, string> = {
 export const Subscription = () => {
   const navigate = useNavigate();
   const { restaurantId } = useAuth();
+
   const {
     subscription,
-    activePlan,
+    currentPlan,
     isLoading,
     trialDaysRemaining,
     isTrialing,
   } = useSubscription();
-  const { fetchPlans, fetchSubscription, cancelSubscription } =
-    useFetchSubscription();
+
+  const { fetchSubscription, cancelSubscription } = useFetchSubscription();
+
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [cancelError, setCancelError] = useState("");
 
   useEffect(() => {
-    fetchPlans();
-    if (restaurantId) fetchSubscription(restaurantId);
-  }, [restaurantId]);
+    if (!restaurantId) return;
+    if (subscription !== null) return;
+
+    fetchSubscription(restaurantId);
+  }, [restaurantId, subscription, fetchSubscription]);
 
   const handleCancel = async () => {
     if (!subscription) return;
-    await cancelSubscription(subscription.id);
-    setShowCancelConfirm(false);
+    setCancelError("");
+    const result = await cancelSubscription(subscription.id);
+    if (result.success) {
+      setShowCancelConfirm(false);
+    } else {
+      setCancelError(
+        result.error || "No se pudo cancelar la suscripción. Intentá de nuevo.",
+      );
+    }
   };
 
   if (isLoading && !subscription) {
@@ -56,7 +70,7 @@ export const Subscription = () => {
   return (
     <div className="p-4 max-w-3xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-1">Suscripción</h1>
+        <h1 className="font-display text-3xl font-semibold mb-1">Suscripción</h1>
         <p className="opacity-60">Administrá tu plan actual.</p>
       </div>
 
@@ -80,12 +94,12 @@ export const Subscription = () => {
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="text-sm opacity-60 mb-1">Plan actual</p>
-                  <h2 className="text-2xl font-bold">
-                    {activePlan?.name ?? "—"}
+                  <h2 className="font-display text-2xl font-semibold">
+                    {currentPlan?.name ?? "—"}
                   </h2>
-                  {activePlan && (
+                  {currentPlan && (
                     <p className="text-sm opacity-60 mt-1">
-                      ${activePlan.price.toFixed(2)}/mes
+                      $ {PriceUtils.getFormattedPrice(currentPlan.price)}/mes
                     </p>
                   )}
                 </div>
@@ -122,22 +136,22 @@ export const Subscription = () => {
                 </div>
               )}
 
-              {activePlan && (
+              {currentPlan && (
                 <div className="mt-4 grid grid-cols-2 gap-3">
                   <div className="p-3 bg-base-200 rounded-lg">
                     <p className="text-xs opacity-60 mb-1">Mesas</p>
                     <p className="font-bold">
-                      {activePlan.maxTables === -1
+                      {currentPlan.maxTables === -1
                         ? "Ilimitadas"
-                        : activePlan.maxTables}
+                        : currentPlan.maxTables}
                     </p>
                   </div>
                   <div className="p-3 bg-base-200 rounded-lg">
                     <p className="text-xs opacity-60 mb-1">Sucursales</p>
                     <p className="font-bold">
-                      {activePlan.maxBranches === -1
+                      {currentPlan.maxBranches === -1
                         ? "Ilimitadas"
-                        : activePlan.maxBranches}
+                        : currentPlan.maxBranches}
                     </p>
                   </div>
                 </div>
@@ -159,7 +173,10 @@ export const Subscription = () => {
                 {!showCancelConfirm ? (
                   <button
                     className="btn btn-ghost text-error w-full"
-                    onClick={() => setShowCancelConfirm(true)}
+                    onClick={() => {
+                      setCancelError("");
+                      setShowCancelConfirm(true);
+                    }}
                   >
                     Cancelar suscripción
                   </button>
@@ -172,6 +189,7 @@ export const Subscription = () => {
                       Perderás acceso al servicio al finalizar el período
                       actual.
                     </p>
+                    {cancelError && <Alert>{cancelError}</Alert>}
                     <div className="flex gap-2">
                       <button
                         className="btn btn-error btn-sm flex-1"
@@ -186,7 +204,10 @@ export const Subscription = () => {
                       </button>
                       <button
                         className="btn btn-ghost btn-sm flex-1"
-                        onClick={() => setShowCancelConfirm(false)}
+                        onClick={() => {
+                          setCancelError("");
+                          setShowCancelConfirm(false);
+                        }}
                       >
                         Volver
                       </button>

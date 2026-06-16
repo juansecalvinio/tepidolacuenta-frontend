@@ -18,16 +18,19 @@ export const BranchSelector = () => {
   if (!sortedBranches.length) return null;
 
   return (
-    <select
-      value={activeBranch?.id ?? ""}
-      className="select select-sm border-base-300 max-w-36 sm:max-w-52 text-sm"
-      onChange={handleBranchChange}
-    >
-      {sortedBranches.map((branch) => (
-        <option key={branch.id} value={branch.id}>
-          {branch.address}
-        </option>
-      ))}
-    </select>
+    <div className="flex items-center gap-4">
+      <p className="text-sm">Sucursal</p>
+      <select
+        value={activeBranch?.id ?? ""}
+        className="select select-sm border-base-300 max-w-36 sm:max-w-52 text-sm"
+        onChange={handleBranchChange}
+      >
+        {sortedBranches.map((branch) => (
+          <option key={branch.id} value={branch.id}>
+            {branch.address}
+          </option>
+        ))}
+      </select>
+    </div>
   );
 };

@@ -8,7 +8,7 @@ import type {
 } from "../../domain/models/BillRequest";
 import { mockDelay } from "../../../../api/mock-client";
 
-let mockRequests: BillRequest[] = [
+const mockRequests: BillRequest[] = [
   {
     id: "req-1",
     tableId: "table-3",

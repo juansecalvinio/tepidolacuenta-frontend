@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { useAuthContext } from "../contexts/auth.context";
 import { Login } from "../../core/modules/auth/use-cases/Login";
 import { Register } from "../../core/modules/auth/use-cases/Register";
+import { RegisterEmployee } from "../../core/modules/auth/use-cases/RegisterEmployee";
 import { ForgotPassword } from "../../core/modules/auth/use-cases/ForgotPassword";
 import { ResetPassword } from "../../core/modules/auth/use-cases/ResetPassword";
 import { getAuthRepository } from "../../core/modules/auth/infrastructure/factories/AuthRepositoryFactory";
@@ -10,6 +11,7 @@ import { GetRestaurants } from "../../core/modules/restaurant/use-cases/GetResta
 import type {
   LoginRequest,
   RegisterRequest,
+  RegisterEmployeeRequest,
   ForgotPasswordRequest,
   ResetPasswordRequest,
 } from "../../core/modules/auth/domain/models/Auth";
@@ -41,30 +43,26 @@ export const useFetchAuth = () => {
         const loginUseCase = Login(authRepository);
         const response = await loginUseCase(credentials);
 
-        //
         if (response.success) {
-          // Save token to sessionStorage
           sessionStorage.setItem("auth-token", response.data.token);
+          const { user, token } = response.data;
 
-          // After login, fetch user's restaurant to get restaurantId
-          try {
-            const getRestaurantsUseCase = GetRestaurants(restaurantRepository);
-            const restaurantsResponse = await getRestaurantsUseCase();
-
-            // Assume user has at least one restaurant (first one)
-            const restaurantId =
-              restaurantsResponse.data.length > 0
-                ? restaurantsResponse.data[0].id
-                : null;
-
-            setAuth(
-              response.data.user,
-              response.data.token,
-              restaurantId || undefined,
-            );
-          } catch {
-            // If fetching restaurant fails, still login but without restaurantId
-            setAuth(response.data.user, response.data.token);
+          if (user.role === "employee") {
+            // Employee: restaurantId comes from the user object returned by the API
+            setAuth(user, token, user.restaurantId);
+          } else {
+            // Owner: fetch restaurants to get restaurantId
+            try {
+              const getRestaurantsUseCase = GetRestaurants(restaurantRepository);
+              const restaurantsResponse = await getRestaurantsUseCase();
+              const restaurantId =
+                restaurantsResponse.data.length > 0
+                  ? restaurantsResponse.data[0].id
+                  : undefined;
+              setAuth(user, token, restaurantId);
+            } catch {
+              setAuth(user, token);
+            }
           }
 
           return { success: true, message: response.message };
@@ -182,8 +180,36 @@ export const useFetchAuth = () => {
     [authRepository, setLoading, setError, clearError],
   );
 
+  const registerEmployee = useCallback(
+    async (userData: RegisterEmployeeRequest) => {
+      try {
+        setLoading(true);
+        clearError();
+
+        const registerEmployeeUseCase = RegisterEmployee(authRepository);
+        const response = await registerEmployeeUseCase(userData);
+
+        if (response.success) {
+          sessionStorage.setItem("auth-token", response.data.token);
+          setAuth(response.data.user, response.data.token, response.data.user.restaurantId);
+          return { success: true, message: response.message };
+        } else {
+          const errorMessage = getErrorMessage(null, "register");
+          setError(errorMessage);
+          return { success: false, message: errorMessage };
+        }
+      } catch (err) {
+        const errorMessage = getErrorMessage(err, "register");
+        setError(errorMessage);
+        return { success: false, message: errorMessage };
+      } finally {
+        setLoading(false);
+      }
+    },
+    [authRepository, setAuth, setLoading, setError, clearError],
+  );
+
   const logout = useCallback(() => {
-    // Clear token from sessionStorage
     sessionStorage.removeItem("auth-token");
     logoutContext();
   }, [logoutContext]);
@@ -199,6 +225,7 @@ export const useFetchAuth = () => {
     // Actions
     login,
     register,
+    registerEmployee,
     forgotPassword,
     resetPassword,
     logout,

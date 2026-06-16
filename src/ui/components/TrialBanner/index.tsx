@@ -14,7 +14,7 @@ export const TrialBanner = () => {
     if (!restaurantId) return;
     fetchPlans();
     fetchSubscription(restaurantId);
-  }, [restaurantId]);
+  }, [restaurantId, fetchPlans, fetchSubscription]);
 
   if (!isTrialing && !isExpired) return null;
 
@@ -42,7 +42,7 @@ export const TrialBanner = () => {
           </p>
         </div>
         <button
-          className="btn btn-sm btn-neutral"
+          className="btn btn-sm btn-secondary"
           onClick={() => navigate("/dashboard/plans")}
         >
           Ver planes
@@ -83,7 +83,7 @@ export const TrialBanner = () => {
         </p>
       </div>
       <button
-        className="btn btn-sm btn-neutral"
+        className="btn btn-sm btn-secondary"
         onClick={() => navigate("/dashboard/plans")}
       >
         Ver planes

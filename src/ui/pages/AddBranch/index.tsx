@@ -3,11 +3,18 @@ import { useNavigate } from "react-router-dom";
 import type { CreateBranchRequest } from "../../../core/modules/restaurant/domain/models/Restaurant";
 import { useFetchBranches } from "../../hooks/useFetchBranches";
 import { useRestaurants } from "../../hooks/useRestaurants";
+import { useSubscription } from "../../hooks/useSubscription";
+import { PlanLimitReached } from "../../components/PlanLimitReached";
 
 export const AddBranch = () => {
   const navigate = useNavigate();
   const { createBranch } = useFetchBranches();
-  const { restaurant, isLoading } = useRestaurants();
+  const { restaurant, branches, isLoading } = useRestaurants();
+  const { currentPlan } = useSubscription();
+
+  const maxBranches = currentPlan?.maxBranches ?? -1;
+  const currentCount = branches?.length ?? 0;
+  const isAtLimit = maxBranches !== -1 && currentCount >= maxBranches;
 
   const [formData, setFormData] = useState<CreateBranchRequest>({
     restaurantId: restaurant?.id || "",
@@ -32,7 +39,6 @@ export const AddBranch = () => {
     e.preventDefault();
 
     const createBranchResult = await createBranch(formData);
-    console.log("🚀 ~ onSubmit ~ createBranchResult:", createBranchResult);
 
     if (!createBranchResult.success) {
       navigate("/dashboard/restaurant/add-branch/result", {
@@ -47,14 +53,28 @@ export const AddBranch = () => {
     }
   };
 
+  if (isAtLimit) {
+    return (
+      <div className="p-4 max-w-3xl mx-auto">
+        <h2 className="font-display text-xl text-center font-semibold mb-6">
+          Agregar nueva sucursal
+        </h2>
+        <PlanLimitReached
+          title="Límite de sucursales alcanzado"
+          description={`Tu plan actual permite hasta ${maxBranches} ${maxBranches === 1 ? "sucursal" : "sucursales"}. Actualizá tu plan para poder agregar más.`}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="p-4 max-w-3xl mx-auto">
-      <h2 className="text-xl text-center font-bold mb-6">
+      <h2 className="font-display text-xl text-center font-semibold mb-6">
         Agregar nueva sucursal
       </h2>
 
       <form onSubmit={onSubmit}>
-        <div className="bg-base-100 border-2 border-base-300 p-4 rounded-xl">
+        <div className="bg-base-100 border border-base-300 p-4 rounded-xl">
           <div className="form-control">
             <label className="label">
               <span className="label-text text-base-content mb-2">
@@ -110,12 +130,16 @@ export const AddBranch = () => {
         <div className="flex w-full gap-4 items-center mt-6">
           <button
             type="button"
-            className="btn btn-neutral flex-1"
+            className="btn btn-ghost flex-1"
             onClick={onCancel}
           >
             Cancelar
           </button>
-          <button type="submit" className="btn btn-primary flex-1">
+          <button
+            type="submit"
+            className="btn btn-primary flex-1"
+            disabled={isLoading}
+          >
             {isLoading ? (
               <span className="loading loading-spinner"></span>
             ) : (

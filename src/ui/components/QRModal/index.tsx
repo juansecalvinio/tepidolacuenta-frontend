@@ -39,11 +39,12 @@ export const QRModal = ({ title, qrCode, show, onClose }: Props) => {
           <button
             className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
             onClick={closeModal}
+            aria-label="Cerrar"
           >
             ✕
           </button>
         </form>
-        <h3 className="text-3xl font-bold text-center mb-4">{title}</h3>
+        <h3 className="font-display text-3xl font-semibold text-center mb-4">{title}</h3>
         <div className="flex justify-center">
           <QRCode value={qrCode} size={300} />
         </div>

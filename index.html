@@ -1,12 +1,32 @@
 <!doctype html>
-<html lang="en" data-theme="black">
+<html lang="es" data-theme="black">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1a1a1a" />
+    <meta
+      name="description"
+      content="Tus clientes piden la cuenta escaneando el QR de la mesa y vos recibís la solicitud al instante. Sin apps."
+    />
     <title>tepidolacuenta</title>
   </head>
   <body>
+    <script>
+      // Aplica el tema guardado antes de pintar para evitar flash (FOUC)
+      (function () {
+        try {
+          var t = localStorage.getItem("theme");
+          if (t === "black" || t === "white") {
+            document.documentElement.setAttribute("data-theme", t);
+            var meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute("content", t === "white" ? "#fafafa" : "#1a1a1a");
+          }
+        } catch (e) {}
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/ui/main.tsx"></script>
   </body>

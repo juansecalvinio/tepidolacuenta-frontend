@@ -5,7 +5,12 @@ import { GetPlans } from "../../core/modules/subscription/use-cases/GetPlans";
 import { GetSubscriptionByRestaurant } from "../../core/modules/subscription/use-cases/GetSubscriptionByRestaurant";
 import { UpdateSubscription } from "../../core/modules/subscription/use-cases/UpdateSubscription";
 import { CancelSubscription } from "../../core/modules/subscription/use-cases/CancelSubscription";
-import type { Plan, UpdateSubscriptionRequest } from "../../core/modules/subscription/domain/models/Subscription";
+import { CreateSubscription } from "../../core/modules/subscription/use-cases/CreateSubscription";
+import { GetPlanById } from "../../core/modules/subscription/use-cases/GetPlanById";
+import type {
+  UpdateSubscriptionRequest,
+  CreateSubscriptionRequest,
+} from "../../core/modules/subscription/domain/models/Subscription";
 import { getErrorMessage } from "../../core/utils/error-messages";
 
 function isNotFoundError(err: unknown): boolean {
@@ -23,6 +28,7 @@ export const useFetchSubscription = () => {
     setPlans,
     setSubscription,
     updateSubscription,
+    setCurrentPlan,
     setLoading,
     setError,
     clearError,
@@ -33,9 +39,8 @@ export const useFetchSubscription = () => {
   const fetchPlans = useCallback(async () => {
     clearError();
     try {
-      const useCase = GetPlans(repository);
-      const response = await useCase();
-      const plans = Array.isArray(response) ? response : ((response as { data?: Plan[] }).data ?? []);
+      const execute = GetPlans(repository);
+      const plans = await execute();
       setPlans(plans);
       return { success: true, data: plans };
     } catch (err) {
@@ -50,9 +55,12 @@ export const useFetchSubscription = () => {
       setLoading(true);
       clearError();
       try {
-        const useCase = GetSubscriptionByRestaurant(repository);
-        const subscription = await useCase(restaurantId);
+        const execute = GetSubscriptionByRestaurant(repository);
+        const subscription = await execute(restaurantId);
         setSubscription(subscription);
+        if (subscription.plan) {
+          setCurrentPlan(subscription.plan);
+        }
         return { success: true, data: subscription };
       } catch (err) {
         if (isNotFoundError(err)) {
@@ -66,7 +74,7 @@ export const useFetchSubscription = () => {
         setLoading(false);
       }
     },
-    [repository, setSubscription, setLoading, setError, clearError],
+    [repository, setSubscription, setCurrentPlan, setLoading, setError, clearError],
   );
 
   const changePlan = useCallback(
@@ -74,8 +82,8 @@ export const useFetchSubscription = () => {
       setLoading(true);
       clearError();
       try {
-        const useCase = UpdateSubscription(repository);
-        const updated = await useCase(subscriptionId, request);
+        const execute = UpdateSubscription(repository);
+        const updated = await execute(subscriptionId, request);
         setSubscription(updated);
         return { success: true, data: updated };
       } catch (err) {
@@ -94,8 +102,8 @@ export const useFetchSubscription = () => {
       setLoading(true);
       clearError();
       try {
-        const useCase = CancelSubscription(repository);
-        await useCase(subscriptionId);
+        const execute = CancelSubscription(repository);
+        await execute(subscriptionId);
         updateSubscription({ status: "canceled" });
         return { success: true };
       } catch (err) {
@@ -109,10 +117,52 @@ export const useFetchSubscription = () => {
     [repository, updateSubscription, setLoading, setError, clearError],
   );
 
+  const createSubscription = useCallback(
+    async (request: CreateSubscriptionRequest) => {
+      setLoading(true);
+      clearError();
+      try {
+        const execute = CreateSubscription(repository);
+        const subscription = await execute(request);
+        setSubscription(subscription);
+        return { success: true, data: subscription };
+      } catch (err) {
+        const errorMessage = getErrorMessage(err, "createSubscription");
+        setError(errorMessage);
+        return { success: false, error: errorMessage };
+      } finally {
+        setLoading(false);
+      }
+    },
+    [repository, setSubscription, setLoading, setError, clearError],
+  );
+
+  const fetchPlanById = useCallback(
+    async (planId: string) => {
+      setLoading(true);
+      clearError();
+      try {
+        const execute = GetPlanById(repository);
+        const plan = await execute(planId);
+        setCurrentPlan(plan);
+        return { success: true, data: plan };
+      } catch (err) {
+        const errorMessage = getErrorMessage(err, "fetchPlanById");
+        setError(errorMessage);
+        return { success: false, error: errorMessage };
+      } finally {
+        setLoading(false);
+      }
+    },
+    [repository, setCurrentPlan, setLoading, setError, clearError],
+  );
+
   return {
     fetchPlans,
     fetchSubscription,
+    fetchPlanById,
     changePlan,
     cancelSubscription,
+    createSubscription,
   };
 };

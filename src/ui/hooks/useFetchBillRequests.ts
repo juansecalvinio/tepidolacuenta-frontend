@@ -84,7 +84,14 @@ export const useFetchBillRequests = () => {
         setLoading(false);
       }
     },
-    [repository, setIsRequested, setLoading, setError, clearError],
+    [
+      repository,
+      setIsRequested,
+      setIsDuplicateRequest,
+      setLoading,
+      setError,
+      clearError,
+    ],
   );
 
   return {

@@ -43,7 +43,7 @@ export const AddTablesResult = () => {
         )}
 
         <div className="flex flex-col items-center">
-          <h2 className="text-3xl text-center font-bold mb-2">
+          <h2 className="font-display text-3xl text-center font-semibold mb-2">
             {status === "success"
               ? "Se crearon nuevas mesas para tu local"
               : "No se pudo realizar la creación de mesas"}

@@ -14,9 +14,14 @@ export type FetchOperation =
   | "updateBranch"
   | "deleteBranch"
   | "fetchPlans"
+  | "fetchPlanById"
   | "fetchSubscription"
   | "changePlan"
-  | "cancelSubscription";
+  | "cancelSubscription"
+  | "createSubscription"
+  | "createPaymentPreference"
+  | "getPayment"
+  | "getPaymentHistory";
 
 const SERVERS_DOWN =
   "En este momento los servidores no están disponibles. Por favor, reintentá más tarde.";
@@ -113,6 +118,10 @@ const byStatus: Record<FetchOperation, Partial<Record<number, string>>> = {
   fetchPlans: {
     401: SESSION_EXPIRED,
   },
+  fetchPlanById: {
+    401: SESSION_EXPIRED,
+    404: "No encontramos el plan seleccionado.",
+  },
   fetchSubscription: {
     401: SESSION_EXPIRED,
   },
@@ -123,6 +132,29 @@ const byStatus: Record<FetchOperation, Partial<Record<number, string>>> = {
   cancelSubscription: {
     401: SESSION_EXPIRED,
     404: "La suscripción no fue encontrada.",
+  },
+  createSubscription: {
+    400: "Los datos de la suscripción no son válidos.",
+    401: SESSION_EXPIRED,
+    409: "Ya tenés una suscripción activa para este restaurante.",
+  },
+  createPaymentPreference: {
+    400: "Los datos del pago no son válidos. Revisalos e intentá de nuevo.",
+    401: SESSION_EXPIRED,
+    403: "No tenés permisos para realizar este pago.",
+    404: "No encontramos el restaurante o el plan seleccionado.",
+    500: "No pudimos conectar con MercadoPago. Por favor, reintentá en unos minutos.",
+  },
+  getPayment: {
+    401: SESSION_EXPIRED,
+    403: "No tenés permisos para ver este pago.",
+    404: "No encontramos el pago solicitado.",
+  },
+  getPaymentHistory: {
+    400: "El identificador del restaurante no es válido.",
+    401: SESSION_EXPIRED,
+    403: "No tenés permisos para ver el historial de pagos.",
+    404: "No encontramos el restaurante solicitado.",
   },
 };
 
@@ -153,12 +185,22 @@ const defaultMessages: Record<FetchOperation, string> = {
     "No pudimos eliminar la sucursal. Por favor, reintentá más tarde.",
   fetchPlans:
     "No pudimos cargar los planes. Por favor, reintentá más tarde.",
+  fetchPlanById:
+    "No pudimos cargar los detalles del plan. Por favor, reintentá más tarde.",
   fetchSubscription:
     "No pudimos cargar tu suscripción. Por favor, reintentá más tarde.",
   changePlan:
     "No pudimos cambiar el plan. Por favor, reintentá más tarde.",
   cancelSubscription:
     "No pudimos cancelar la suscripción. Por favor, reintentá más tarde.",
+  createSubscription:
+    "No pudimos crear la suscripción. Por favor, reintentá más tarde.",
+  createPaymentPreference:
+    "No pudimos iniciar el proceso de pago. Por favor, reintentá más tarde.",
+  getPayment:
+    "No pudimos obtener la información del pago. Por favor, reintentá más tarde.",
+  getPaymentHistory:
+    "No pudimos cargar el historial de pagos. Por favor, reintentá más tarde.",
 };
 
 /**

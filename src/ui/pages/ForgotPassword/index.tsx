@@ -26,7 +26,7 @@ export const ForgotPassword = () => {
       <div className="w-full max-w-sm">
         <AuthLogo />
 
-        <div className="card w-full bg-base-100 border-base-300 border-2">
+        <div className="card w-full bg-base-100 border-base-300 border">
           <div className="card-body p-6">
             {submitted ? (
               <div className="text-center py-2">
@@ -48,7 +48,7 @@ export const ForgotPassword = () => {
                     </svg>
                   </div>
                 </div>
-                <h2 className="text-xl font-semibold mb-2">Revisá tu correo</h2>
+                <h2 className="font-display text-xl font-semibold mb-2">Revisá tu correo</h2>
                 <p className="text-sm text-base-content/60">
                   Si el email <span className="font-medium text-base-content">{email}</span> está
                   registrado, recibirás un enlace para restablecer tu contraseña en los próximos minutos.
@@ -56,7 +56,7 @@ export const ForgotPassword = () => {
               </div>
             ) : (
               <>
-                <h2 className="text-xl font-semibold mb-1">Olvidé mi contraseña</h2>
+                <h2 className="font-display text-xl font-semibold mb-1">Olvidé mi contraseña</h2>
                 <p className="text-sm text-base-content/60 mb-2">
                   Ingresá tu email y te enviamos un enlace para restablecerla.
                 </p>

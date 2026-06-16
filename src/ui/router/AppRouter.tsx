@@ -1,27 +1,94 @@
+import { lazy, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { Landing } from "../pages/Landing";
-import { NewRequestBill } from "../pages/NewRequestBill";
-import { NewDashboard } from "../pages/NewDashboard";
-import { Onboarding } from "../pages/Onboarding";
 import { MainLayout } from "../layouts/MainLayout";
 import { ProtectedRoute } from "../components/ProtectedRoute";
-import { Tables } from "../pages/Tables";
-import { AuthPage } from "../pages/Auth";
-import { AuthCallback } from "../pages/AuthCallback";
-import { ForgotPassword } from "../pages/ForgotPassword";
-import { ResetPassword } from "../pages/ResetPassword";
-import { Profile } from "../pages/Profile";
-import { Restaurant } from "../pages/Restaurant";
-import { AddBranch } from "../pages/AddBranch";
-import { AddBranchResult } from "../pages/AddBranchResult";
-import { AddTables } from "../pages/AddTables";
-import { AddTablesResult } from "../pages/AddTablesResult";
-import { Plans } from "../pages/Plans";
-import { Subscription } from "../pages/Subscription";
+import { OwnerRoute } from "../components/OwnerRoute";
+
+// Páginas cargadas de forma diferida (code-splitting por ruta).
+const Landing = lazy(() =>
+  import("../pages/Landing").then((m) => ({ default: m.Landing })),
+);
+const NewRequestBill = lazy(() =>
+  import("../pages/NewRequestBill").then((m) => ({ default: m.NewRequestBill })),
+);
+const NewDashboard = lazy(() =>
+  import("../pages/NewDashboard").then((m) => ({ default: m.NewDashboard })),
+);
+const Onboarding = lazy(() =>
+  import("../pages/Onboarding").then((m) => ({ default: m.Onboarding })),
+);
+const Tables = lazy(() =>
+  import("../pages/Tables").then((m) => ({ default: m.Tables })),
+);
+const AuthPage = lazy(() =>
+  import("../pages/Auth").then((m) => ({ default: m.AuthPage })),
+);
+const AuthCallback = lazy(() =>
+  import("../pages/AuthCallback").then((m) => ({ default: m.AuthCallback })),
+);
+const ForgotPassword = lazy(() =>
+  import("../pages/ForgotPassword").then((m) => ({ default: m.ForgotPassword })),
+);
+const ResetPassword = lazy(() =>
+  import("../pages/ResetPassword").then((m) => ({ default: m.ResetPassword })),
+);
+const RoleSelection = lazy(() =>
+  import("../pages/RoleSelection").then((m) => ({ default: m.RoleSelection })),
+);
+const Profile = lazy(() =>
+  import("../pages/Profile").then((m) => ({ default: m.Profile })),
+);
+const Restaurant = lazy(() =>
+  import("../pages/Restaurant").then((m) => ({ default: m.Restaurant })),
+);
+const AddBranch = lazy(() =>
+  import("../pages/AddBranch").then((m) => ({ default: m.AddBranch })),
+);
+const AddBranchResult = lazy(() =>
+  import("../pages/AddBranchResult").then((m) => ({
+    default: m.AddBranchResult,
+  })),
+);
+const AddTables = lazy(() =>
+  import("../pages/AddTables").then((m) => ({ default: m.AddTables })),
+);
+const AddTablesResult = lazy(() =>
+  import("../pages/AddTablesResult").then((m) => ({
+    default: m.AddTablesResult,
+  })),
+);
+const Plans = lazy(() =>
+  import("../pages/Plans").then((m) => ({ default: m.Plans })),
+);
+const Subscription = lazy(() =>
+  import("../pages/Subscription").then((m) => ({ default: m.Subscription })),
+);
+const SelectPlan = lazy(() =>
+  import("../pages/SelectPlan").then((m) => ({ default: m.SelectPlan })),
+);
+const PaymentSuccess = lazy(() =>
+  import("../pages/PaymentSuccess").then((m) => ({ default: m.PaymentSuccess })),
+);
+const PaymentFailure = lazy(() =>
+  import("../pages/PaymentFailure").then((m) => ({ default: m.PaymentFailure })),
+);
+const PaymentPending = lazy(() =>
+  import("../pages/PaymentPending").then((m) => ({ default: m.PaymentPending })),
+);
+
+const PageLoader = () => (
+  <div className="min-h-screen flex items-center justify-center bg-base-100">
+    <span
+      className="loading loading-spinner loading-lg text-primary"
+      aria-label="Cargando…"
+    />
+  </div>
+);
 
 function AppRouter() {
   return (
-    <Routes>
+    <Suspense fallback={<PageLoader />}>
+      <Routes>
       <Route path="/" element={<Landing />} />
 
       {/* Ruta pública de solicitud de cuenta (QR) - sin layout */}
@@ -31,17 +98,52 @@ function AppRouter() {
       {/* Rutas de autenticación sin layout */}
       <Route path="/login" element={<AuthPage authType="login" />} />
       <Route path="/register" element={<AuthPage authType="register" />} />
+      <Route path="/register/role" element={<RoleSelection />} />
       <Route path="/auth/callback" element={<AuthCallback />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
 
-      {/* Ruta de setup (sin layout, sin verificación de mesas) */}
+      {/* Rutas de setup: solo owners (sin layout) */}
       <Route
         path="/dashboard/onboarding"
         element={
-          <ProtectedRoute>
+          <OwnerRoute>
             <Onboarding />
-          </ProtectedRoute>
+          </OwnerRoute>
+        }
+      />
+      <Route
+        path="/dashboard/select-plan"
+        element={
+          <OwnerRoute>
+            <SelectPlan />
+          </OwnerRoute>
+        }
+      />
+
+      {/* Rutas de resultado de pago: solo owners (sin layout) */}
+      <Route
+        path="/payment/success"
+        element={
+          <OwnerRoute>
+            <PaymentSuccess />
+          </OwnerRoute>
+        }
+      />
+      <Route
+        path="/payment/failure"
+        element={
+          <OwnerRoute>
+            <PaymentFailure />
+          </OwnerRoute>
+        }
+      />
+      <Route
+        path="/payment/pending"
+        element={
+          <OwnerRoute>
+            <PaymentPending />
+          </OwnerRoute>
         }
       />
 
@@ -70,17 +172,17 @@ function AppRouter() {
         <Route
           path="/dashboard/tables/add-tables"
           element={
-            <ProtectedRoute>
+            <OwnerRoute>
               <AddTables />
-            </ProtectedRoute>
+            </OwnerRoute>
           }
         />
         <Route
           path="/dashboard/tables/add-tables/result"
           element={
-            <ProtectedRoute>
+            <OwnerRoute>
               <AddTablesResult />
-            </ProtectedRoute>
+            </OwnerRoute>
           }
         />
         <Route
@@ -94,45 +196,46 @@ function AppRouter() {
         <Route
           path="/dashboard/restaurant"
           element={
-            <ProtectedRoute>
+            <OwnerRoute>
               <Restaurant />
-            </ProtectedRoute>
+            </OwnerRoute>
           }
         />
         <Route
           path="/dashboard/restaurant/add-branch"
           element={
-            <ProtectedRoute>
+            <OwnerRoute>
               <AddBranch />
-            </ProtectedRoute>
+            </OwnerRoute>
           }
         />
         <Route
           path="/dashboard/restaurant/add-branch/result"
           element={
-            <ProtectedRoute>
+            <OwnerRoute>
               <AddBranchResult />
-            </ProtectedRoute>
+            </OwnerRoute>
           }
         />
         <Route
           path="/dashboard/plans"
           element={
-            <ProtectedRoute>
+            <OwnerRoute>
               <Plans />
-            </ProtectedRoute>
+            </OwnerRoute>
           }
         />
         <Route
           path="/dashboard/subscription"
           element={
-            <ProtectedRoute>
+            <OwnerRoute>
               <Subscription />
-            </ProtectedRoute>
+            </OwnerRoute>
           }
         />
-      </Route>
-    </Routes>
+        </Route>
+      </Routes>
+    </Suspense>
   );
 }
 

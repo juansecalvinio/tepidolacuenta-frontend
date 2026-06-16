@@ -14,7 +14,7 @@ export const NewTrialBanner = () => {
     if (!restaurantId) return;
     fetchPlans();
     fetchSubscription(restaurantId);
-  }, [restaurantId]);
+  }, [restaurantId, fetchPlans, fetchSubscription]);
 
   if (!isTrialing && !isExpired) return null;
 

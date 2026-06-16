@@ -5,6 +5,12 @@ export interface RegisterRequest {
   password: string;
 }
 
+export interface RegisterEmployeeRequest {
+  email: string;
+  password: string;
+  invitationCode: string;
+}
+
 export interface LoginRequest {
   email: string;
   password: string;
@@ -14,6 +20,15 @@ export interface RegisterResponse {
   success: boolean;
   message: string;
   data: User;
+}
+
+export interface RegisterEmployeeResponse {
+  success: boolean;
+  message: string;
+  data: {
+    token: string;
+    user: User;
+  };
 }
 
 export interface LoginResponse {

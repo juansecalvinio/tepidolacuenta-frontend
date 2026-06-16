@@ -14,9 +14,9 @@ export const BillGeneratingAnimation = ({
       role="status"
       aria-live="polite"
       aria-label="Generando la cuenta"
-      className="flex flex-col items-center gap-8 animate-fade-in"
+      className="flex flex-col items-center gap-8 animate-fade-in motion-reduce:animate-none"
     >
-      <div className="animate-gentle-float">
+      <div className="animate-gentle-float motion-reduce:animate-none">
         <svg
           width="64"
           height="76"
@@ -46,7 +46,7 @@ export const BillGeneratingAnimation = ({
             height="5"
             rx="2.5"
             fill="currentColor"
-            className="text-primary animate-receipt-line"
+            className="text-primary animate-receipt-line motion-reduce:animate-none"
             style={{ animationDelay: "0s" }}
           />
           {/* Líneas de ítems */}
@@ -57,7 +57,7 @@ export const BillGeneratingAnimation = ({
             height="4"
             rx="2"
             fill="currentColor"
-            className="text-base-content/20 animate-receipt-line"
+            className="text-base-content/20 animate-receipt-line motion-reduce:animate-none"
             style={{ animationDelay: "0.3s" }}
           />
           <rect
@@ -67,7 +67,7 @@ export const BillGeneratingAnimation = ({
             height="4"
             rx="2"
             fill="currentColor"
-            className="text-base-content/20 animate-receipt-line"
+            className="text-base-content/20 animate-receipt-line motion-reduce:animate-none"
             style={{ animationDelay: "0.6s" }}
           />
           <rect
@@ -77,7 +77,7 @@ export const BillGeneratingAnimation = ({
             height="4"
             rx="2"
             fill="currentColor"
-            className="text-base-content/20 animate-receipt-line"
+            className="text-base-content/20 animate-receipt-line motion-reduce:animate-none"
             style={{ animationDelay: "0.9s" }}
           />
           {/* Separador total */}
@@ -96,25 +96,25 @@ export const BillGeneratingAnimation = ({
       {/* Puntitos loading */}
       <div className="flex gap-1.5 items-center" aria-hidden="true">
         <div
-          className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce"
+          className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce motion-reduce:animate-none"
           style={{ animationDelay: "0s" }}
         />
         <div
-          className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce"
+          className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce motion-reduce:animate-none"
           style={{ animationDelay: "0.15s" }}
         />
         <div
-          className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce"
+          className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce motion-reduce:animate-none"
           style={{ animationDelay: "0.3s" }}
         />
       </div>
 
-      <div className="flex flex-col items-center gap-1.5 text-center">
-        <p className="text-md font-bold text-base-content">
-          {isLoading && "Enviando tu pedido..."}
+      <div className="flex flex-col items-center gap-2 text-center">
+        <p className="text-lg font-bold text-base-content">
+          {isLoading && "Enviando tu pedido…"}
           {!isLoading && isRequested && "Tu pedido se envió a la caja."}
         </p>
-        <p className="text-sm leading-relaxed text-base-content/40">
+        <p className="text-base leading-relaxed text-base-content/70">
           {isLoading && "Un momento por favor."}
           {!isLoading &&
             isRequested &&

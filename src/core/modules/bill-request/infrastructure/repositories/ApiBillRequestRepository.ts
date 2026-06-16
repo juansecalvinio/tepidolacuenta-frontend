@@ -3,8 +3,10 @@ import type {
   CreateBillRequestBody,
   CreateBillRequestResponse,
   GetPendingBillRequestsResponse,
+  GetVenueInfoResponse,
   MarkBillRequestAsAttendedRequest,
   MarkBillRequestAsAttendedResponse,
+  VenueInfoParams,
 } from "../../domain/models/BillRequest";
 import { api } from "../../../../api/http-client";
 
@@ -32,5 +34,20 @@ export class ApiBillRequestRepository implements BillRequestRepository {
     body: CreateBillRequestBody
   ): Promise<CreateBillRequestResponse> {
     return await api.post("/api/v1/public/request-account", body);
+  }
+
+  async getVenueInfo(
+    params: VenueInfoParams
+  ): Promise<GetVenueInfoResponse> {
+    const query = new URLSearchParams({
+      r: params.restaurantId,
+      b: params.branchId,
+      t: params.tableId,
+      n: String(params.tableNumber),
+      h: params.hash,
+    });
+    return await api.get<GetVenueInfoResponse>(
+      `/api/v1/public/venue-info?${query.toString()}`
+    );
   }
 }

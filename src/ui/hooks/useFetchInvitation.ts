@@ -3,6 +3,7 @@ import { GenerateInvitation } from "../../core/modules/invitation/use-cases/Gene
 import { AcceptInvitation } from "../../core/modules/invitation/use-cases/AcceptInvitation";
 import { getInvitationRepository } from "../../core/modules/invitation/infrastructure/factories/InvitationRepositoryFactory";
 import { useAuthContext } from "../contexts/auth.context";
+import { getErrorMessage } from "../../core/utils/error-messages";
 
 export const useFetchInvitation = () => {
   const { setAuth, token } = useAuthContext();
@@ -24,13 +25,14 @@ export const useFetchInvitation = () => {
         setInvitationCode(response.data.code);
         setInvitationExpiresAt(response.data.expiresAt);
         return { success: true, code: response.data.code, expiresAt: response.data.expiresAt };
-      } else {
-        setError("No se pudo generar el código de invitación.");
-        return { success: false };
       }
-    } catch {
-      setError("No se pudo generar el código de invitación.");
-      return { success: false };
+      const errorMessage = getErrorMessage(null, "generateInvitation");
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } catch (err) {
+      const errorMessage = getErrorMessage(err, "generateInvitation");
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
     } finally {
       setIsLoading(false);
     }
@@ -54,13 +56,14 @@ export const useFetchInvitation = () => {
         if (newToken) sessionStorage.setItem("auth-token", newToken);
         setAuth(user, activeToken, user.restaurantId);
         return { success: true };
-      } else {
-        setError("Código inválido o expirado.");
-        return { success: false };
       }
-    } catch {
-      setError("Código inválido o expirado.");
-      return { success: false };
+      const errorMessage = getErrorMessage(null, "acceptInvitation");
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } catch (err) {
+      const errorMessage = getErrorMessage(err, "acceptInvitation");
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
     } finally {
       setIsLoading(false);
     }

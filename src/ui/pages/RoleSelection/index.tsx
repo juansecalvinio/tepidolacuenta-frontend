@@ -1,8 +1,9 @@
 import { useState, type FormEvent } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Navigate } from "react-router-dom";
 import { useFetchAuth } from "../../hooks/useFetchAuth";
 import { useFetchInvitation } from "../../hooks/useFetchInvitation";
 import { AuthLogo } from "../../components/AuthLogo";
+import { Alert } from "../../components/Alert";
 
 type SelectedRole = "owner" | "employee" | null;
 
@@ -35,8 +36,7 @@ export const RoleSelection = () => {
 
   // Acceso directo sin estado válido → redirigir al inicio del registro
   if (!isOAuth && !hasCredentials) {
-    navigate("/register", { replace: true });
-    return null;
+    return <Navigate to="/register" replace />;
   }
 
   const isLoading = authLoading || invitationLoading;
@@ -113,24 +113,7 @@ export const RoleSelection = () => {
               Elegí una opción para configurar tu cuenta.
             </p>
 
-            {error && (
-              <div className="alert alert-error alert-soft mb-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="stroke-current shrink-0 h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                <span>{error}</span>
-              </div>
-            )}
+            {error && <Alert className="mb-2">{error}</Alert>}
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-3">
               {/* Opción owner */}

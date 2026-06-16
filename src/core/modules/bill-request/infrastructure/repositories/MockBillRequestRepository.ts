@@ -1,6 +1,7 @@
 import type { BillRequestRepository } from "../../domain/repositories/BillRequestRepository";
 import type {
   GetPendingBillRequestsResponse,
+  GetVenueInfoResponse,
   MarkBillRequestAsAttendedRequest,
   MarkBillRequestAsAttendedResponse,
   BillRequest,
@@ -80,5 +81,18 @@ export class MockBillRequestRepository implements BillRequestRepository {
   async createBillRequest(): Promise<CreateBillRequestResponse> {
     await mockDelay(2000);
     return mockRequestResponse;
+  }
+
+  async getVenueInfo(): Promise<GetVenueInfoResponse> {
+    await mockDelay(400);
+    return {
+      success: true,
+      message: "Venue info retrieved successfully",
+      data: {
+        restaurantName: "La Trattoria",
+        branchAddress: "Av. Corrientes 1234",
+        tableNumber: 5,
+      },
+    };
   }
 }

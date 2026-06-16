@@ -14,6 +14,7 @@ import {
   type WsStatus,
 } from "../../hooks/useWebSocketNotifications";
 import { NewTrialBanner } from "../../components/NewTrialBanner";
+import { NotificationPermissionBanner } from "../../components/NotificationPermissionBanner";
 import { TimeUtils } from "../../utils/time.utils";
 import type {
   BillRequest,
@@ -230,6 +231,8 @@ export const NewDashboard = () => {
         </div>
         <WsBadge status={wsStatus} />
       </div>
+
+      <NotificationPermissionBanner />
 
       {/* Reconectando — aviso transitorio */}
       {wsStatus === "reconnecting" && (

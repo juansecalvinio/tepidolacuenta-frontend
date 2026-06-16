@@ -80,9 +80,9 @@ export const Profile = () => {
             </div>
             <button
               className="btn btn-sm btn-secondary shrink-0"
-              onClick={() => navigate("/dashboard/plans")}
+              onClick={() => navigate("/dashboard/subscription")}
             >
-              Modificar
+              Gestionar
             </button>
           </div>
 

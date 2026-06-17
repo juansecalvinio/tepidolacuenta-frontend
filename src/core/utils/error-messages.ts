@@ -23,7 +23,9 @@ export type FetchOperation =
   | "getPayment"
   | "getPaymentHistory"
   | "generateInvitation"
-  | "acceptInvitation";
+  | "acceptInvitation"
+  | "listEmployees"
+  | "revokeEmployee";
 
 const SERVERS_DOWN =
   "En este momento los servidores no están disponibles. Por favor, reintentá más tarde.";
@@ -167,6 +169,15 @@ const byStatus: Record<FetchOperation, Partial<Record<number, string>>> = {
     404: "El código es inválido o ya expiró.",
     409: "Este código de invitación ya fue utilizado.",
   },
+  listEmployees: {
+    401: SESSION_EXPIRED,
+    403: "Solo el dueño del local puede ver el equipo.",
+  },
+  revokeEmployee: {
+    401: SESSION_EXPIRED,
+    403: "No tenés permisos para revocar a este empleado.",
+    404: "No encontramos al empleado.",
+  },
 };
 
 const defaultMessages: Record<FetchOperation, string> = {
@@ -216,6 +227,10 @@ const defaultMessages: Record<FetchOperation, string> = {
     "No pudimos generar el código de invitación. Por favor, reintentá más tarde.",
   acceptInvitation:
     "No pudimos validar el código de invitación. Por favor, reintentá más tarde.",
+  listEmployees:
+    "No pudimos cargar el equipo. Por favor, reintentá más tarde.",
+  revokeEmployee:
+    "No pudimos revocar el acceso del empleado. Por favor, reintentá más tarde.",
 };
 
 /**

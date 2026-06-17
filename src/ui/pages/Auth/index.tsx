@@ -3,7 +3,7 @@ import { useFetchAuth } from "../../hooks/useFetchAuth";
 import { useEffect, useState, type FormEvent } from "react";
 import { AuthLogo } from "../../components/AuthLogo";
 import { Alert } from "../../components/Alert";
-import { EyeIcon, EyeOffIcon } from "../../components/icons";
+import { EyeIcon, EyeOffIcon } from "../../components/Icons";
 
 interface Props {
   authType: "login" | "register";

@@ -12,14 +12,15 @@ export const useFetchInvitation = () => {
   const [invitationCode, setInvitationCode] = useState<string | null>(null);
   const [invitationExpiresAt, setInvitationExpiresAt] = useState<string | null>(null);
 
-  const generateInvitation = useCallback(async (restaurantId: string) => {
+  const generateInvitation = useCallback(
+    async (restaurantId: string, branchId: string) => {
     try {
       setIsLoading(true);
       setError(null);
 
       const repository = getInvitationRepository();
       const generateInvitationUseCase = GenerateInvitation(repository);
-      const response = await generateInvitationUseCase({ restaurantId });
+      const response = await generateInvitationUseCase({ restaurantId, branchId });
 
       if (response.success) {
         setInvitationCode(response.data.code);

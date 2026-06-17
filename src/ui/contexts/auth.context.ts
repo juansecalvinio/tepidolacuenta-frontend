@@ -68,6 +68,8 @@ export const useAuthContext = create<AuthContext>()(
             user,
             token,
             restaurantId: restaurantId || null,
+            // El empleado viene con su sucursal en el user; el owner no tiene.
+            branchId: user.branchId || null,
             isAuthenticated: true,
             error: null,
           }),
@@ -100,6 +102,7 @@ export const useAuthContext = create<AuthContext>()(
           user: state.user,
           token: state.token,
           restaurantId: state.restaurantId,
+          branchId: state.branchId,
           isAuthenticated: state.isAuthenticated,
         }),
       },

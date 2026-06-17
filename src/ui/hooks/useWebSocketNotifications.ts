@@ -4,6 +4,7 @@ import { useNotifications } from "../contexts/notification.context";
 import type { BillRequestWsResponse } from "../../core/modules/bill-request-ws/domain/models/BillRequestWs";
 import type { PaymentApprovedWsMessage } from "../../core/modules/payment/domain/models/Payment";
 import { useFetchBillRequests } from "./useFetchBillRequests";
+import { useAuth } from "./useAuth";
 
 type WsMessage = BillRequestWsResponse | PaymentApprovedWsMessage;
 
@@ -20,7 +21,15 @@ const globalRecentNotifications = new Set<string>();
 export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
   const { addNotification } = useNotifications();
   const { fetchPendingRequests } = useFetchBillRequests();
+  const { branchId, isEmployee } = useAuth();
   const [wsStatus, setWsStatus] = useState<WsStatus>("connecting");
+
+  // Ref con el scope de sucursal del empleado, leído por el closure de onmessage
+  // sin necesidad de reconectar el WebSocket cuando cambia.
+  const branchScopeRef = useRef({ branchId, isEmployee });
+  useEffect(() => {
+    branchScopeRef.current = { branchId, isEmployee };
+  }, [branchId, isEmployee]);
 
   // Limpiar baseUrl de protocolos existentes
   const baseUrl = (import.meta.env.VITE_WS_BASE_URL || "localhost:8080")
@@ -86,6 +95,14 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
           const billData = data as BillRequestWsResponse;
           logger.debug("✅ Datos parseados:", billData);
           logger.debug(`🍽️ Mesa ${billData.tableNumber} - Estado: ${billData.status}`);
+
+          // Empleado scopeado a una sucursal: ignorar pedidos de otras sucursales.
+          const { branchId: empBranchId, isEmployee: emp } =
+            branchScopeRef.current;
+          if (emp && empBranchId && billData.branchId !== empBranchId) {
+            logger.debug("⏭️ Pedido de otra sucursal, ignorado");
+            return;
+          }
 
           // Mostrar notificación solo si es un pedido nuevo (pending)
           if (billData.status === "pending") {

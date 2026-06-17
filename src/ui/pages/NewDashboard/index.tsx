@@ -123,7 +123,7 @@ const LoadingSkeleton = () => (
 
 export const NewDashboard = () => {
   const navigate = useNavigate();
-  const { token, restaurantId } = useAuth();
+  const { token, restaurantId, isOwner } = useAuth();
   const { fetchRestaurant } = useFetchRestaurant();
   const { fetchBranchesByRestaurant } = useFetchBranches();
   const { fetchTables } = useFetchTables();
@@ -326,12 +326,16 @@ export const NewDashboard = () => {
           {isTablesLoading ? (
             <div className="h-8 w-8 bg-base-300 rounded animate-pulse" />
           ) : tables.length === 0 ? (
-            <button
-              className="text-sm font-medium text-primary hover:underline underline-offset-2 transition-all"
-              onClick={() => navigate("/dashboard/tables/add-tables")}
-            >
-              Configurar mesas →
-            </button>
+            isOwner ? (
+              <button
+                className="text-sm font-medium text-primary hover:underline underline-offset-2 transition-all"
+                onClick={() => navigate("/dashboard/tables/add-tables")}
+              >
+                Configurar mesas →
+              </button>
+            ) : (
+              <span className="text-sm text-base-content/40">Sin mesas</span>
+            )
           ) : (
             <div className="flex items-end justify-between">
               <span className="font-host text-3xl font-black">

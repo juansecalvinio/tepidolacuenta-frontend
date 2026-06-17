@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { AlertCircleIcon } from "../icons";
+import { AlertCircleIcon } from "../Icons";
 
 type AlertVariant = "error" | "success" | "warning" | "info";
 

@@ -5,6 +5,7 @@ export interface User {
   email: string;
   role: UserRole;
   restaurantId?: string;
+  branchId?: string;
   createdAt: Date | string;
   updatedAt: Date | string;
 }

@@ -3,7 +3,6 @@ import { useAuth } from "../../hooks/useAuth";
 import { AvatarMenu } from "../AvatarMenu";
 import { avatarMenuItemsData } from "../../data/avatar-menu";
 import { BranchSelector } from "../../pages/BranchSelector";
-import { ToggleTheme } from "../ToggleTheme";
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -32,8 +31,6 @@ export const Header = () => {
         <BranchSelector />
 
         <div className="flex items-center gap-2 sm:gap-4">
-          <ToggleTheme />
-
           {user && <AvatarMenu items={avatarMenuItemsData} />}
         </div>
       </div>

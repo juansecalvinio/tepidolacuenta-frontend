@@ -11,6 +11,7 @@ import {
 } from "../utils/notificationSound";
 import { showDesktopNotification } from "../utils/desktopNotification";
 import { startTitleFlash } from "../utils/titleFlash";
+import { usePreferencesContext } from "./preferences.context";
 
 export interface NotificationData {
   id: string;
@@ -73,12 +74,19 @@ export const NotificationProvider = ({
 
     setNotifications((prev) => [newNotification, ...prev]); // Agregar al inicio para que aparezca arriba
 
-    // Siempre intentamos el sonido in-app (con el audio ya desbloqueado por un
-    // gesto, la mayoría de los navegadores lo dejan sonar incluso en segundo
-    // plano). Y si la pestaña está oculta, sumamos notificación del sistema +
-    // parpadeo del título como respaldo visible.
-    playNotificationSound();
-    if (typeof document !== "undefined" && document.hidden) {
+    // Respetamos las preferencias del usuario (sonido / notif. de escritorio).
+    const { notifications } = usePreferencesContext.getState();
+
+    if (notifications.sound) {
+      playNotificationSound();
+    }
+    // Si la pestaña está oculta y el usuario lo tiene activado: notificación del
+    // sistema + parpadeo del título como respaldo visible.
+    if (
+      notifications.desktop &&
+      typeof document !== "undefined" &&
+      document.hidden
+    ) {
       showDesktopNotification(
         "tepidolacuenta",
         resolvedMessage,

@@ -290,6 +290,10 @@ body {
   }
 }
 
+@page {
+  margin: 12mm;
+}
+
 @media print {
   header {
     display: none !important;

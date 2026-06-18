@@ -39,6 +39,12 @@ const RoleSelection = lazy(() =>
 const Profile = lazy(() =>
   import("../pages/Profile").then((m) => ({ default: m.Profile })),
 );
+const Settings = lazy(() =>
+  import("../pages/Settings").then((m) => ({ default: m.Settings })),
+);
+const PrintQRs = lazy(() =>
+  import("../pages/PrintQRs").then((m) => ({ default: m.PrintQRs })),
+);
 const Restaurant = lazy(() =>
   import("../pages/Restaurant").then((m) => ({ default: m.Restaurant })),
 );
@@ -150,6 +156,16 @@ function AppRouter() {
         }
       />
 
+      {/* Vista de impresión de QRs (sin layout, para imprimir limpio) */}
+      <Route
+        path="/dashboard/tables/print"
+        element={
+          <ProtectedRoute>
+            <PrintQRs />
+          </ProtectedRoute>
+        }
+      />
+
       {/* Rutas protegidas con layout  */}
       <Route element={<MainLayout />}>
         <Route
@@ -193,6 +209,14 @@ function AppRouter() {
           element={
             <ProtectedRoute>
               <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/settings"
+          element={
+            <ProtectedRoute>
+              <Settings />
             </ProtectedRoute>
           }
         />

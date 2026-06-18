@@ -57,7 +57,7 @@ export const AddTables = () => {
         </h2>
         <PlanLimitReached
           title="Límite de mesas alcanzado"
-          description={`Tu plan actual permite hasta ${maxTables} ${maxTables === 1 ? "mesa" : "mesas"}. Actualizá tu plan para poder agregar más.`}
+          description={`Tu plan actual permite hasta ${maxTables} ${maxTables === 1 ? "mesa" : "mesas"} por sucursal. Actualizá tu plan para poder agregar más.`}
         />
       </div>
     );
@@ -65,9 +65,19 @@ export const AddTables = () => {
 
   return (
     <div className="p-4 max-w-3xl mx-auto">
-      <h2 className="font-display text-xl text-center font-semibold mb-6">
+      <h2
+        className={`font-display text-xl text-center font-semibold ${
+          maxTables !== -1 ? "mb-2" : "mb-6"
+        }`}
+      >
         Agregar mesas a {activeBranch?.address || "tu sucursal"}
       </h2>
+
+      {maxTables !== -1 && (
+        <p className="text-center text-sm text-base-content/60 mb-6">
+          {currentCount} de {maxTables} mesas en esta sucursal
+        </p>
+      )}
 
       {wouldExceedLimit && remaining !== null && (
         <div role="alert" className="alert alert-soft alert-warning mb-4">

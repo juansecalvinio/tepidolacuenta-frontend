@@ -1,7 +1,7 @@
 import type { Plan } from "../../../core/modules/subscription/domain/models/Subscription";
 import { PriceUtils } from "../../utils/price.utils";
 import { getPlanFeatures } from "../../utils/plan.utils";
-import { CheckIcon } from "../Icons";
+import { CheckIcon } from "../icons";
 
 interface Props {
   plan: Plan;

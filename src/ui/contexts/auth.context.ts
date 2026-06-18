@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { devtools, persist, createJSONStorage } from "zustand/middleware";
+import * as Sentry from "@sentry/react";
 import type { User } from "../../core/modules/auth/domain/models/User";
 
 interface AuthState {
@@ -63,16 +64,27 @@ export const useAuthContext = create<AuthContext>()(
             branchId,
           }),
 
-        setAuth: (user, token, restaurantId) =>
+        setAuth: (user, token, restaurantId) => {
+          const branchId = user.branchId || null;
+          const effectiveRestaurantId =
+            restaurantId || user.restaurantId || null;
+
+          // Contexto para Sentry: quién es y de qué local/rol (para filtrar/alertar).
+          Sentry.setUser({ id: user.id, email: user.email });
+          Sentry.setTag("role", user.role);
+          Sentry.setTag("restaurantId", effectiveRestaurantId ?? undefined);
+          Sentry.setTag("branchId", branchId ?? undefined);
+
           set({
             user,
             token,
             restaurantId: restaurantId || null,
             // El empleado viene con su sucursal en el user; el owner no tiene.
-            branchId: user.branchId || null,
+            branchId,
             isAuthenticated: true,
             error: null,
-          }),
+          });
+        },
 
         setLoading: (isLoading) =>
           set({
@@ -85,10 +97,12 @@ export const useAuthContext = create<AuthContext>()(
             isLoading: false,
           }),
 
-        logout: () =>
+        logout: () => {
+          Sentry.setUser(null);
           set({
             ...initialState,
-          }),
+          });
+        },
 
         clearError: () =>
           set({

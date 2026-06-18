@@ -1,32 +1,8 @@
-import { useEffect, useState } from "react";
-
-type Theme = "black" | "white";
-
-const THEME_COLORS: Record<Theme, string> = {
-  black: "#1a1a1a",
-  white: "#fafafa",
-};
-
-const getInitialTheme = (): Theme =>
-  document.documentElement.getAttribute("data-theme") === "white"
-    ? "white"
-    : "black";
+import { usePreferencesContext } from "../../contexts/preferences.context";
 
 export const ToggleTheme = () => {
-  const [theme, setTheme] = useState<Theme>(getInitialTheme);
-
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-    try {
-      localStorage.setItem("theme", theme);
-    } catch {
-      // localStorage no disponible (modo privado) — el tema igual se aplica en memoria
-    }
-    document
-      .querySelector('meta[name="theme-color"]')
-      ?.setAttribute("content", THEME_COLORS[theme]);
-  }, [theme]);
-
+  const theme = usePreferencesContext((s) => s.theme);
+  const setTheme = usePreferencesContext((s) => s.setTheme);
   const isDark = theme === "black";
 
   return (

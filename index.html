@@ -15,7 +15,7 @@
   </head>
   <body>
     <script>
-      // Aplica el tema guardado antes de pintar para evitar flash (FOUC)
+      // Aplica el tema y el color primary guardados antes de pintar (anti-FOUC)
       (function () {
         try {
           var t = localStorage.getItem("theme");
@@ -23,6 +23,20 @@
             document.documentElement.setAttribute("data-theme", t);
             var meta = document.querySelector('meta[name="theme-color"]');
             if (meta) meta.setAttribute("content", t === "white" ? "#fafafa" : "#1a1a1a");
+          }
+        } catch (e) {}
+        // Color primary (mirror de src/ui/utils/primaryColor.ts)
+        try {
+          var PRIMARY = {
+            amber: ["oklch(83% 0.128 66.29)", "oklch(14% 0 0)"],
+            emerald: ["oklch(80% 0.14 162)", "oklch(14% 0 0)"],
+            indigo: ["oklch(58% 0.2 270)", "oklch(98% 0 0)"],
+          };
+          var raw = localStorage.getItem("tplc-preferences");
+          var color = raw && JSON.parse(raw).state.primaryColor;
+          if (color && PRIMARY[color]) {
+            document.documentElement.style.setProperty("--color-primary", PRIMARY[color][0]);
+            document.documentElement.style.setProperty("--color-primary-content", PRIMARY[color][1]);
           }
         } catch (e) {}
       })();

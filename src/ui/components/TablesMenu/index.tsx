@@ -10,7 +10,7 @@ export const TablesMenu = () => {
   };
 
   const handlePrintQRs = () => {
-    window.print();
+    navigate("/dashboard/tables/print");
   };
 
   return (

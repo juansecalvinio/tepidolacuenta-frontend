@@ -7,7 +7,12 @@ import * as Sentry from "@sentry/react";
  */
 export const initSentry = () => {
   const dsn = import.meta.env.VITE_SENTRY_DSN;
-  if (!dsn) return;
+  if (!dsn) {
+    console.warn(
+      "[observability] Sentry NO inicializado: falta VITE_SENTRY_DSN en el build.",
+    );
+    return;
+  }
 
   Sentry.init({
     dsn,
@@ -20,6 +25,8 @@ export const initSentry = () => {
     // se activa en la Fase 3, junto con el CORS). Bajá este valor si el volumen molesta.
     tracesSampleRate: 1.0,
   });
+
+  console.info("[observability] Sentry inicializado ✓");
 };
 
 export { Sentry };

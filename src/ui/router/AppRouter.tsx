@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { MainLayout } from "../layouts/MainLayout";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 import { OwnerRoute } from "../components/OwnerRoute";
+import { useDomainRouting } from "../hooks/useDomainRouting";
 
 // Páginas cargadas de forma diferida (code-splitting por ruta).
 const Landing = lazy(() =>
@@ -86,6 +87,8 @@ const PageLoader = () => (
 );
 
 function AppRouter() {
+  useDomainRouting();
+
   return (
     <Suspense fallback={<PageLoader />}>
       <Routes>

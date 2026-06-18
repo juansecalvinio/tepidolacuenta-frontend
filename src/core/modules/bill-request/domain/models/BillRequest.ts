@@ -41,3 +41,23 @@ export interface CreateBillRequestResponse {
   message: string;
   data: BillRequest;
 }
+
+export interface VenueInfoParams {
+  restaurantId: string;
+  branchId: string;
+  tableId: string;
+  tableNumber: number;
+  hash: string;
+}
+
+export interface VenueInfo {
+  restaurantName: string;
+  branchAddress: string;
+  tableNumber: number;
+}
+
+export interface GetVenueInfoResponse {
+  success: boolean;
+  message: string;
+  data: VenueInfo;
+}

@@ -2,6 +2,7 @@ import type { User } from "../../../auth/domain/models/User";
 
 export interface GenerateInvitationRequest {
   restaurantId: string;
+  branchId: string;
 }
 
 export interface GenerateInvitationResponse {

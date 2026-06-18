@@ -12,14 +12,17 @@ interface Props {
 
 export const AvatarMenu = ({ items }: Props) => {
   const navigate = useNavigate();
-  const { logout, user } = useAuth();
+  const { logout, user, isOwner } = useAuth();
 
   const handleLogout = () => {
     logout();
     navigate("/");
   };
 
-  const itemsWithHandlers: AvatarMenuItemWithHandler[] = items.map((item) => {
+  // Los empleados no ven los ítems owner-only (plan, local).
+  const visibleItems = items.filter((item) => !item.ownerOnly || isOwner);
+
+  const itemsWithHandlers: AvatarMenuItemWithHandler[] = visibleItems.map((item) => {
     switch (item.id) {
       case "dashboard":
         return { ...item, onClick: () => navigate("/dashboard") };

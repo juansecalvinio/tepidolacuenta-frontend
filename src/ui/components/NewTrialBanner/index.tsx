@@ -6,15 +6,18 @@ import { useAuth } from "../../hooks/useAuth";
 
 export const NewTrialBanner = () => {
   const navigate = useNavigate();
-  const { restaurantId } = useAuth();
+  const { restaurantId, isOwner } = useAuth();
   const { isTrialing, isExpired, trialDaysRemaining } = useSubscription();
   const { fetchPlans, fetchSubscription } = useFetchSubscription();
 
   useEffect(() => {
-    if (!restaurantId) return;
+    // El trial/plan es asunto del owner; los empleados no lo gestionan.
+    if (!isOwner || !restaurantId) return;
     fetchPlans();
     fetchSubscription(restaurantId);
-  }, [restaurantId, fetchPlans, fetchSubscription]);
+  }, [isOwner, restaurantId, fetchPlans, fetchSubscription]);
+
+  if (!isOwner) return null;
 
   if (!isTrialing && !isExpired) return null;
 

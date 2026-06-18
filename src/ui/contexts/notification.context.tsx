@@ -1,4 +1,16 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
+import {
+  playNotificationSound,
+  unlockNotificationSound,
+} from "../utils/notificationSound";
+import { showDesktopNotification } from "../utils/desktopNotification";
+import { startTitleFlash } from "../utils/titleFlash";
 
 export interface NotificationData {
   id: string;
@@ -37,15 +49,43 @@ export const NotificationProvider = ({
 }: NotificationProviderProps) => {
   const [notifications, setNotifications] = useState<NotificationData[]>([]);
 
+  // Desbloqueamos el audio en la primera interacción del usuario para sortear
+  // la política de autoplay (si no, el primer aviso puede salir mudo).
+  useEffect(() => {
+    const unlock = () => unlockNotificationSound();
+    window.addEventListener("pointerdown", unlock, { once: true });
+    window.addEventListener("keydown", unlock, { once: true });
+    return () => {
+      window.removeEventListener("pointerdown", unlock);
+      window.removeEventListener("keydown", unlock);
+    };
+  }, []);
+
   const addNotification = (tableNumber: number, message?: string) => {
+    const resolvedMessage =
+      message || `Nueva solicitud de la mesa ${tableNumber}`;
     const newNotification: NotificationData = {
       id: `notification-${Date.now()}-${Math.random()}`,
       tableNumber,
-      message: message || `Nueva solicitud de la mesa ${tableNumber}`,
+      message: resolvedMessage,
       timestamp: new Date(),
     };
 
     setNotifications((prev) => [newNotification, ...prev]); // Agregar al inicio para que aparezca arriba
+
+    // Siempre intentamos el sonido in-app (con el audio ya desbloqueado por un
+    // gesto, la mayoría de los navegadores lo dejan sonar incluso en segundo
+    // plano). Y si la pestaña está oculta, sumamos notificación del sistema +
+    // parpadeo del título como respaldo visible.
+    playNotificationSound();
+    if (typeof document !== "undefined" && document.hidden) {
+      showDesktopNotification(
+        "tepidolacuenta",
+        resolvedMessage,
+        newNotification.id,
+      );
+      startTitleFlash(`🔔 ${resolvedMessage}`);
+    }
   };
 
   const removeNotification = (id: string) => {

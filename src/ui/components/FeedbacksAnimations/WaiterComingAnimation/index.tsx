@@ -1,12 +1,18 @@
-export const WaiterComingAnimation = () => (
+interface WaiterComingAnimationProps {
+  method?: { icon: string; label: string };
+}
+
+export const WaiterComingAnimation = ({
+  method,
+}: WaiterComingAnimationProps) => (
   <div
     role="status"
     aria-live="polite"
     aria-label="Cuenta pedida. El mozo está yendo a tu mesa."
-    className="flex flex-col items-center gap-6 animate-fade-in"
+    className="flex flex-col items-center gap-6 animate-fade-in motion-reduce:animate-none"
   >
     {/* Recibo con checkmark flotando */}
-    <div className="animate-gentle-float" aria-hidden="true">
+    <div className="animate-gentle-float motion-reduce:animate-none" aria-hidden="true">
       <svg width="56" height="68" viewBox="0 0 56 68" fill="none">
         {/* Papel */}
         <rect
@@ -90,7 +96,7 @@ export const WaiterComingAnimation = () => (
     <div className="flex flex-col gap-2.5 items-center" aria-hidden="true">
       {/* Paso 1 — más lejos (izquierda) */}
       <div
-        className="flex gap-10 items-center animate-footstep"
+        className="flex gap-10 items-center animate-footstep motion-reduce:animate-none"
         style={{ animationDelay: "0s" }}
       >
         <div className="w-3 h-5 rounded-full bg-success/20 -rotate-12" />
@@ -98,7 +104,7 @@ export const WaiterComingAnimation = () => (
       </div>
       {/* Paso 2 (derecha) */}
       <div
-        className="flex gap-10 items-center animate-footstep"
+        className="flex gap-10 items-center animate-footstep motion-reduce:animate-none"
         style={{ animationDelay: "0.2s" }}
       >
         <div className="w-3 h-5 opacity-0" />
@@ -106,7 +112,7 @@ export const WaiterComingAnimation = () => (
       </div>
       {/* Paso 3 (izquierda) */}
       <div
-        className="flex gap-10 items-center animate-footstep"
+        className="flex gap-10 items-center animate-footstep motion-reduce:animate-none"
         style={{ animationDelay: "0.4s" }}
       >
         <div className="w-3.5 h-6 rounded-full bg-success/55 -rotate-12" />
@@ -114,7 +120,7 @@ export const WaiterComingAnimation = () => (
       </div>
       {/* Paso 4 — más cerca (derecha) */}
       <div
-        className="flex gap-10 items-center animate-footstep"
+        className="flex gap-10 items-center animate-footstep motion-reduce:animate-none"
         style={{ animationDelay: "0.6s" }}
       >
         <div className="w-4 h-6 opacity-0" />
@@ -122,11 +128,20 @@ export const WaiterComingAnimation = () => (
       </div>
     </div>
 
-    <div className="flex flex-col items-center gap-1.5 text-center">
-      <p className="text-sm font-semibold text-base-content">¡Cuenta pedida!</p>
-      <p className="text-xs text-base-content/40">
+    <div className="flex flex-col items-center gap-2 text-center">
+      <p className="text-xl font-bold text-base-content">¡Cuenta pedida!</p>
+      <p className="text-base text-base-content/70">
         El mozo está yendo a tu mesa
       </p>
+      {method && (
+        <p className="mt-1 flex items-center gap-1.5 text-sm text-base-content/70">
+          <span>Pagás con</span>
+          <span aria-hidden="true">{method.icon}</span>
+          <span className="font-semibold text-base-content">
+            {method.label}
+          </span>
+        </p>
+      )}
     </div>
   </div>
 );

@@ -1,24 +1,59 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { useFetchAuth } from "../../hooks/useFetchAuth";
 import { useRestaurants } from "../../hooks/useRestaurants";
 import { useSubscription } from "../../hooks/useSubscription";
 import { useFetchInvitation } from "../../hooks/useFetchInvitation";
+import { useFetchTeam } from "../../hooks/useFetchTeam";
+import { useFetchBranches } from "../../hooks/useFetchBranches";
 
 export const Profile = () => {
   const navigate = useNavigate();
   const { user, restaurantId, isOwner } = useAuth();
   const { logout } = useFetchAuth();
-  const { restaurant } = useRestaurants();
+  const { restaurant, branches, activeBranch } = useRestaurants();
+  const { fetchBranchesByRestaurant } = useFetchBranches();
   const { subscription } = useSubscription();
   const { isLoading: invitationLoading, error: invitationError, invitationCode, invitationExpiresAt, generateInvitation, clearInvitation } = useFetchInvitation();
+  const {
+    employees,
+    isLoading: teamLoading,
+    error: teamError,
+    revokingId,
+    fetchEmployees,
+    revokeEmployee,
+  } = useFetchTeam();
   const [copied, setCopied] = useState(false);
+  const [confirmRevokeId, setConfirmRevokeId] = useState<string | null>(null);
+  const [selectedBranchId, setSelectedBranchId] = useState<string>("");
+
+  useEffect(() => {
+    if (isOwner && restaurantId) {
+      fetchEmployees(restaurantId);
+      fetchBranchesByRestaurant(restaurantId);
+    }
+  }, [isOwner, restaurantId, fetchEmployees, fetchBranchesByRestaurant]);
+
+  // Sucursal efectiva: la elegida o, por defecto, la activa / la primera.
+  const effectiveBranchId =
+    selectedBranchId || activeBranch?.id || branches?.[0]?.id || "";
+
+  const branchName = (branchId?: string) => {
+    const branch = branches?.find((b) => b.id === branchId);
+    return branch?.name || branch?.address || "Sucursal";
+  };
 
   const handleGenerateInvitation = async () => {
-    if (restaurantId) {
-      await generateInvitation(restaurantId);
+    if (restaurantId && effectiveBranchId) {
+      await generateInvitation(restaurantId, effectiveBranchId);
     }
+  };
+
+  const handleRevokeEmployee = async (employeeId: string) => {
+    if (!restaurantId) return;
+    await revokeEmployee(restaurantId, employeeId);
+    setConfirmRevokeId(null);
   };
 
   const handleCopyCode = async () => {
@@ -29,8 +64,10 @@ export const Profile = () => {
     }
   };
 
-  const formatExpiresAt = (iso: string) =>
-    new Date(iso).toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric" });
+  const formatDate = (value: Date | string) =>
+    new Date(value).toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric" });
+
+  const formatExpiresAt = (iso: string) => formatDate(iso);
 
   return (
     <div className="p-4 max-w-3xl mx-auto">
@@ -80,9 +117,9 @@ export const Profile = () => {
             </div>
             <button
               className="btn btn-sm btn-secondary shrink-0"
-              onClick={() => navigate("/dashboard/plans")}
+              onClick={() => navigate("/dashboard/subscription")}
             >
-              Modificar
+              Gestionar
             </button>
           </div>
 
@@ -91,7 +128,7 @@ export const Profile = () => {
           <div className="bg-base-100 border border-base-300 rounded-xl overflow-hidden">
             <div className="p-4 border-b border-base-300">
               <p className="text-sm text-base-content/60">
-                Generá un código de invitación para que un empleado pueda registrarse. El código expira a los 7 días y es de un solo uso.
+                Elegí la sucursal y generá un código para que un empleado se registre con acceso solo a esa sucursal. El código expira a los 7 días y es de un solo uso.
               </p>
             </div>
 
@@ -118,6 +155,12 @@ export const Profile = () => {
                       Expira el {formatExpiresAt(invitationExpiresAt)}
                     </p>
                   )}
+                  <p className="text-xs text-base-content/50">
+                    Acceso a:{" "}
+                    <span className="font-medium text-base-content/70">
+                      {branchName(effectiveBranchId)}
+                    </span>
+                  </p>
                   <button
                     className="btn btn-sm btn-ghost self-start"
                     onClick={clearInvitation}
@@ -126,19 +169,117 @@ export const Profile = () => {
                   </button>
                 </div>
               ) : (
-                <button
-                  className="btn btn-primary btn-sm"
-                  onClick={handleGenerateInvitation}
-                  disabled={invitationLoading}
-                >
-                  {invitationLoading ? (
-                    <span className="loading loading-spinner loading-xs" />
-                  ) : (
-                    "Generar código de invitación"
-                  )}
-                </button>
+                <div className="flex flex-col gap-3">
+                  <label className="flex flex-col gap-1">
+                    <span className="text-xs font-medium text-base-content/70">
+                      Sucursal
+                    </span>
+                    <select
+                      className="select select-bordered select-sm"
+                      value={effectiveBranchId}
+                      onChange={(e) => setSelectedBranchId(e.target.value)}
+                    >
+                      {(branches ?? []).map((branch) => (
+                        <option key={branch.id} value={branch.id}>
+                          {branch.name || branch.address}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <button
+                    className="btn btn-primary btn-sm self-start"
+                    onClick={handleGenerateInvitation}
+                    disabled={invitationLoading || !effectiveBranchId}
+                  >
+                    {invitationLoading ? (
+                      <span className="loading loading-spinner loading-xs" />
+                    ) : (
+                      "Generar código de invitación"
+                    )}
+                  </button>
+                </div>
               )}
             </div>
+          </div>
+
+          {/* Lista de empleados */}
+          <div className="bg-base-100 border border-base-300 rounded-xl overflow-hidden mt-4">
+            <div className="p-4 border-b border-base-300">
+              <p className="text-sm font-medium text-base-content">Empleados</p>
+              <p className="text-xs text-base-content/60 mt-0.5">
+                Tienen acceso a este local. Podés revocarles el acceso cuando quieras.
+              </p>
+            </div>
+
+            {teamError && (
+              <div className="p-4">
+                <div className="alert alert-error alert-soft">
+                  <span>{teamError}</span>
+                </div>
+              </div>
+            )}
+
+            {teamLoading ? (
+              <div className="p-4 flex justify-center">
+                <span
+                  className="loading loading-spinner loading-sm"
+                  aria-label="Cargando empleados…"
+                />
+              </div>
+            ) : employees.length === 0 ? (
+              <p className="p-4 text-sm text-base-content/50">
+                Todavía no hay empleados. Generá un código de invitación para sumar uno.
+              </p>
+            ) : (
+              <ul className="divide-y divide-base-300">
+                {employees.map((employee) => (
+                  <li
+                    key={employee.id}
+                    className="p-4 flex items-center justify-between gap-3"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium truncate">
+                        {employee.email}
+                      </p>
+                      <p className="text-xs text-base-content/50 truncate">
+                        {branchName(employee.branchId)} · Desde{" "}
+                        {formatDate(employee.createdAt)}
+                      </p>
+                    </div>
+
+                    {confirmRevokeId === employee.id ? (
+                      <div className="flex items-center gap-2 shrink-0">
+                        <button
+                          className="btn btn-xs btn-error"
+                          onClick={() => handleRevokeEmployee(employee.id)}
+                          disabled={revokingId === employee.id}
+                        >
+                          {revokingId === employee.id ? (
+                            <span className="loading loading-spinner loading-xs" />
+                          ) : (
+                            "Revocar"
+                          )}
+                        </button>
+                        <button
+                          className="btn btn-xs btn-ghost"
+                          onClick={() => setConfirmRevokeId(null)}
+                          disabled={revokingId === employee.id}
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        className="btn btn-xs btn-ghost text-error shrink-0"
+                        onClick={() => setConfirmRevokeId(employee.id)}
+                      >
+                        Revocar
+                      </button>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </>
       )}

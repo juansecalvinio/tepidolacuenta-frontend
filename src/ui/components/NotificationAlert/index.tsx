@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import { useSound } from "../../hooks/useSound";
 
 interface NotificationAlertProps {
   id: string;
@@ -19,14 +18,6 @@ export const NotificationAlert = ({
 }: NotificationAlertProps) => {
   const [isVisible, setIsVisible] = useState(true);
   const [isClosing, setIsClosing] = useState(false);
-  const [_, setProgress] = useState(100);
-
-  const { play } = useSound("/sounds/notification.wav", { volume: 0.3 });
-
-  useEffect(() => {
-    // El componente se muestra inmediatamente cuando se monta
-    play();
-  }, [play]);
 
   const handleClose = useCallback(() => {
     setIsClosing(true);
@@ -41,21 +32,11 @@ export const NotificationAlert = ({
   useEffect(() => {
     if (!isVisible || !autoClose) return;
 
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        const newProgress = prev - 100 / (duration / 100); // Disminuir cada 100ms
-        return newProgress > 0 ? newProgress : 0;
-      });
-    }, 100);
-
     const timer = setTimeout(() => {
       handleClose();
     }, duration);
 
-    return () => {
-      clearInterval(interval);
-      clearTimeout(timer);
-    };
+    return () => clearTimeout(timer);
   }, [isVisible, autoClose, duration, handleClose]);
 
   if (!isVisible && !isClosing) {

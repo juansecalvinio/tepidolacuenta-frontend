@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import { APP_ORIGIN, isAppHost } from "../../utils/host";
 import { motion } from "motion/react";
 import QRCode from "react-qr-code";
 import { useAuth } from "../../hooks/useAuth";
@@ -260,7 +261,7 @@ const HeroMockup = () => (
         <span className="font-display text-lg font-semibold">La Parrilla</span>
         <span className="text-xs text-base-content/50 mb-4">Mesa 5</span>
         <div className="rounded-xl bg-white p-3">
-          <QRCode value="https://tepidolacuenta.app/request" size={116} />
+          <QRCode value={`${APP_ORIGIN}/request`} size={116} />
         </div>
         <div className="mt-5 w-full rounded-xl bg-primary text-primary-content text-sm font-semibold py-2.5">
           Pedir la cuenta
@@ -304,6 +305,7 @@ export const Landing = () => {
   const [showStickyCta, setShowStickyCta] = useState(false);
 
   useEffect(() => {
+    if (isAppHost()) return; // en el subdominio app no se muestra la landing
     fetchPlans();
   }, [fetchPlans]);
 
@@ -325,6 +327,13 @@ export const Landing = () => {
   const sortedPlans = [...plans].sort((a, b) => a.price - b.price);
   const recommendedId = sortedPlans[Math.floor((sortedPlans.length - 1) / 2)]?.id;
   const trialDays = sortedPlans[0]?.trialDays ?? 30;
+
+  // En el subdominio app la landing no se muestra: a la app directamente.
+  if (isAppHost()) {
+    return (
+      <Navigate to={isAuthenticated ? "/dashboard" : "/login"} replace />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-base-100 text-base-content overflow-x-hidden">

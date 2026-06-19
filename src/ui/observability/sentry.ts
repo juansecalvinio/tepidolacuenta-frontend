@@ -20,10 +20,17 @@ export const initSentry = () => {
       import.meta.env.VITE_SENTRY_ENV || import.meta.env.MODE || "production",
     release: import.meta.env.VITE_RELEASE || undefined,
     integrations: [Sentry.browserTracingIntegration()],
-    // Muestreo de trazas. Por defecto Sentry solo propaga la traza a same-origin,
-    // así que NO toca las llamadas cross-origin a api.* (la conexión front↔back
-    // se activa en la Fase 3, junto con el CORS). Bajá este valor si el volumen molesta.
+    // Muestreo de trazas (bajá este valor si el volumen molesta).
     tracesSampleRate: 1.0,
+    // Propagamos la traza al backend para conectar front↔back en una sola traza.
+    // Incluye localhost (dev) + el host de la API. Requiere que el CORS del backend
+    // permita los headers `sentry-trace` y `baggage` (ya habilitados).
+    tracePropagationTargets: [
+      "localhost",
+      ...(import.meta.env.VITE_API_BASE_URL
+        ? [import.meta.env.VITE_API_BASE_URL]
+        : []),
+    ],
   });
 
   console.info("[observability] Sentry inicializado ✓");

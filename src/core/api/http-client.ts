@@ -1,3 +1,5 @@
+import * as Sentry from "@sentry/react";
+
 export class HttpError extends Error {
   status: number;
   constructor(message: string, status: number) {
@@ -61,7 +63,17 @@ export class HttpClient {
       [input, init] = await this.interceptRequest(input, init);
     }
 
-    let response = await fetch(input, init);
+    let response: Response;
+    try {
+      response = await fetch(input, init);
+    } catch (networkError) {
+      // Error de red (sin conexión / servidor caído) → señal de conectividad.
+      Sentry.captureException(networkError, {
+        tags: { kind: "api.network", "api.method": method },
+        extra: { url },
+      });
+      throw networkError;
+    }
 
     if (this.interceptResponse) {
       response = await this.interceptResponse(response);
@@ -69,10 +81,23 @@ export class HttpClient {
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new HttpError(
+      const httpError = new HttpError(
         errorText || `HTTP error ${response.status}`,
         response.status,
       );
+      // Solo reportamos errores de servidor (5xx); los 4xx son esperados
+      // (validaciones, auth) y solo harían ruido.
+      if (response.status >= 500) {
+        Sentry.captureException(httpError, {
+          tags: {
+            kind: "api.server_error",
+            "api.method": method,
+            "api.status": String(response.status),
+          },
+          extra: { url },
+        });
+      }
+      throw httpError;
     }
 
     if (response.status === 204) return null as unknown as TResponse;

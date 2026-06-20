@@ -202,7 +202,7 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
           // real (lleva el tag restaurantId del scope global).
           Sentry.captureMessage(
             "WebSocket desconectado: sin reintentos restantes",
-            "warning",
+            { level: "warning", tags: { area: "connectivity" } },
           );
           setWsStatus("disconnected");
         }

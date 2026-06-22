@@ -30,7 +30,7 @@ const timeUrgencyClass = (dateString: string): string => {
   const mins = minutesAgo(dateString);
   if (mins >= 20) return "text-error font-medium";
   if (mins >= 10) return "text-warning font-medium";
-  return "text-base-content/40";
+  return "text-fg-subtle";
 };
 
 const PAYMENT_LABELS: Record<PaymentMethod, string> = {
@@ -79,19 +79,19 @@ const CardIcon = () => (
 
 const WsBadge = ({ status }: { status: WsStatus }) => {
   const config: Record<WsStatus, { dot: string; label: string }> = {
-    connecting: { dot: "bg-amber-400 animate-pulse", label: "Conectando..." },
-    connected: { dot: "bg-green-500", label: "Conectado con las mesas" },
+    connecting: { dot: "bg-warning animate-pulse", label: "Conectando..." },
+    connected: { dot: "bg-success", label: "Conectado con las mesas" },
     reconnecting: {
-      dot: "bg-amber-400 animate-pulse",
+      dot: "bg-warning animate-pulse",
       label: "Reconectando...",
     },
-    disconnected: { dot: "bg-red-500", label: "Sin conexión" },
+    disconnected: { dot: "bg-error", label: "Sin conexión" },
   };
 
   const { dot, label } = config[status];
 
   return (
-    <div className="flex items-center gap-1.5 text-xs font-medium text-base-content/50 shrink-0">
+    <div className="flex items-center gap-1.5 text-xs font-medium text-fg-subtle shrink-0">
       <span className={`w-2 h-2 rounded-full ${dot}`} />
       <span className="hidden sm:inline">{label}</span>
     </div>
@@ -224,7 +224,7 @@ export const NewDashboard = () => {
             {restaurant?.name || "Tu restaurante"}
           </h1>
           {activeBranch && (
-            <p className="text-sm text-base-content/40 mt-0.5 truncate">
+            <p className="text-sm text-fg-subtle mt-0.5 truncate">
               {activeBranch.name}
             </p>
           )}
@@ -236,14 +236,14 @@ export const NewDashboard = () => {
 
       {/* Reconectando — aviso transitorio */}
       {wsStatus === "reconnecting" && (
-        <div className="flex items-start gap-3 border border-amber-400/30 bg-amber-400/5 rounded-xl px-4 py-3 mb-4 text-sm">
+        <div className="flex items-start gap-3 border border-warning/30 bg-warning/5 rounded-xl px-4 py-3 mb-4 text-sm">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="none"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-4 h-4 shrink-0 mt-0.5 text-amber-500 animate-spin"
+            className="w-4 h-4 shrink-0 mt-0.5 text-warning animate-spin"
           >
             <path
               strokeLinecap="round"
@@ -251,7 +251,7 @@ export const NewDashboard = () => {
               d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
             />
           </svg>
-          <p className="flex-1 text-base-content/70">
+          <p className="flex-1 text-fg-soft">
             Reconectando con el servidor de notificaciones...
           </p>
         </div>
@@ -259,14 +259,14 @@ export const NewDashboard = () => {
 
       {/* Sin conexión — alerta persistente */}
       {wsStatus === "disconnected" && (
-        <div className="flex items-start gap-3 border border-red-500/25 bg-red-500/5 rounded-xl px-4 py-3 mb-4 text-sm">
+        <div className="flex items-start gap-3 border border-error/25 bg-error/5 rounded-xl px-4 py-3 mb-4 text-sm">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="none"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-4 h-4 shrink-0 mt-0.5 text-red-500"
+            className="w-4 h-4 shrink-0 mt-0.5 text-error"
           >
             <path
               strokeLinecap="round"
@@ -274,7 +274,7 @@ export const NewDashboard = () => {
               d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
             />
           </svg>
-          <p className="flex-1 text-base-content/80">
+          <p className="flex-1 text-fg">
             Sin conexión en tiempo real. Las solicitudes no se actualizarán
             automáticamente.
           </p>
@@ -289,14 +289,14 @@ export const NewDashboard = () => {
 
       {/* Error al cargar solicitudes */}
       {!isInitialLoading && requestsError && (
-        <div className="flex items-start gap-3 border border-red-500/25 bg-red-500/5 rounded-xl px-4 py-3 mb-4 text-sm">
+        <div className="flex items-start gap-3 border border-error/25 bg-error/5 rounded-xl px-4 py-3 mb-4 text-sm">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="none"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-4 h-4 shrink-0 mt-0.5 text-red-500"
+            className="w-4 h-4 shrink-0 mt-0.5 text-error"
           >
             <path
               strokeLinecap="round"
@@ -304,7 +304,7 @@ export const NewDashboard = () => {
               d="M12 9v3.75m9-3.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
             />
           </svg>
-          <p className="flex-1 text-base-content/80">
+          <p className="flex-1 text-fg">
             No pudimos cargar las solicitudes.
           </p>
           <button
@@ -320,7 +320,7 @@ export const NewDashboard = () => {
       <div className="flex gap-3 mb-6">
         {/* Mesas */}
         <div className="flex-1 border border-base-300 rounded-xl p-4 bg-base-100">
-          <p className="text-xs font-medium text-base-content/40 uppercase tracking-wider mb-2">
+          <p className="text-xs font-medium text-fg-subtle uppercase tracking-wider mb-2">
             Mesas
           </p>
           {isTablesLoading ? (
@@ -334,7 +334,7 @@ export const NewDashboard = () => {
                 Configurar mesas →
               </button>
             ) : (
-              <span className="text-sm text-base-content/40">Sin mesas</span>
+              <span className="text-sm text-fg-subtle">Sin mesas</span>
             )
           ) : (
             <div className="flex items-end justify-between">
@@ -375,7 +375,7 @@ export const NewDashboard = () => {
         >
           <p
             className={`text-xs font-medium uppercase tracking-wider mb-2 ${
-              filteredPendingCount > 0 ? "text-primary/60" : "text-base-content/40"
+              filteredPendingCount > 0 ? "text-primary/60" : "text-fg-subtle"
             }`}
           >
             Pendientes
@@ -414,7 +414,7 @@ export const NewDashboard = () => {
               fill="none"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="w-8 h-8 text-base-content/20"
+              className="w-8 h-8 text-fg-faint"
             >
               <path
                 strokeLinecap="round"
@@ -422,7 +422,7 @@ export const NewDashboard = () => {
                 d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
               />
             </svg>
-            <p className="text-base-content/40 text-sm">
+            <p className="text-fg-subtle text-sm">
               Sin solicitudes por el momento
             </p>
           </div>
@@ -471,12 +471,12 @@ export const NewDashboard = () => {
                         {TimeUtils.getTimeAgo(request.createdAt)}
                       </span>
                     </div>
-                    <div className="flex items-center gap-1.5 text-xs text-base-content/40 mt-0.5">
+                    <div className="flex items-center gap-1.5 text-xs text-fg-subtle mt-0.5">
                       <PayIcon />
                       <span>
                         {PAYMENT_LABELS[request.paymentMethod as PaymentMethod]}
                       </span>
-                      <span className="text-base-content/20">·</span>
+                      <span className="text-fg-faint">·</span>
                       <span>{TimeUtils.formatTime(request.createdAt)}</span>
                     </div>
                   </div>

@@ -143,7 +143,7 @@ export const NewRequestBill = () => {
                     {venueInfo.restaurantName}
                   </p>
                   {venueInfo.branchAddress && (
-                    <p className="text-sm leading-snug text-base-content/60 text-pretty break-words">
+                    <p className="text-sm leading-snug text-fg-soft text-pretty break-words">
                       {venueInfo.branchAddress}
                     </p>
                   )}
@@ -185,7 +185,7 @@ export const NewRequestBill = () => {
                 <p className="text-lg font-semibold text-base-content">
                   Ya hay una cuenta pedida
                 </p>
-                <p className="text-base leading-relaxed text-base-content/70">
+                <p className="text-base leading-relaxed text-fg-soft">
                   Alguien en tu mesa ya solicitó la cuenta. El mozo está en
                   camino.
                 </p>
@@ -196,7 +196,7 @@ export const NewRequestBill = () => {
           {/* Estado: QR inválido */}
           {!requestData && !isDuplicateRequest && (
             <div role="alert" className="text-center max-w-xs">
-              <p className="text-base leading-relaxed text-base-content/70">
+              <p className="text-base leading-relaxed text-fg-soft">
                 El código QR no es válido. Por favor, escaneá el código de tu
                 mesa nuevamente.
               </p>
@@ -212,7 +212,7 @@ export const NewRequestBill = () => {
               {isLoading && isSlow && (
                 <p
                   aria-live="polite"
-                  className="text-base text-center leading-relaxed text-base-content/70 max-w-xs -mt-4"
+                  className="text-base text-center leading-relaxed text-fg-soft max-w-xs -mt-4"
                 >
                   Está tardando más de lo normal. Seguí esperando un momento…
                 </p>
@@ -222,7 +222,7 @@ export const NewRequestBill = () => {
               )}
               {!isLoading && !isRequested && (
                 <div className="w-full max-w-sm flex flex-col gap-4">
-                  <p className="text-[11px] tracking-[0.2em] uppercase text-center font-medium text-base-content/70">
+                  <p className="text-[11px] tracking-[0.2em] uppercase text-center font-medium text-fg-soft">
                     ¿Cómo vas a pagar?
                   </p>
                   <div
@@ -290,7 +290,7 @@ export const NewRequestBill = () => {
                             {option.icon}
                           </span>
                           <span
-                            className={`text-xs font-medium tracking-wide ${isSelected ? "text-primary" : "text-base-content/70"}`}
+                            className={`text-xs font-medium tracking-wide ${isSelected ? "text-primary" : "text-fg-soft"}`}
                           >
                             {option.label}
                           </span>
@@ -338,7 +338,7 @@ export const NewRequestBill = () => {
           {isSelecting && selectedOption && (
             <p
               aria-live="polite"
-              className="flex items-center justify-center gap-1.5 text-sm text-base-content/70"
+              className="flex items-center justify-center gap-1.5 text-sm text-fg-soft"
             >
               <span>Vas a pagar con</span>
               <span aria-hidden="true">{selectedOption.icon}</span>
@@ -370,9 +370,10 @@ export const NewRequestBill = () => {
             style={
               isRequested || isDuplicateRequest
                 ? {
-                    background: "linear-gradient(135deg, #3A7A50, #4E9A65)",
-                    color: "#E8F5ED",
-                    boxShadow: "0 0 32px rgba(60, 140, 90, 0.25)",
+                    background:
+                      "linear-gradient(135deg, var(--seal-from), var(--seal-to))",
+                    color: "var(--seal-fg)",
+                    boxShadow: "0 0 32px var(--seal-glow)",
                   }
                 : {
                     background:
@@ -404,7 +405,7 @@ export const NewRequestBill = () => {
 
         {/* Brand footer */}
         <footer className="py-4 flex items-center justify-center">
-          <span className="font-display text-sm font-semibold tracking-tight text-base-content/40">
+          <span className="font-display text-sm font-semibold tracking-tight text-fg-subtle">
             tepidolacuenta
           </span>
         </footer>

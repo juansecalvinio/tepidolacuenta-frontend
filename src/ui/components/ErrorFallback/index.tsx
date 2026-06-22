@@ -22,7 +22,7 @@ export const ErrorFallback = () => (
         <h1 className="font-display text-2xl font-semibold text-base-content">
           Algo salió mal
         </h1>
-        <p className="text-sm leading-relaxed text-base-content/60">
+        <p className="text-sm leading-relaxed text-fg-soft">
           Tuvimos un problema inesperado. Ya nos enteramos y lo estamos
           revisando. Probá recargar la página.
         </p>

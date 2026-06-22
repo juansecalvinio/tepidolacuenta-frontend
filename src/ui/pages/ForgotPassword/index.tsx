@@ -49,7 +49,7 @@ export const ForgotPassword = () => {
                   </div>
                 </div>
                 <h2 className="font-display text-xl font-semibold mb-2">Revisá tu correo</h2>
-                <p className="text-sm text-base-content/60">
+                <p className="text-sm text-fg-soft">
                   Si el email <span className="font-medium text-base-content">{email}</span> está
                   registrado, recibirás un enlace para restablecer tu contraseña en los próximos minutos.
                 </p>
@@ -57,7 +57,7 @@ export const ForgotPassword = () => {
             ) : (
               <>
                 <h2 className="font-display text-xl font-semibold mb-1">Olvidé mi contraseña</h2>
-                <p className="text-sm text-base-content/60 mb-2">
+                <p className="text-sm text-fg-soft mb-2">
                   Ingresá tu email y te enviamos un enlace para restablecerla.
                 </p>
 
@@ -117,7 +117,7 @@ export const ForgotPassword = () => {
           </div>
         </div>
 
-        <p className="text-center text-sm text-base-content/60 mt-4">
+        <p className="text-center text-sm text-fg-soft mt-4">
           <Link to="/login" className="text-primary font-medium hover:underline">
             Volver al inicio de sesión
           </Link>

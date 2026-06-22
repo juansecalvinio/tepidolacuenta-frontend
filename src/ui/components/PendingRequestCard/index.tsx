@@ -34,11 +34,11 @@ export const PendingRequestCard = memo(
                 <div className="font-bold text-2xl">
                   Mesa {request.tableNumber}
                 </div>
-                <div className="font-bold text-lg text-base-content/90">
+                <div className="font-bold text-lg text-fg">
                   Paga con {PAYMENT_METHOD_LABELS[request.paymentMethod].label}{" "}
                   {PAYMENT_METHOD_LABELS[request.paymentMethod].icon}
                 </div>
-                <div className="text-sm text-base-content/60">
+                <div className="text-sm text-fg-soft">
                   {TimeUtils.formatTime(request.createdAt)} •{" "}
                   {TimeUtils.getTimeAgo(request.createdAt)}
                 </div>

@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import {
   applyPrimaryColor,
   DEFAULT_PRIMARY,
+  isPrimaryColor,
   type PrimaryColor,
 } from "../utils/primaryColor";
 
@@ -69,6 +70,10 @@ export const usePreferencesContext = create<PreferencesState>()(
     }),
     {
       name: "tplc-preferences",
+      // Subir este número al cambiar la forma persistida; `migrate` adapta datos
+      // viejos para no romper sesiones existentes (client-localstorage-schema).
+      version: 1,
+      migrate: (persisted) => persisted as Partial<PreferencesState>,
       storage: createJSONStorage(() => localStorage),
       // El tema vive en su propia key (`theme`, leída por el script anti-FOUC),
       // así que no lo persistimos acá para no tener dos fuentes de verdad.
@@ -76,9 +81,15 @@ export const usePreferencesContext = create<PreferencesState>()(
         primaryColor: state.primaryColor,
         notifications: state.notifications,
       }),
-      // Reaplica el color al rehidratar (respaldo del script de index.html).
+      // Al rehidratar, validamos el color guardado (si quedó uno inválido de una
+      // versión vieja, volvemos al default) y lo reaplicamos como respaldo del
+      // script anti-FOUC de index.html.
       onRehydrateStorage: () => (state) => {
-        if (state) applyPrimaryColor(state.primaryColor);
+        if (!state) return;
+        if (!isPrimaryColor(state.primaryColor)) {
+          state.primaryColor = DEFAULT_PRIMARY;
+        }
+        applyPrimaryColor(state.primaryColor);
       },
     },
   ),

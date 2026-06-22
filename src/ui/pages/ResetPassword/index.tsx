@@ -41,12 +41,12 @@ export const ResetPassword = () => {
           <div className="card w-full bg-base-100 border-base-300 border">
             <div className="card-body p-6 text-center">
               <h2 className="font-display text-xl font-semibold mb-2">Enlace inválido</h2>
-              <p className="text-sm text-base-content/60">
+              <p className="text-sm text-fg-soft">
                 Este enlace de recuperación no es válido o ya expiró.
               </p>
             </div>
           </div>
-          <p className="text-center text-sm text-base-content/60 mt-4">
+          <p className="text-center text-sm text-fg-soft mt-4">
             <Link to="/forgot-password" className="text-primary font-medium hover:underline">
               Solicitar un nuevo enlace
             </Link>
@@ -64,7 +64,7 @@ export const ResetPassword = () => {
         <div className="card w-full bg-base-100 border-base-300 border">
           <div className="card-body p-6">
             <h2 className="font-display text-xl font-semibold mb-1">Nueva contraseña</h2>
-            <p className="text-sm text-base-content/60 mb-2">
+            <p className="text-sm text-fg-soft mb-2">
               Ingresá tu nueva contraseña para recuperar el acceso.
             </p>
 
@@ -111,7 +111,7 @@ export const ResetPassword = () => {
                   />
                   <button
                     type="button"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/50 hover:text-base-content"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-fg-subtle hover:text-base-content"
                     onClick={() => setShowPassword(!showPassword)}
                     tabIndex={-1}
                   >
@@ -127,7 +127,7 @@ export const ResetPassword = () => {
                     )}
                   </button>
                 </div>
-                <p className="text-xs text-base-content/50 mt-1.5">Mínimo 8 caracteres</p>
+                <p className="text-xs text-fg-subtle mt-1.5">Mínimo 8 caracteres</p>
               </div>
 
               <div className="form-control mt-4">
@@ -157,7 +157,7 @@ export const ResetPassword = () => {
                   />
                   <button
                     type="button"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/50 hover:text-base-content"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-fg-subtle hover:text-base-content"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     tabIndex={-1}
                   >
@@ -175,7 +175,7 @@ export const ResetPassword = () => {
                 </div>
                 {formData.confirmPassword.length > 0 && (
                   <p className={`text-xs mt-1.5 ${
-                    passwordsMatch ? "text-success" : confirmTouched ? "text-error" : "text-base-content/50"
+                    passwordsMatch ? "text-success" : confirmTouched ? "text-error" : "text-fg-subtle"
                   }`}>
                     {passwordsMatch ? "Las contraseñas coinciden" : "Las contraseñas no coinciden"}
                   </p>
@@ -199,7 +199,7 @@ export const ResetPassword = () => {
           </div>
         </div>
 
-        <p className="text-center text-sm text-base-content/60 mt-4">
+        <p className="text-center text-sm text-fg-soft mt-4">
           <Link to="/login" className="text-primary font-medium hover:underline">
             Volver al inicio de sesión
           </Link>

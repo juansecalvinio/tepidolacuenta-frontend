@@ -148,7 +148,7 @@ export const AuthPage = ({ authType = "login" }: Props) => {
                   />
                   <button
                     type="button"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/50 hover:text-base-content"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-fg-subtle hover:text-base-content"
                     onClick={() => setShowPassword(!showPassword)}
                     aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                   >
@@ -156,7 +156,7 @@ export const AuthPage = ({ authType = "login" }: Props) => {
                   </button>
                 </div>
                 {authType === "register" && (
-                  <p className="text-xs text-base-content/50 mt-1.5">
+                  <p className="text-xs text-fg-subtle mt-1.5">
                     Mínimo 8 caracteres
                   </p>
                 )}
@@ -192,7 +192,7 @@ export const AuthPage = ({ authType = "login" }: Props) => {
                     />
                     <button
                       type="button"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/50 hover:text-base-content"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-fg-subtle hover:text-base-content"
                       onClick={() => setShowSecondPassword(!showSecondPassword)}
                       aria-label={showSecondPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                     >
@@ -205,7 +205,7 @@ export const AuthPage = ({ authType = "login" }: Props) => {
                         ? "text-success"
                         : secondPasswordTouched
                           ? "text-error"
-                          : "text-base-content/50"
+                          : "text-fg-subtle"
                     }`}>
                       {formData.password === formData.secondPassword
                         ? "Las contraseñas coinciden"
@@ -237,7 +237,7 @@ export const AuthPage = ({ authType = "login" }: Props) => {
               </div>
             </form>
 
-            <div className="divider text-base-content/40 text-xs mt-2">o</div>
+            <div className="divider text-fg-subtle text-xs mt-2">o</div>
 
             <a
               href={`${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/google`}
@@ -271,7 +271,7 @@ export const AuthPage = ({ authType = "login" }: Props) => {
           </div>
         </div>
 
-        <p className="text-center text-sm text-base-content/60 mt-4">
+        <p className="text-center text-sm text-fg-soft mt-4">
           {authType === "login" ? "¿No tenés cuenta? " : "¿Ya tenés cuenta? "}
           <Link
             to={secondaryActionLink}

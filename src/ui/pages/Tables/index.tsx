@@ -128,7 +128,7 @@ export const Tables = () => {
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="w-8 h-8 text-base-content/20"
+                className="w-8 h-8 text-fg-faint"
               >
                 <path
                   strokeLinecap="round"
@@ -136,7 +136,7 @@ export const Tables = () => {
                   d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
                 />
               </svg>
-              <p className="text-base-content/40 text-sm">
+              <p className="text-fg-subtle text-sm">
                 No se encontraron mesas
               </p>
             </div>
@@ -163,7 +163,7 @@ export const Tables = () => {
             >
               ← Anterior
             </button>
-            <span className="text-sm text-base-content/50">
+            <span className="text-sm text-fg-subtle">
               {currentPage} / {totalPages}
             </span>
             <button

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useCallback, useState } from "react";
+import * as Sentry from "@sentry/react";
 import { logger } from "../utils/logger";
 import { useNotifications } from "../contexts/notification.context";
 import type { BillRequestWsResponse } from "../../core/modules/bill-request-ws/domain/models/BillRequestWs";
@@ -196,6 +197,12 @@ export const useWebSocketNotifications = ({ restaurantId, token }: Props) => {
         } else {
           console.error(
             "❌ Máximo número de intentos de reconexión alcanzado. Por favor, recarga la página.",
+          );
+          // Señal de conectividad: el local se quedó sin notificaciones en tiempo
+          // real (lleva el tag restaurantId del scope global).
+          Sentry.captureMessage(
+            "WebSocket desconectado: sin reintentos restantes",
+            { level: "warning", tags: { area: "connectivity" } },
           );
           setWsStatus("disconnected");
         }

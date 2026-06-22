@@ -28,7 +28,7 @@ export const NotificationPermissionBanner = () => {
         <p className="font-medium text-base-content">
           Activá los avisos de pedidos
         </p>
-        <p className="text-base-content/60 mt-0.5">
+        <p className="text-fg-soft mt-0.5">
           Te avisamos cuando una mesa pide la cuenta, aunque tengas la pestaña
           en segundo plano.
         </p>

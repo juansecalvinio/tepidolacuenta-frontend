@@ -1,41 +1,34 @@
-// Paleta de color primary seleccionable. Como toda la app usa el token
-// `--color-primary` (daisyUI), basta con sobrescribir esa variable en runtime
-// para que el cambio se propague a toda la UI.
+// Paleta de color primary seleccionable.
 //
-// ⚠️ Si cambiás estos valores, replicá los mismos en el script anti-FOUC de
-// `index.html` (que los aplica antes de pintar para evitar un flash de color).
+// Los VALORES (oklch) viven en una sola fuente: styles.css → bloque `:root` con
+// las vars `--primary-<key>` y `--primary-<key>-content`. Acá manejamos solo las
+// keys y sus labels; el color se referencia por NOMBRE vía `var(--primary-<key>)`.
+// Así no hay hex duplicado entre CSS, este archivo y el script anti-FOUC.
+//
+// Para agregar un color: sumá la var en styles.css y la key acá.
 
 export type PrimaryColor = "amber" | "emerald" | "indigo";
 
-export const DEFAULT_PRIMARY: PrimaryColor = "amber";
+export const DEFAULT_PRIMARY: PrimaryColor = "emerald";
 
-export const PRIMARY_PALETTE: Record<
-  PrimaryColor,
-  { label: string; primary: string; primaryContent: string }
-> = {
-  amber: {
-    label: "Ámbar",
-    primary: "oklch(83% 0.128 66.29)",
-    primaryContent: "oklch(14% 0 0)",
-  },
-  emerald: {
-    label: "Esmeralda",
-    primary: "oklch(80% 0.14 162)",
-    primaryContent: "oklch(14% 0 0)",
-  },
-  indigo: {
-    label: "Índigo",
-    primary: "oklch(58% 0.2 270)",
-    primaryContent: "oklch(98% 0 0)",
-  },
+export const PRIMARY_PALETTE: Record<PrimaryColor, { label: string }> = {
+  emerald: { label: "Esmeralda" },
+  indigo: { label: "Índigo" },
+  amber: { label: "Ámbar" },
 };
+
+// Referencias a las vars CSS de la paleta (única fuente: styles.css).
+export const primaryVar = (color: PrimaryColor) => `var(--primary-${color})`;
+export const primaryContentVar = (color: PrimaryColor) =>
+  `var(--primary-${color}-content)`;
 
 export const isPrimaryColor = (value: unknown): value is PrimaryColor =>
   typeof value === "string" && value in PRIMARY_PALETTE;
 
+// Como toda la app usa el token `--color-primary`, basta con apuntarlo a la var
+// de la paleta elegida en runtime para que el cambio se propague a toda la UI.
 export const applyPrimaryColor = (color: PrimaryColor) => {
-  const { primary, primaryContent } = PRIMARY_PALETTE[color];
   const root = document.documentElement;
-  root.style.setProperty("--color-primary", primary);
-  root.style.setProperty("--color-primary-content", primaryContent);
+  root.style.setProperty("--color-primary", primaryVar(color));
+  root.style.setProperty("--color-primary-content", primaryContentVar(color));
 };

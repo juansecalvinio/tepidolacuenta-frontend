@@ -1,0 +1,159 @@
+/* ============================================================================
+   THEME — tokens de diseño: paleta, temas daisyUI, branding, tipografías y
+   jerarquía de texto. Único lugar para cambiar la identidad visual del producto.
+   ============================================================================ */
+
+/* ──────────────────────────────────────────────────────────────────────────
+   🎨 PALETA PRIMARY — única fuente de verdad de los colores seleccionables.
+
+   Los valores oklch viven SOLO acá. El default lo elige cada tema abajo
+   (`--color-primary: var(--primary-emerald)`), y la preferencia por dispositivo
+   se aplica en runtime sobreescribiendo --color-primary con `var(--primary-<key>)`
+   (ver src/ui/utils/primaryColor.ts y el script anti-FOUC de index.html, que ya
+   NO repiten estos valores: referencian estas vars por nombre).
+
+   Para agregar un color: sumá acá `--primary-<key>` + `--primary-<key>-content`,
+   y la key en PRIMARY_PALETTE de primaryColor.ts.
+   ────────────────────────────────────────────────────────────────────────── */
+:root {
+  --primary-emerald: oklch(80% 0.14 162);
+  --primary-emerald-content: oklch(14% 0 0);
+  --primary-amber: oklch(83% 0.128 66.29);
+  --primary-amber-content: oklch(14% 0 0);
+  --primary-indigo: oklch(58% 0.2 270);
+  --primary-indigo-content: oklch(98% 0 0);
+
+  /* "Sello confirmado": el botón de pedir la cuenta cuando el pedido ya se envió.
+     Verde estampa, intencionalmente consistente en ambos temas (no es un estado
+     seleccionable ni un token semántico). Único lugar donde se define. */
+  --seal-from: #3a7a50;
+  --seal-to: #4e9a65;
+  --seal-fg: #e8f5ed;
+  --seal-glow: rgba(60, 140, 90, 0.25);
+}
+
+@plugin "daisyui/theme" {
+  name: "white";
+  color-scheme: "light";
+  --color-base-100: oklch(98% 0 0);
+  --color-base-200: oklch(97% 0 0);
+  --color-base-300: oklch(92% 0 0);
+  --color-base-content: oklch(20% 0 0);
+  --color-primary: var(--primary-emerald);
+  --color-primary-content: var(--primary-emerald-content);
+  --color-secondary: oklch(0% 0 0);
+  --color-secondary-content: var(--primary-emerald);
+  --color-accent: oklch(70% 0.04 256.788);
+  --color-accent-content: oklch(98% 0.003 247.858);
+  --color-neutral: oklch(92% 0 0);
+  --color-neutral-content: oklch(20% 0 0);
+  /* Estados (tema claro): colores medios y saturados con texto claro, para que
+     contrasten sobre el fondo casi blanco. El warning (ámbar) lleva texto oscuro
+     porque el blanco no contrasta sobre amarillo. */
+  --color-info: oklch(54% 0.17 248);
+  --color-info-content: oklch(98% 0 0);
+  --color-success: oklch(56% 0.15 152);
+  --color-success-content: oklch(98% 0 0);
+  --color-warning: oklch(70% 0.16 75);
+  --color-warning-content: oklch(25% 0 0);
+  --color-error: oklch(55% 0.21 25);
+  --color-error-content: oklch(98% 0 0);
+  --radius-selector: 0.5rem;
+  --radius-field: 0.625rem;
+  --radius-box: 1rem;
+  --size-selector: 0.3125rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+@plugin "daisyui/theme" {
+  name: "black";
+  default: true;
+  prefersdark: true;
+  color-scheme: "dark";
+  --color-base-100: oklch(20% 0 0);
+  --color-base-200: oklch(26% 0 0);
+  --color-base-300: oklch(37% 0 0);
+  --color-base-content: oklch(97% 0 0);
+  --color-primary: var(--primary-emerald);
+  --color-primary-content: var(--primary-emerald-content);
+  --color-secondary: oklch(0% 0 0);
+  --color-secondary-content: var(--primary-emerald);
+  --color-accent: oklch(70% 0.04 256.788);
+  --color-accent-content: oklch(98% 0.003 247.858);
+  --color-neutral: oklch(14% 0 0);
+  --color-neutral-content: oklch(100% 0 0);
+  /* Estados (tema oscuro): colores claros y saturados con texto oscuro, para que
+     resalten sobre el fondo casi negro. */
+  --color-info: oklch(72% 0.15 235);
+  --color-info-content: oklch(16% 0 0);
+  --color-success: oklch(76% 0.17 152);
+  --color-success-content: oklch(16% 0 0);
+  --color-warning: oklch(82% 0.16 78);
+  --color-warning-content: oklch(16% 0 0);
+  --color-error: oklch(70% 0.18 22);
+  --color-error-content: oklch(16% 0 0);
+  --radius-selector: 0.5rem;
+  --radius-field: 0.625rem;
+  --radius-box: 1rem;
+  --size-selector: 0.3125rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   🎨 BRANDING — punto único para cambiar los colores de marca del producto.
+
+   • PRIMARY (botones, links, acentos, anillos de foco): el default de cada tema
+     apunta a una var de la paleta de arriba (`--color-primary: var(--primary-emerald)`).
+     Para cambiar el default global, cambiá esa referencia. El usuario puede
+     sobreescribirlo por dispositivo desde Configuración (ver primaryColor.ts).
+   • BRAND (acento de marca, ej. el punto "nuevo pedido"): por defecto sigue al
+     primary, así no hay un color suelto que mantener. Si querés un acento
+     distinto, reemplazá `var(--color-primary)` por un color propio.
+
+   NO son branding (no tocar acá): los colores de ESTADO (warning/info/error/
+   success) viven en los tokens daisyUI de arriba y comunican semántica, no marca.
+   ────────────────────────────────────────────────────────────────────────── */
+[data-theme="white"],
+[data-theme="black"] {
+  --color-brand: var(--color-primary);
+}
+
+@theme {
+  --font-sans: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Fraunces', ui-serif, Georgia, serif;
+  --font-host: 'Host Grotesk', ui-sans-serif, system-ui, sans-serif;
+}
+
+@theme inline {
+  --color-brand: var(--color-brand);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Jerarquía de texto: 4 niveles nombrados sobre base-content (adaptan por tema,
+   porque base-content se resuelve en el elemento, donde el tema ya lo definió).
+   Reemplazan las opacidades ad-hoc `text-base-content/NN`.
+     text-fg        → texto principal (titulares, body)
+     text-fg-soft   → secundario (subtítulos, texto de apoyo)
+     text-fg-subtle → terciario (metadatos, captions)
+     text-fg-faint  → muted (placeholders, deshabilitado, decorativo)
+   ────────────────────────────────────────────────────────────────────────── */
+@layer utilities {
+  .text-fg {
+    color: var(--color-base-content);
+  }
+  .text-fg-soft {
+    color: color-mix(in oklab, var(--color-base-content) 68%, transparent);
+  }
+  .text-fg-subtle {
+    color: color-mix(in oklab, var(--color-base-content) 45%, transparent);
+  }
+  .text-fg-faint {
+    color: color-mix(in oklab, var(--color-base-content) 20%, transparent);
+  }
+}

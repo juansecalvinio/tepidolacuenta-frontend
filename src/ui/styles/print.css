@@ -1,0 +1,16 @@
+/* ============================================================================
+   PRINT — ajustes para impresión (oculta el header, fondo blanco del contenido).
+   ============================================================================ */
+
+@page {
+  margin: 12mm;
+}
+
+@media print {
+  header {
+    display: none !important;
+  }
+  main {
+    background: white !important;
+  }
+}

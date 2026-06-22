@@ -259,14 +259,14 @@ const HeroMockup = () => (
       <div className="absolute top-3 left-1/2 -translate-x-1/2 h-1.5 w-16 rounded-full bg-base-300" />
       <div className="mt-5 rounded-[1.75rem] bg-base-200/50 px-5 py-6 flex flex-col items-center text-center">
         <span className="font-display text-lg font-semibold">La Parrilla</span>
-        <span className="text-xs text-base-content/50 mb-4">Mesa 5</span>
+        <span className="text-xs text-fg-subtle mb-4">Mesa 5</span>
         <div className="rounded-xl bg-white p-3">
           <QRCode value={`${APP_ORIGIN}/request`} size={116} />
         </div>
         <div className="mt-5 w-full rounded-xl bg-primary text-primary-content text-sm font-semibold py-2.5">
           Pedir la cuenta
         </div>
-        <span className="text-[10px] text-base-content/40 mt-2">
+        <span className="text-[10px] text-fg-subtle mt-2">
           Sin descargar ninguna app
         </span>
       </div>
@@ -284,7 +284,7 @@ const HeroMockup = () => (
       </span>
       <div className="text-left">
         <p className="text-sm font-semibold leading-tight">Nueva solicitud</p>
-        <p className="text-xs text-base-content/50">Mesa 5 · hace un instante</p>
+        <p className="text-xs text-fg-subtle">Mesa 5 · hace un instante</p>
       </div>
       <span className="ml-auto mt-0.5 w-2 h-2 rounded-full bg-success animate-pulse shrink-0" />
     </motion.div>
@@ -366,7 +366,7 @@ export const Landing = () => {
               Pedir la cuenta
               <span className="text-primary italic block">ahora es más simple</span>
             </h1>
-            <p className="text-lg sm:text-xl text-base-content/55 mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+            <p className="text-lg sm:text-xl text-fg-soft mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed">
               Tus clientes escanean el QR de la mesa. Vos recibís la solicitud al
               instante. Sin aplicaciones, sin confusión.
             </p>
@@ -386,7 +386,7 @@ export const Landing = () => {
               {TRUST_SIGNALS.map((signal) => (
                 <li
                   key={signal}
-                  className="flex items-center gap-1.5 text-sm text-base-content/50"
+                  className="flex items-center gap-1.5 text-sm text-fg-subtle"
                 >
                   <span className="text-primary">
                     <CheckIcon />
@@ -415,7 +415,7 @@ export const Landing = () => {
             <h2 className="font-display text-3xl sm:text-4xl font-semibold tracking-tight mb-3 text-balance">
               Todo lo que necesitás
             </h2>
-            <p className="text-base-content/50 text-lg max-w-md mx-auto">
+            <p className="text-fg-subtle text-lg max-w-md mx-auto">
               Diseñado para restaurantes que quieren dejar de depender del "¿nos
               trae la cuenta?"
             </p>
@@ -439,7 +439,7 @@ export const Landing = () => {
                   <Icon />
                 </div>
                 <h3 className="font-display font-semibold text-lg mb-2">{title}</h3>
-                <p className="text-base-content/50 text-sm leading-relaxed">
+                <p className="text-fg-subtle text-sm leading-relaxed">
                   {description}
                 </p>
               </motion.div>
@@ -455,7 +455,7 @@ export const Landing = () => {
             <h2 className="font-display text-3xl sm:text-4xl font-semibold tracking-tight mb-3 text-balance">
               Tres pasos y ya
             </h2>
-            <p className="text-base-content/50 text-lg">
+            <p className="text-fg-subtle text-lg">
               Configuración en minutos, resultados desde el primer día.
             </p>
           </div>
@@ -477,7 +477,7 @@ export const Landing = () => {
                   {number}
                 </span>
                 <h3 className="font-display font-semibold text-xl mb-2">{title}</h3>
-                <p className="text-base-content/50 text-sm leading-relaxed">
+                <p className="text-fg-subtle text-sm leading-relaxed">
                   {description}
                 </p>
               </motion.div>
@@ -493,7 +493,7 @@ export const Landing = () => {
             <h2 className="font-display text-3xl sm:text-4xl font-semibold tracking-tight mb-3 text-balance">
               Planes
             </h2>
-            <p className="text-base-content/50 text-lg">
+            <p className="text-fg-subtle text-lg">
               Elegí el plan que mejor se adapta a tu negocio.
             </p>
           </div>
@@ -516,7 +516,7 @@ export const Landing = () => {
           )}
 
           {plans.length > 0 && (
-            <p className="text-center text-sm text-base-content/35 mt-6">
+            <p className="text-center text-sm text-fg-subtle mt-6">
               Todos los planes incluyen {trialDays} días de prueba gratis.
               Cancelás cuando quieras.
             </p>
@@ -531,7 +531,7 @@ export const Landing = () => {
             <h2 className="font-display text-3xl sm:text-4xl font-semibold tracking-tight mb-3 text-balance">
               Preguntas frecuentes
             </h2>
-            <p className="text-base-content/50 text-lg">
+            <p className="text-fg-subtle text-lg">
               Lo que suelen preguntar antes de empezar.
             </p>
           </div>
@@ -552,7 +552,7 @@ export const Landing = () => {
               >
                 <summary className="flex items-center justify-between gap-4 cursor-pointer list-none py-4 font-display font-semibold text-lg">
                   {question}
-                  <span className="shrink-0 text-base-content/40 transition-transform duration-200 group-open:rotate-45">
+                  <span className="shrink-0 text-fg-subtle transition-transform duration-200 group-open:rotate-45">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
@@ -570,7 +570,7 @@ export const Landing = () => {
                     </svg>
                   </span>
                 </summary>
-                <p className="text-base-content/55 text-sm leading-relaxed pb-5 -mt-1">
+                <p className="text-fg-soft text-sm leading-relaxed pb-5 -mt-1">
                   {answer}
                 </p>
               </motion.details>
@@ -585,7 +585,7 @@ export const Landing = () => {
           <h2 className="font-display text-3xl sm:text-4xl font-semibold tracking-tight mb-4 text-balance">
             Empezá a usarlo hoy
           </h2>
-          <p className="text-base-content/50 text-lg mb-8">
+          <p className="text-fg-subtle text-lg mb-8">
             {trialDays} días gratis. Cancelás cuando quieras.
           </p>
           <button onClick={handleGetStarted} className="btn btn-primary btn-lg">
@@ -596,8 +596,8 @@ export const Landing = () => {
 
       {/* ── Footer ─────────────────────────────────────────────────────────── */}
       <footer className="border-t border-base-300/40 py-10 pb-28 md:pb-10 px-4">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-base-content/40">
-          <span className="font-display font-semibold text-base-content/60">
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-fg-subtle">
+          <span className="font-display font-semibold text-fg-soft">
             tepidolacuenta
           </span>
           <span>© 2026 tepidolacuenta</span>

@@ -57,7 +57,7 @@ export const BillGeneratingAnimation = ({
             height="4"
             rx="2"
             fill="currentColor"
-            className="text-base-content/20 animate-receipt-line motion-reduce:animate-none"
+            className="text-fg-faint animate-receipt-line motion-reduce:animate-none"
             style={{ animationDelay: "0.3s" }}
           />
           <rect
@@ -67,7 +67,7 @@ export const BillGeneratingAnimation = ({
             height="4"
             rx="2"
             fill="currentColor"
-            className="text-base-content/20 animate-receipt-line motion-reduce:animate-none"
+            className="text-fg-faint animate-receipt-line motion-reduce:animate-none"
             style={{ animationDelay: "0.6s" }}
           />
           <rect
@@ -77,7 +77,7 @@ export const BillGeneratingAnimation = ({
             height="4"
             rx="2"
             fill="currentColor"
-            className="text-base-content/20 animate-receipt-line motion-reduce:animate-none"
+            className="text-fg-faint animate-receipt-line motion-reduce:animate-none"
             style={{ animationDelay: "0.9s" }}
           />
           {/* Separador total */}
@@ -88,7 +88,7 @@ export const BillGeneratingAnimation = ({
             height="1"
             rx="0.5"
             fill="currentColor"
-            className="text-base-content/10"
+            className="text-fg-faint"
           />
         </svg>
       </div>
@@ -114,7 +114,7 @@ export const BillGeneratingAnimation = ({
           {isLoading && "Enviando tu pedido…"}
           {!isLoading && isRequested && "Tu pedido se envió a la caja."}
         </p>
-        <p className="text-base leading-relaxed text-base-content/70">
+        <p className="text-base leading-relaxed text-fg-soft">
           {isLoading && "Un momento por favor."}
           {!isLoading &&
             isRequested &&

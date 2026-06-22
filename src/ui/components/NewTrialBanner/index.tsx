@@ -23,14 +23,14 @@ export const NewTrialBanner = () => {
 
   if (isExpired) {
     return (
-      <div className="flex items-start gap-3 border border-red-500/25 bg-red-500/5 rounded-xl px-4 py-3 mb-6 text-sm">
+      <div className="flex items-start gap-3 border border-error/25 bg-error/5 rounded-xl px-4 py-3 mb-6 text-sm">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
           fill="none"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="w-4 h-4 shrink-0 mt-0.5 text-red-500"
+          className="w-4 h-4 shrink-0 mt-0.5 text-error"
         >
           <path
             strokeLinecap="round"
@@ -42,12 +42,12 @@ export const NewTrialBanner = () => {
           <span className="font-semibold text-base-content">
             Tu período de prueba ha vencido.
           </span>
-          <span className="text-base-content/60 ml-1">
+          <span className="text-fg-soft ml-1">
             Elegí un plan para seguir usando el servicio.
           </span>
         </div>
         <button
-          className="btn btn-xs btn-ghost shrink-0 text-red-500 hover:bg-red-500/10"
+          className="btn btn-xs btn-ghost shrink-0 text-error hover:bg-error/10"
           onClick={() => navigate("/dashboard/plans")}
         >
           Ver planes
@@ -67,8 +67,8 @@ export const NewTrialBanner = () => {
     <div
       className={`flex items-start gap-3 border rounded-xl px-4 py-3 mb-6 text-sm ${
         isUrgent
-          ? "border-amber-400/30 bg-amber-400/5"
-          : "border-blue-400/25 bg-blue-400/5"
+          ? "border-warning/30 bg-warning/5"
+          : "border-info/25 bg-info/5"
       }`}
     >
       <svg
@@ -77,7 +77,7 @@ export const NewTrialBanner = () => {
         fill="none"
         strokeWidth={1.5}
         stroke="currentColor"
-        className={`w-4 h-4 shrink-0 mt-0.5 ${isUrgent ? "text-amber-500" : "text-blue-500"}`}
+        className={`w-4 h-4 shrink-0 mt-0.5 ${isUrgent ? "text-warning" : "text-info"}`}
       >
         <path
           strokeLinecap="round"
@@ -87,15 +87,15 @@ export const NewTrialBanner = () => {
       </svg>
       <div className="flex-1 min-w-0">
         <span className="font-semibold text-base-content">{daysLabel}</span>
-        <span className="text-base-content/60 ml-1">
+        <span className="text-fg-soft ml-1">
           Elegí un plan para no interrumpir el servicio.
         </span>
       </div>
       <button
         className={`btn btn-xs btn-ghost shrink-0 ${
           isUrgent
-            ? "text-amber-600 hover:bg-amber-400/10"
-            : "text-blue-600 hover:bg-blue-400/10"
+            ? "text-warning hover:bg-warning/10"
+            : "text-info hover:bg-info/10"
         }`}
         onClick={() => navigate("/dashboard/plans")}
       >

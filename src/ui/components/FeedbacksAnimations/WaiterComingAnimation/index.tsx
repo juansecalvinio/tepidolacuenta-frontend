@@ -36,7 +36,7 @@ export const WaiterComingAnimation = ({
           height="4"
           rx="2"
           fill="currentColor"
-          className="text-base-content/20"
+          className="text-fg-faint"
         />
         <rect
           x="8"
@@ -45,7 +45,7 @@ export const WaiterComingAnimation = ({
           height="3"
           rx="1.5"
           fill="currentColor"
-          className="text-base-content/15"
+          className="text-fg-faint"
         />
         <rect
           x="8"
@@ -54,7 +54,7 @@ export const WaiterComingAnimation = ({
           height="3"
           rx="1.5"
           fill="currentColor"
-          className="text-base-content/15"
+          className="text-fg-faint"
         />
         <rect
           x="4"
@@ -63,7 +63,7 @@ export const WaiterComingAnimation = ({
           height="1"
           rx="0.5"
           fill="currentColor"
-          className="text-base-content/10"
+          className="text-fg-faint"
         />
         <rect
           x="8"
@@ -72,7 +72,7 @@ export const WaiterComingAnimation = ({
           height="4"
           rx="2"
           fill="currentColor"
-          className="text-base-content/20"
+          className="text-fg-faint"
         />
         {/* Círculo check - superpuesto */}
         <circle
@@ -130,11 +130,11 @@ export const WaiterComingAnimation = ({
 
     <div className="flex flex-col items-center gap-2 text-center">
       <p className="text-xl font-bold text-base-content">¡Cuenta pedida!</p>
-      <p className="text-base text-base-content/70">
+      <p className="text-base text-fg-soft">
         El mozo está yendo a tu mesa
       </p>
       {method && (
-        <p className="mt-1 flex items-center gap-1.5 text-sm text-base-content/70">
+        <p className="mt-1 flex items-center gap-1.5 text-sm text-fg-soft">
           <span>Pagás con</span>
           <span aria-hidden="true">{method.icon}</span>
           <span className="font-semibold text-base-content">

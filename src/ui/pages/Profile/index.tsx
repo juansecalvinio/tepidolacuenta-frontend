@@ -84,7 +84,7 @@ export const Profile = () => {
             </div>
           </div>
           <div className="min-w-0">
-            <p className="text-xs text-base-content/40 uppercase tracking-wider mb-0.5">
+            <p className="text-xs text-fg-subtle uppercase tracking-wider mb-0.5">
               Email
             </p>
             <p className="text-base font-medium break-all leading-snug">
@@ -95,7 +95,7 @@ export const Profile = () => {
 
         {/* Nombre del local */}
         <div className="p-4">
-          <p className="text-xs text-base-content/40 uppercase tracking-wider mb-1">
+          <p className="text-xs text-fg-subtle uppercase tracking-wider mb-1">
             Nombre del local
           </p>
           <p className="text-base font-semibold">{restaurant?.name}</p>
@@ -108,7 +108,7 @@ export const Profile = () => {
 
           <div className="bg-base-100 border border-base-300 rounded-xl flex items-center justify-between gap-4 p-4">
             <div className="min-w-0">
-              <p className="text-xs text-base-content/40 uppercase tracking-wider mb-1">
+              <p className="text-xs text-fg-subtle uppercase tracking-wider mb-1">
                 Plan actual
               </p>
               <p className="text-base font-semibold truncate">
@@ -127,7 +127,7 @@ export const Profile = () => {
 
           <div className="bg-base-100 border border-base-300 rounded-xl overflow-hidden">
             <div className="p-4 border-b border-base-300">
-              <p className="text-sm text-base-content/60">
+              <p className="text-sm text-fg-soft">
                 Elegí la sucursal y generá un código para que un empleado se registre con acceso solo a esa sucursal. El código expira a los 7 días y es de un solo uso.
               </p>
             </div>
@@ -151,13 +151,13 @@ export const Profile = () => {
                     </button>
                   </div>
                   {invitationExpiresAt && (
-                    <p className="text-xs text-base-content/50">
+                    <p className="text-xs text-fg-subtle">
                       Expira el {formatExpiresAt(invitationExpiresAt)}
                     </p>
                   )}
-                  <p className="text-xs text-base-content/50">
+                  <p className="text-xs text-fg-subtle">
                     Acceso a:{" "}
-                    <span className="font-medium text-base-content/70">
+                    <span className="font-medium text-fg-soft">
                       {branchName(effectiveBranchId)}
                     </span>
                   </p>
@@ -171,7 +171,7 @@ export const Profile = () => {
               ) : (
                 <div className="flex flex-col gap-3">
                   <label className="flex flex-col gap-1">
-                    <span className="text-xs font-medium text-base-content/70">
+                    <span className="text-xs font-medium text-fg-soft">
                       Sucursal
                     </span>
                     <select
@@ -206,7 +206,7 @@ export const Profile = () => {
           <div className="bg-base-100 border border-base-300 rounded-xl overflow-hidden mt-4">
             <div className="p-4 border-b border-base-300">
               <p className="text-sm font-medium text-base-content">Empleados</p>
-              <p className="text-xs text-base-content/60 mt-0.5">
+              <p className="text-xs text-fg-soft mt-0.5">
                 Tienen acceso a este local. Podés revocarles el acceso cuando quieras.
               </p>
             </div>
@@ -227,7 +227,7 @@ export const Profile = () => {
                 />
               </div>
             ) : employees.length === 0 ? (
-              <p className="p-4 text-sm text-base-content/50">
+              <p className="p-4 text-sm text-fg-subtle">
                 Todavía no hay empleados. Generá un código de invitación para sumar uno.
               </p>
             ) : (
@@ -241,7 +241,7 @@ export const Profile = () => {
                       <p className="text-sm font-medium truncate">
                         {employee.email}
                       </p>
-                      <p className="text-xs text-base-content/50 truncate">
+                      <p className="text-xs text-fg-subtle truncate">
                         {branchName(employee.branchId)} · Desde{" "}
                         {formatDate(employee.createdAt)}
                       </p>

@@ -7,6 +7,12 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#1a1a1a" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=Host+Grotesk:ital,wght@0,300..800;1,300..800&display=swap"
+    />
     <meta
       name="description"
       content="Tus clientes piden la cuenta escaneando el QR de la mesa y vos recibís la solicitud al instante. Sin apps."
@@ -25,18 +31,16 @@
             if (meta) meta.setAttribute("content", t === "white" ? "#fafafa" : "#1a1a1a");
           }
         } catch (e) {}
-        // Color primary (mirror de src/ui/utils/primaryColor.ts)
+        // Color primary: apunta --color-primary a la var de la paleta guardada
+        // antes de pintar (anti-FOUC). Los VALORES viven en styles.css (:root);
+        // acá solo validamos la key, sin repetir hex.
         try {
-          var PRIMARY = {
-            amber: ["oklch(83% 0.128 66.29)", "oklch(14% 0 0)"],
-            emerald: ["oklch(80% 0.14 162)", "oklch(14% 0 0)"],
-            indigo: ["oklch(58% 0.2 270)", "oklch(98% 0 0)"],
-          };
+          var VALID = { amber: 1, emerald: 1, indigo: 1 };
           var raw = localStorage.getItem("tplc-preferences");
           var color = raw && JSON.parse(raw).state.primaryColor;
-          if (color && PRIMARY[color]) {
-            document.documentElement.style.setProperty("--color-primary", PRIMARY[color][0]);
-            document.documentElement.style.setProperty("--color-primary-content", PRIMARY[color][1]);
+          if (color && VALID[color]) {
+            document.documentElement.style.setProperty("--color-primary", "var(--primary-" + color + ")");
+            document.documentElement.style.setProperty("--color-primary-content", "var(--primary-" + color + "-content)");
           }
         } catch (e) {}
       })();

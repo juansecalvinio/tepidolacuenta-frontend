@@ -1,0 +1,52 @@
+/* ============================================================================
+   BASE — elementos raíz y overrides de componentes daisyUI (inputs, botones).
+   ============================================================================ */
+
+#root {
+  @apply h-screen;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ── Estados interactivos (override de daisyUI) ─────────────────────────── */
+
+/* Focus de inputs: anillo en color primary en vez del borde blanco por defecto */
+.input:focus,
+.input:focus-within,
+.textarea:focus,
+.select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 30%, transparent);
+}
+
+/* Hover perceptible en botones oscuros: mezcla hacia el color de texto del tema
+   (aclara en tema oscuro, oscurece en tema claro) */
+.btn-neutral:hover {
+  background-color: color-mix(
+    in oklab,
+    var(--color-neutral) 88%,
+    var(--color-base-content)
+  );
+}
+.btn-secondary:hover {
+  background-color: color-mix(
+    in oklab,
+    var(--color-secondary) 85%,
+    var(--color-base-content)
+  );
+}
+
+/* Foco de teclado visible y consistente en botones (a11y) */
+.btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Botones tipo "pill" (estilo Spotify/LinkedIn). Solo botones; inputs y cards
+   mantienen su radius para conservar la legibilidad de los formularios. */
+.btn {
+  border-radius: 9999px;
+}

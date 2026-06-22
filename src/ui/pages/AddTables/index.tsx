@@ -74,7 +74,7 @@ export const AddTables = () => {
       </h2>
 
       {maxTables !== -1 && (
-        <p className="text-center text-sm text-base-content/60 mb-6">
+        <p className="text-center text-sm text-fg-soft mb-6">
           {currentCount} de {maxTables} mesas en esta sucursal
         </p>
       )}

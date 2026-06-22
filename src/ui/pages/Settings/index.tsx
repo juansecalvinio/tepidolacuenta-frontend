@@ -1,6 +1,11 @@
 import { ToggleTheme } from "../../components/ToggleTheme";
 import { usePreferencesContext } from "../../contexts/preferences.context";
-import { PRIMARY_PALETTE, type PrimaryColor } from "../../utils/primaryColor";
+import {
+  PRIMARY_PALETTE,
+  primaryVar,
+  primaryContentVar,
+  type PrimaryColor,
+} from "../../utils/primaryColor";
 import { useNotificationPermission } from "../../hooks/useNotificationPermission";
 
 export const Settings = () => {
@@ -33,19 +38,19 @@ export const Settings = () => {
         <div className="p-4 flex items-center justify-between gap-4 border-b border-base-300">
           <div className="min-w-0">
             <p className="text-sm font-medium">Tema</p>
-            <p className="text-xs text-base-content/60">Modo claro u oscuro.</p>
+            <p className="text-xs text-fg-soft">Modo claro u oscuro.</p>
           </div>
           <ToggleTheme />
         </div>
 
         <div className="p-4">
           <p className="text-sm font-medium">Color principal</p>
-          <p className="text-xs text-base-content/60 mb-3">
+          <p className="text-xs text-fg-soft mb-3">
             Cambia el acento de toda la app.
           </p>
           <div className="flex items-center gap-3">
             {colors.map((key) => {
-              const { label, primary, primaryContent } = PRIMARY_PALETTE[key];
+              const { label } = PRIMARY_PALETTE[key];
               const selected = primaryColor === key;
               return (
                 <button
@@ -58,7 +63,7 @@ export const Settings = () => {
                   className={`w-9 h-9 rounded-full flex items-center justify-center border-2 transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-base-100 ${
                     selected ? "border-base-content" : "border-transparent"
                   }`}
-                  style={{ backgroundColor: primary }}
+                  style={{ backgroundColor: primaryVar(key) }}
                 >
                   {selected && (
                     <svg
@@ -66,7 +71,7 @@ export const Settings = () => {
                       className="w-4 h-4"
                       viewBox="0 0 24 24"
                       fill="none"
-                      stroke={primaryContent}
+                      stroke={primaryContentVar(key)}
                       strokeWidth={3}
                     >
                       <path
@@ -92,7 +97,7 @@ export const Settings = () => {
         <div className="p-4 flex items-center justify-between gap-4 border-b border-base-300">
           <div className="min-w-0">
             <p className="text-sm font-medium">Sonido</p>
-            <p className="text-xs text-base-content/60">
+            <p className="text-xs text-fg-soft">
               Reproducir un sonido al recibir un pedido.
             </p>
           </div>
@@ -108,7 +113,7 @@ export const Settings = () => {
         <div className="p-4 flex items-center justify-between gap-4">
           <div className="min-w-0">
             <p className="text-sm font-medium">Notificaciones de escritorio</p>
-            <p className="text-xs text-base-content/60">
+            <p className="text-xs text-fg-soft">
               Avisar aunque la pestaña esté en segundo plano.
             </p>
             {supported && permission === "denied" && (
@@ -118,7 +123,7 @@ export const Settings = () => {
               </p>
             )}
             {!supported && (
-              <p className="text-xs text-base-content/50 mt-1">
+              <p className="text-xs text-fg-subtle mt-1">
                 Tu navegador no soporta notificaciones de escritorio.
               </p>
             )}

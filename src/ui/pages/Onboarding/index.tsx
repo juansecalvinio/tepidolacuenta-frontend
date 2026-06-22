@@ -257,10 +257,10 @@ export const Onboarding = () => {
               Number(quantity) > 0 &&
               Number(quantity) <= 100 && (
                 <div className="mt-6 p-4 bg-base-200 rounded-lg">
-                  <p className="text-xs text-center text-base-content/60 mb-2">
+                  <p className="text-xs text-center text-fg-soft mb-2">
                     <strong>{restaurantName}</strong>
                   </p>
-                  <p className="text-xs text-center text-base-content/60">
+                  <p className="text-xs text-center text-fg-soft">
                     Se crearán {quantity}{" "}
                     {Number(quantity) === 1 ? "mesa" : "mesas"} numeradas del 1
                     al {quantity}

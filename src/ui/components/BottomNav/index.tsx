@@ -63,7 +63,7 @@ export const BottomNav = () => {
               `flex-1 flex flex-col items-center justify-center gap-1 text-xs transition-colors ${
                 isActive
                   ? "text-primary"
-                  : "text-base-content/40 hover:text-base-content/70"
+                  : "text-fg-subtle hover:text-fg-soft"
               }`
             }
           >

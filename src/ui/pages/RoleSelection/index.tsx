@@ -109,7 +109,7 @@ export const RoleSelection = () => {
         <div className="card w-full bg-base-100 border-base-300 border">
           <div className="card-body p-6">
             <h2 className="font-display text-xl font-semibold mb-1">¿Cómo querés continuar?</h2>
-            <p className="text-sm text-base-content/60 mb-4">
+            <p className="text-sm text-fg-soft mb-4">
               Elegí una opción para configurar tu cuenta.
             </p>
 
@@ -130,7 +130,7 @@ export const RoleSelection = () => {
                 <span className="text-2xl mt-0.5">🏪</span>
                 <div>
                   <p className="font-semibold text-base-content">Registrar mi negocio</p>
-                  <p className="text-sm text-base-content/60 mt-0.5">
+                  <p className="text-sm text-fg-soft mt-0.5">
                     Creá tu local, elegí un plan y administrá tus mesas y sucursales.
                   </p>
                 </div>
@@ -150,7 +150,7 @@ export const RoleSelection = () => {
                 <span className="text-2xl mt-0.5">🔑</span>
                 <div>
                   <p className="font-semibold text-base-content">Tengo un código de invitación</p>
-                  <p className="text-sm text-base-content/60 mt-0.5">
+                  <p className="text-sm text-fg-soft mt-0.5">
                     Ingresá como empleado para ver las mesas y QRs de tu local.
                   </p>
                 </div>
@@ -198,7 +198,7 @@ export const RoleSelection = () => {
         </div>
 
         {!isOAuth && (
-          <p className="text-center text-sm text-base-content/60 mt-4">
+          <p className="text-center text-sm text-fg-soft mt-4">
             ¿Querés usar otro email?{" "}
             <button
               className="text-primary font-medium hover:underline"

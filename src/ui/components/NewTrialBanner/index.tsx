@@ -58,10 +58,17 @@ export const NewTrialBanner = () => {
 
   const isUrgent = trialDaysRemaining !== null && trialDaysRemaining <= 3;
 
-  const daysLabel =
-    trialDaysRemaining === 1
-      ? "Te queda 1 día de prueba."
-      : `Te quedan ${trialDaysRemaining} días de prueba.`;
+  const daysText = trialDaysRemaining === 1 ? "1 día" : `${trialDaysRemaining} días`;
+
+  // Prueba con días de sobra: la prueba es una buena noticia, no una advertencia.
+  // Solo en los últimos días (isUrgent) el llamado a suscribirse es legítimo.
+  const title = isUrgent
+    ? `Te queda${trialDaysRemaining === 1 ? "" : "n"} ${daysText} de prueba.`
+    : "Prueba gratis activa.";
+
+  const subtitle = isUrgent
+    ? "Suscribite para no perder el acceso."
+    : `Tenés acceso completo por ${daysText} más.`;
 
   return (
     <div
@@ -86,10 +93,8 @@ export const NewTrialBanner = () => {
         />
       </svg>
       <div className="flex-1 min-w-0">
-        <span className="font-semibold text-base-content">{daysLabel}</span>
-        <span className="text-fg-soft ml-1">
-          Elegí un plan para no interrumpir el servicio.
-        </span>
+        <span className="font-semibold text-base-content">{title}</span>
+        <span className="text-fg-soft ml-1">{subtitle}</span>
       </div>
       <button
         className={`btn btn-xs btn-ghost shrink-0 ${

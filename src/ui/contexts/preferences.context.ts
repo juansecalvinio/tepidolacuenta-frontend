@@ -12,6 +12,7 @@ export type Theme = "black" | "white";
 export interface NotificationPrefs {
   sound: boolean;
   desktop: boolean;
+  volume: number; // 0–1, volumen del sonido de alerta
 }
 
 interface PreferencesState {
@@ -20,7 +21,10 @@ interface PreferencesState {
   notifications: NotificationPrefs;
   setTheme: (theme: Theme) => void;
   setPrimaryColor: (color: PrimaryColor) => void;
-  setNotificationPref: (key: keyof NotificationPrefs, value: boolean) => void;
+  setNotificationPref: <K extends keyof NotificationPrefs>(
+    key: K,
+    value: NotificationPrefs[K],
+  ) => void;
 }
 
 const THEME_COLORS: Record<Theme, string> = {
@@ -54,7 +58,7 @@ export const usePreferencesContext = create<PreferencesState>()(
     (set) => ({
       theme: getInitialTheme(),
       primaryColor: DEFAULT_PRIMARY,
-      notifications: { sound: true, desktop: true },
+      notifications: { sound: true, desktop: true, volume: 0.5 },
       setTheme: (theme) => {
         applyTheme(theme);
         set({ theme });
@@ -74,6 +78,19 @@ export const usePreferencesContext = create<PreferencesState>()(
       // viejos para no romper sesiones existentes (client-localstorage-schema).
       version: 1,
       migrate: (persisted) => persisted as Partial<PreferencesState>,
+      // Merge profundo de `notifications`: si datos persistidos viejos no tienen
+      // un campo nuevo (ej. `volume`), se toma su default del estado actual.
+      merge: (persisted, current) => {
+        const p = (persisted ?? {}) as Partial<PreferencesState>;
+        return {
+          ...current,
+          ...p,
+          notifications: {
+            ...current.notifications,
+            ...(p.notifications ?? {}),
+          },
+        };
+      },
       storage: createJSONStorage(() => localStorage),
       // El tema vive en su propia key (`theme`, leída por el script anti-FOUC),
       // así que no lo persistimos acá para no tener dos fuentes de verdad.

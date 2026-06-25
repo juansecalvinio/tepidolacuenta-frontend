@@ -46,7 +46,7 @@ export const PaymentPending = () => {
             <h1 className="font-display text-2xl font-semibold mb-2">
               ¡Pago aprobado!
             </h1>
-            <p className="opacity-60 text-sm">
+            <p className="text-fg-soft text-sm">
               Tu suscripción fue activada correctamente. Redirigiendo al
               dashboard…
             </p>
@@ -82,14 +82,14 @@ export const PaymentPending = () => {
           <h1 className="font-display text-2xl font-semibold mb-2">
             Pago en proceso
           </h1>
-          <p className="opacity-60 text-sm">
+          <p className="text-fg-soft text-sm">
             Tu pago está siendo procesado. Te notificaremos cuando se confirme.
             Podés cerrar esta pantalla y volver más tarde.
           </p>
         </div>
 
         {status === "waiting" && (
-          <div className="flex items-center justify-center gap-2 text-sm opacity-60">
+          <div className="flex items-center justify-center gap-2 text-sm text-fg-soft">
             <span className="loading loading-ring loading-xs" />
             <span>Esperando confirmación…</span>
           </div>

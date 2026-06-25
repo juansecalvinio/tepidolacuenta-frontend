@@ -50,3 +50,135 @@ body {
 .btn {
   border-radius: 9999px;
 }
+
+/* ── Sistema de elevación estilo Geist/Vercel ───────────────────────────────
+   Nivel 1 (reposo): cards y paneles neutros. En CLARO: hairline de baja opacidad
+   + sombra suave cálida. En OSCURO: borde base-300 (sin tocar) + una sombra
+   oscura sutil para dar profundidad. Se excluyen las cards con borde de color
+   (ej. plan recomendado) y los dropdowns (que son overlays, nivel 2). */
+[data-theme="white"] .card:not(.border-primary):not(.dropdown-content),
+[data-theme="white"] .surface {
+  border-color: var(--surface-border);
+  box-shadow: var(--surface-shadow);
+}
+[data-theme="black"] .card:not(.border-primary):not(.dropdown-content),
+[data-theme="black"] .surface {
+  box-shadow: var(--surface-shadow);
+}
+
+/* Nivel 2 (overlays): dropdowns, modales y toasts flotan sobre todo → sombra más
+   marcada, en AMBOS temas. El hairline del dropdown se aplica solo en claro. */
+[data-theme="white"] .dropdown-content {
+  border-color: var(--surface-border);
+}
+.dropdown-content,
+.modal-box,
+.overlay-shadow {
+  box-shadow: var(--shadow-overlay);
+}
+
+/* Nav inferior: leve sombra hacia arriba para despegarla del contenido (claro). */
+[data-theme="white"] .nav-elevated {
+  box-shadow: 0 -2px 12px -4px oklch(25% 0.03 85 / 0.07);
+}
+
+/* Sombra de superficie SIN tocar el borde — para cards con borde condicional o de
+   color (ej. pedidos pendientes, que cambian el borde según urgencia y deben
+   conservarlo). El `.surface` completo pisaría ese borde con el hairline. */
+[data-theme="white"] .shadow-surface,
+[data-theme="black"] .shadow-surface {
+  box-shadow: var(--surface-shadow);
+}
+
+/* Lift sutil solo en el CTA primary (estilo Geist). El resto de botones quedan
+   planos: su jerarquía la dan el color y el relleno, no la sombra.
+   En hover el botón se despega (sombra mayor + translateY); al click, "pressed". */
+[data-theme="white"] .btn-primary {
+  box-shadow:
+    0 1px 2px oklch(25% 0.03 85 / 0.12),
+    0 2px 5px -1px oklch(25% 0.03 85 / 0.10);
+  transition-property: color, background-color, border-color, box-shadow, transform;
+  transition-duration: 0.18s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="white"] .btn-primary:hover {
+  box-shadow:
+    0 2px 4px oklch(25% 0.03 85 / 0.12),
+    0 6px 16px -3px oklch(25% 0.03 85 / 0.16);
+  transform: translateY(-1px);
+}
+
+[data-theme="white"] .btn-primary:active {
+  box-shadow: 0 1px 2px oklch(25% 0.03 85 / 0.12);
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-theme="white"] .btn-primary:hover,
+  [data-theme="white"] .btn-primary:active {
+    transform: none;
+  }
+}
+
+/* ── Slider fino (range custom) ──────────────────────────────────────────────
+   Track tipo línea de 4px + thumb chico, en color primary. El relleno en WebKit
+   se controla con la var `--range-fill` (porcentaje), que se setea inline según
+   el valor; Firefox usa ::-moz-range-progress (no la necesita). */
+.range-thin {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 14px; /* área clickeable; el track visible es de 4px */
+  background: transparent;
+  cursor: pointer;
+}
+.range-thin::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    var(--color-primary) var(--range-fill, 50%),
+    var(--color-base-300) var(--range-fill, 50%)
+  );
+}
+.range-thin::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  margin-top: -5px; /* centra el thumb (14px) sobre el track (4px) */
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  background: var(--color-primary);
+  border: 2px solid var(--color-base-100);
+  box-shadow: 0 1px 3px oklch(0% 0 0 / 0.25);
+}
+.range-thin::-moz-range-track {
+  height: 4px;
+  border-radius: 9999px;
+  background: var(--color-base-300);
+}
+.range-thin::-moz-range-progress {
+  height: 4px;
+  border-radius: 9999px;
+  background: var(--color-primary);
+}
+.range-thin::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  background: var(--color-primary);
+  border: 2px solid var(--color-base-100);
+  box-shadow: 0 1px 3px oklch(0% 0 0 / 0.25);
+}
+.range-thin:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+.range-thin:focus-visible::-moz-range-thumb {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+.range-thin:disabled {
+  cursor: not-allowed;
+}

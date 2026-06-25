@@ -35,9 +35,13 @@
 @plugin "daisyui/theme" {
   name: "white";
   color-scheme: "light";
-  --color-base-100: oklch(98% 0 0);
-  --color-base-200: oklch(97% 0 0);
-  --color-base-300: oklch(92% 0 0);
+  /* Superficies con un toque de calidez (croma bajo, hue ~85) para que el fondo
+     no sea gris neutro de plantilla. El canvas (base-200) está un poco más bajo
+     que las cards (base-100) para que estas destaquen ~2% por encima + borde y se
+     lean claramente elevadas. */
+  --color-base-100: oklch(96% 0.006 85);
+  --color-base-200: oklch(94% 0.006 85);
+  --color-base-300: oklch(89% 0.008 85);
   --color-base-content: oklch(20% 0 0);
   --color-primary: var(--primary-emerald);
   --color-primary-content: var(--primary-emerald-content);
@@ -73,9 +77,11 @@
   default: true;
   prefersdark: true;
   color-scheme: "dark";
-  --color-base-100: oklch(20% 0 0);
-  --color-base-200: oklch(26% 0 0);
-  --color-base-300: oklch(37% 0 0);
+  /* Charcoal con un toque de calidez (mismo hue ~85 que el tema claro) en vez de
+     gris neutro. base-100 a 23% para que no sea tan profundo. */
+  --color-base-100: oklch(23% 0.005 85);
+  --color-base-200: oklch(27.5% 0.006 85);
+  --color-base-300: oklch(34% 0.008 85);
   --color-base-content: oklch(97% 0 0);
   --color-primary: var(--primary-emerald);
   --color-primary-content: var(--primary-emerald-content);
@@ -122,6 +128,37 @@
 [data-theme="white"],
 [data-theme="black"] {
   --color-brand: var(--color-primary);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Superficies estilo Geist/Vercel — SOLO tema claro. En vez de elevar por brillo
+   (card más blanca que el fondo), la card es del mismo tono cálido y se separa
+   con un hairline de baja opacidad + una sombra suave y cálida. El tema oscuro
+   se apoya en el borde y queda como está. Se aplican en base.css (.card).
+   ────────────────────────────────────────────────────────────────────────── */
+[data-theme="white"] {
+  --surface-border: color-mix(in oklab, var(--color-base-content) 8%, transparent);
+  /* Nivel 1 — superficies en reposo (cards, paneles). */
+  --surface-shadow:
+    0 1px 2px oklch(25% 0.03 85 / 0.06),
+    0 4px 10px -2px oklch(25% 0.03 85 / 0.07);
+  /* Nivel 2 — overlays (dropdowns, modales, toasts): más marcada y difusa. */
+  --shadow-overlay:
+    0 4px 12px -2px oklch(25% 0.03 85 / 0.10),
+    0 12px 32px -8px oklch(25% 0.03 85 / 0.14);
+}
+
+/* En oscuro el lift no viene del brillo: el overlay usa una sombra más profunda
+   (casi negra) para despegarse del fondo. Las superficies en reposo se apoyan en
+   el borde, así que no llevan sombra. */
+[data-theme="black"] {
+  /* Nivel 1 — superficies en reposo: sombra oscura (más que el fondo) para dar
+     profundidad sin depender del brillo. El borde sigue siendo base-300. */
+  --surface-shadow:
+    0 1px 3px oklch(0% 0 0 / 0.4),
+    0 4px 12px -2px oklch(0% 0 0 / 0.35);
+  /* Nivel 2 — overlays (dropdowns, modales, toasts): más profunda. */
+  --shadow-overlay: 0 8px 28px -6px oklch(0% 0 0 / 0.55);
 }
 
 @theme {

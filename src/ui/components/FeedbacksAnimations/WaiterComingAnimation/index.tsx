@@ -1,5 +1,10 @@
+import type { ReactElement } from "react";
+
 interface WaiterComingAnimationProps {
-  method?: { icon: string; label: string };
+  method?: {
+    label: string;
+    Icon: (props: { className?: string }) => ReactElement;
+  };
 }
 
 export const WaiterComingAnimation = ({
@@ -136,7 +141,7 @@ export const WaiterComingAnimation = ({
       {method && (
         <p className="mt-1 flex items-center gap-1.5 text-sm text-fg-soft">
           <span>Pagás con</span>
-          <span aria-hidden="true">{method.icon}</span>
+          <method.Icon className="w-4 h-4" />
           <span className="font-semibold text-base-content">
             {method.label}
           </span>

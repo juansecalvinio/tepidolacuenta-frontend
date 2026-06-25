@@ -78,7 +78,7 @@ export const NotificationProvider = ({
     const { notifications } = usePreferencesContext.getState();
 
     if (notifications.sound) {
-      playNotificationSound();
+      playNotificationSound(notifications.volume);
     }
     // Si la pestaña está oculta y el usuario lo tiene activado: notificación del
     // sistema + parpadeo del título como respaldo visible.

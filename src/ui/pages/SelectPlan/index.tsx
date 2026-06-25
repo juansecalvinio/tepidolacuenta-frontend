@@ -100,7 +100,7 @@ export const SelectPlan = () => {
                 <h2 className="font-display text-xl font-semibold mb-1">
                   Tenés un pago en proceso
                 </h2>
-                <p className="opacity-60 text-sm">
+                <p className="text-fg-soft text-sm">
                   Estamos confirmando tu pago con MercadoPago. Puede tardar unos
                   minutos — no hace falta que pagues de nuevo.
                 </p>
@@ -129,7 +129,7 @@ export const SelectPlan = () => {
               <h1 className="font-display text-3xl font-semibold mb-1 text-balance">
                 Elegí tu plan
               </h1>
-              <p className="opacity-60">
+              <p className="text-fg-soft">
                 {isPayFlow
                   ? "Elegí un plan para continuar usando el servicio."
                   : "Comenzá con un período de prueba gratuito."}
@@ -138,7 +138,7 @@ export const SelectPlan = () => {
 
             {error && <Alert className="mb-6">{error}</Alert>}
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
               {sortedPlans.map((plan) => (
                 <PlanCard
                   key={plan.id}
@@ -159,7 +159,7 @@ export const SelectPlan = () => {
 
             {plans.length === 0 && !isLoading && (
               <div className="card bg-base-100 card-border border-base-300">
-                <div className="card-body text-center opacity-60">
+                <div className="card-body text-center text-fg-soft">
                   No hay planes disponibles por el momento.
                 </div>
               </div>

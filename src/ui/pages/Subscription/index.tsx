@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSubscription } from "../../hooks/useSubscription";
 import { useFetchSubscription } from "../../hooks/useFetchSubscription";
+import { useRestaurants } from "../../hooks/useRestaurants";
+import { useFetchBranches } from "../../hooks/useFetchBranches";
 import { useAuth } from "../../hooks/useAuth";
 import { Alert } from "../../components/Alert";
 import { PriceUtils } from "../../utils/price.utils";
@@ -35,9 +37,14 @@ export const Subscription = () => {
   } = useSubscription();
 
   const { fetchSubscription, cancelSubscription } = useFetchSubscription();
+  const { branches } = useRestaurants();
+  const { fetchBranchesByRestaurant } = useFetchBranches();
 
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [cancelError, setCancelError] = useState("");
+
+  // Conteo real de sucursales creadas, para mostrar uso vs. límite del plan.
+  const branchCount = branches?.length ?? 0;
 
   useEffect(() => {
     if (!restaurantId) return;
@@ -45,6 +52,10 @@ export const Subscription = () => {
 
     fetchSubscription(restaurantId);
   }, [restaurantId, subscription, fetchSubscription]);
+
+  useEffect(() => {
+    if (restaurantId) fetchBranchesByRestaurant(restaurantId);
+  }, [restaurantId, fetchBranchesByRestaurant]);
 
   const handleCancel = async () => {
     if (!subscription) return;
@@ -70,14 +81,18 @@ export const Subscription = () => {
   return (
     <div className="p-4 max-w-3xl mx-auto">
       <div className="mb-8">
-        <h1 className="font-display text-3xl font-semibold mb-1">Suscripción</h1>
-        <p className="opacity-60">Administrá tu plan actual.</p>
+        <h1 className="font-display text-3xl font-semibold mb-1">
+          Suscripción
+        </h1>
+        <p className="text-fg-soft">Administrá tu plan actual.</p>
       </div>
 
       {!subscription ? (
         <div className="card bg-base-100 card-border border-base-300">
           <div className="card-body text-center">
-            <p className="opacity-60 mb-4">No tenés una suscripción activa.</p>
+            <p className="text-fg-soft mb-4">
+              No tenés una suscripción activa.
+            </p>
             <button
               className="btn btn-primary mx-auto"
               onClick={() => navigate("/dashboard/plans")}
@@ -89,22 +104,22 @@ export const Subscription = () => {
       ) : (
         <div className="space-y-4">
           {/* Plan actual */}
-          <div className="card bg-base-100 card-border border-base-300">
+          <div className="card bg-base-100 card-border border-base-300 mb-8">
             <div className="card-body p-6">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-sm opacity-60 mb-1">Plan actual</p>
+                  <p className="text-sm text-fg-soft mb-1">Plan actual</p>
                   <h2 className="font-display text-2xl font-semibold">
                     {currentPlan?.name ?? "—"}
                   </h2>
                   {currentPlan && (
-                    <p className="text-sm opacity-60 mt-1">
+                    <p className="text-sm text-fg-soft mt-1">
                       $ {PriceUtils.getFormattedPrice(currentPlan.price)}/mes
                     </p>
                   )}
                 </div>
                 <span
-                  className={`badge badge-sm ${STATUS_BADGE[subscription.status] ?? "badge-neutral"}`}
+                  className={`badge badge-sm badge-soft ${STATUS_BADGE[subscription.status] ?? "badge-neutral"}`}
                 >
                   {STATUS_LABELS[subscription.status] ?? subscription.status}
                 </span>
@@ -119,7 +134,7 @@ export const Subscription = () => {
                       : "días restantes"}{" "}
                     de prueba
                     {subscription.trialEndsAt && (
-                      <span className="opacity-60">
+                      <span className="text-fg-soft">
                         {" "}
                         · Vence el{" "}
                         {new Date(subscription.trialEndsAt).toLocaleDateString(
@@ -138,20 +153,36 @@ export const Subscription = () => {
 
               {currentPlan && (
                 <div className="mt-4 grid grid-cols-2 gap-3">
+                  {/* Sucursales: uso real vs. límite del plan */}
                   <div className="p-3 bg-base-200 rounded-lg">
-                    <p className="text-xs opacity-60 mb-1">Mesas</p>
-                    <p className="font-bold">
-                      {currentPlan.maxTables === -1
-                        ? "Ilimitadas"
-                        : currentPlan.maxTables}
+                    <p className="text-xs text-fg-soft mb-1">Sucursales</p>
+                    <p>
+                      <span className="font-bold text-lg">{branchCount}</span>{" "}
+                      <span className="text-sm text-fg-soft">
+                        {currentPlan.maxBranches === -1
+                          ? "· sin límite"
+                          : `de ${currentPlan.maxBranches}`}
+                      </span>
                     </p>
                   </div>
+                  {/* Mesas: tope POR sucursal que permite el plan */}
                   <div className="p-3 bg-base-200 rounded-lg">
-                    <p className="text-xs opacity-60 mb-1">Sucursales</p>
-                    <p className="font-bold">
-                      {currentPlan.maxBranches === -1
-                        ? "Ilimitadas"
-                        : currentPlan.maxBranches}
+                    <p className="text-xs text-fg-soft mb-1">
+                      {currentPlan.maxBranches === 1
+                        ? "Mesas"
+                        : "Mesas por sucursal"}
+                    </p>
+                    <p>
+                      {currentPlan.maxTables === -1 ? (
+                        <span className="font-bold text-lg">Ilimitadas</span>
+                      ) : (
+                        <>
+                          <span className="text-sm text-fg-soft">hasta</span>{" "}
+                          <span className="font-bold text-lg">
+                            {currentPlan.maxTables}
+                          </span>
+                        </>
+                      )}
                     </p>
                   </div>
                 </div>
@@ -159,69 +190,66 @@ export const Subscription = () => {
             </div>
           </div>
 
-          {/* Acciones */}
+          {/* Acciones — directas sobre el fondo, no son contenido de una card */}
           {subscription.status !== "canceled" && (
-            <div className="card bg-base-100 card-border border-base-300">
-              <div className="card-body p-6 gap-3">
+            <div className="flex flex-col gap-3">
+              <button
+                className="btn btn-secondary w-full"
+                onClick={() => navigate("/dashboard/plans")}
+              >
+                Cambiar de plan
+              </button>
+
+              {!showCancelConfirm ? (
                 <button
                   className="btn btn-outline w-full"
-                  onClick={() => navigate("/dashboard/plans")}
+                  onClick={() => {
+                    setCancelError("");
+                    setShowCancelConfirm(true);
+                  }}
                 >
-                  Cambiar de plan
+                  Cancelar suscripción
                 </button>
-
-                {!showCancelConfirm ? (
-                  <button
-                    className="btn btn-ghost text-error w-full"
-                    onClick={() => {
-                      setCancelError("");
-                      setShowCancelConfirm(true);
-                    }}
-                  >
-                    Cancelar suscripción
-                  </button>
-                ) : (
-                  <div className="p-4 bg-error/10 rounded-lg space-y-3">
-                    <p className="text-sm font-semibold">
-                      ¿Estás seguro que querés cancelar tu suscripción?
-                    </p>
-                    <p className="text-sm opacity-70">
-                      Perderás acceso al servicio al finalizar el período
-                      actual.
-                    </p>
-                    {cancelError && <Alert>{cancelError}</Alert>}
-                    <div className="flex gap-2">
-                      <button
-                        className="btn btn-error btn-sm flex-1"
-                        onClick={handleCancel}
-                        disabled={isLoading}
-                      >
-                        {isLoading ? (
-                          <span className="loading loading-spinner loading-xs" />
-                        ) : (
-                          "Sí, cancelar"
-                        )}
-                      </button>
-                      <button
-                        className="btn btn-ghost btn-sm flex-1"
-                        onClick={() => {
-                          setCancelError("");
-                          setShowCancelConfirm(false);
-                        }}
-                      >
-                        Volver
-                      </button>
-                    </div>
+              ) : (
+                <div className="p-4 bg-error/10 rounded-lg space-y-3">
+                  <p className="text-sm font-semibold">
+                    ¿Estás seguro que querés cancelar tu suscripción?
+                  </p>
+                  <p className="text-sm text-fg-soft">
+                    Perderás acceso al servicio al finalizar el período actual.
+                  </p>
+                  {cancelError && <Alert>{cancelError}</Alert>}
+                  <div className="flex gap-2">
+                    <button
+                      className="btn btn-error btn-sm flex-1"
+                      onClick={handleCancel}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? (
+                        <span className="loading loading-spinner loading-xs" />
+                      ) : (
+                        "Sí, cancelar"
+                      )}
+                    </button>
+                    <button
+                      className="btn btn-ghost btn-sm flex-1"
+                      onClick={() => {
+                        setCancelError("");
+                        setShowCancelConfirm(false);
+                      }}
+                    >
+                      Volver
+                    </button>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           )}
 
           {subscription.status === "canceled" && (
             <div className="card bg-base-100 card-border border-base-300">
               <div className="card-body p-6 text-center">
-                <p className="opacity-60 mb-4">
+                <p className="text-fg-soft mb-4">
                   Tu suscripción está cancelada.
                 </p>
                 <button

@@ -74,7 +74,7 @@ export const AddBranch = () => {
       </h2>
 
       <form onSubmit={onSubmit}>
-        <div className="bg-base-100 border border-base-300 p-4 rounded-xl">
+        <div className="surface bg-base-100 border border-base-300 p-4 rounded-xl">
           <div className="form-control">
             <label className="label">
               <span className="label-text text-base-content mb-2">

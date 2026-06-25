@@ -50,7 +50,7 @@ export const BottomNav = () => {
 
   return (
     <nav
-      className="fixed bottom-0 inset-x-0 bg-base-100 border-t border-base-300 z-40"
+      className="nav-elevated fixed bottom-0 inset-x-0 bg-base-100 border-t border-base-300 z-40"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       <div className="flex items-stretch h-16 max-w-3xl mx-auto">

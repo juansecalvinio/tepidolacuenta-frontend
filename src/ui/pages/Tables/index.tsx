@@ -120,7 +120,7 @@ export const Tables = () => {
         </label>
 
         {filteredTables.length === 0 ? (
-          <div className="border border-base-300 rounded-xl bg-base-100">
+          <div className="surface border border-base-300 rounded-xl bg-base-100">
             <div className="p-8 flex flex-col items-center gap-2 text-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

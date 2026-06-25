@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { ToggleTheme } from "../../components/ToggleTheme";
 import { usePreferencesContext } from "../../contexts/preferences.context";
 import {
@@ -7,6 +8,8 @@ import {
   type PrimaryColor,
 } from "../../utils/primaryColor";
 import { useNotificationPermission } from "../../hooks/useNotificationPermission";
+import { playNotificationSound } from "../../utils/notificationSound";
+import { SpeakerIcon } from "../../components/icons";
 
 export const Settings = () => {
   const primaryColor = usePreferencesContext((s) => s.primaryColor);
@@ -30,7 +33,7 @@ export const Settings = () => {
       <h2 className="font-display text-2xl font-semibold mb-6">Configuración</h2>
 
       {/* Apariencia */}
-      <section className="bg-base-100 border border-base-300 rounded-xl overflow-hidden">
+      <section className="surface bg-base-100 border border-base-300 rounded-xl overflow-hidden">
         <div className="p-4 border-b border-base-300">
           <p className="text-sm font-medium text-base-content">Apariencia</p>
         </div>
@@ -46,7 +49,7 @@ export const Settings = () => {
         <div className="p-4">
           <p className="text-sm font-medium">Color principal</p>
           <p className="text-xs text-fg-soft mb-3">
-            Cambia el acento de toda la app.
+            Cambiá el acento de toda la app.
           </p>
           <div className="flex items-center gap-3">
             {colors.map((key) => {
@@ -89,7 +92,7 @@ export const Settings = () => {
       </section>
 
       {/* Notificaciones */}
-      <section className="bg-base-100 border border-base-300 rounded-xl overflow-hidden mt-4">
+      <section className="surface bg-base-100 border border-base-300 rounded-xl overflow-hidden mt-4">
         <div className="p-4 border-b border-base-300">
           <p className="text-sm font-medium text-base-content">Notificaciones</p>
         </div>
@@ -108,6 +111,48 @@ export const Settings = () => {
             onChange={(e) => setNotificationPref("sound", e.target.checked)}
             aria-label="Sonido de notificaciones"
           />
+        </div>
+
+        {/* Volumen del sonido — se atenúa/deshabilita si el sonido está apagado */}
+        <div
+          className={`p-4 border-b border-base-300 transition-opacity ${
+            notifications.sound ? "" : "opacity-50"
+          }`}
+        >
+          <div className="flex items-center justify-between gap-3 mb-2">
+            <p className="text-sm font-medium">Volumen</p>
+            <span className="text-xs text-fg-soft tabular-nums">
+              {Math.round(notifications.volume * 100)}%
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <input
+              type="range"
+              min={0}
+              max={100}
+              value={Math.round(notifications.volume * 100)}
+              onChange={(e) =>
+                setNotificationPref("volume", Number(e.target.value) / 100)
+              }
+              className="range-thin flex-1"
+              style={
+                {
+                  "--range-fill": `${Math.round(notifications.volume * 100)}%`,
+                } as CSSProperties
+              }
+              aria-label="Volumen del sonido"
+              disabled={!notifications.sound}
+            />
+            <button
+              type="button"
+              className="btn btn-sm btn-ghost shrink-0 gap-1.5"
+              onClick={() => playNotificationSound(notifications.volume)}
+              disabled={!notifications.sound}
+            >
+              <SpeakerIcon className="w-4 h-4" />
+              Probar
+            </button>
+          </div>
         </div>
 
         <div className="p-4 flex items-center justify-between gap-4">

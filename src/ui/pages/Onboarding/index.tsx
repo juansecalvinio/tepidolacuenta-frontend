@@ -34,26 +34,26 @@ export const Onboarding = () => {
 
     if (!selectedPlan) return;
 
-    // Validar nombre del restaurante
+    // Validar nombre del local
     if (!restaurantName.trim()) {
-      setValidationError("Ingresa el nombre de tu restaurante");
+      setValidationError("Ingresá el nombre de tu local");
       return;
     }
 
     if (!cuit.trim()) {
-      setValidationError("Ingresa el CUIT de tu restaurante");
+      setValidationError("Ingresá el CUIT de tu local");
       return;
     }
 
     if (!address.trim()) {
-      setValidationError("Ingresa la dirección de tu restaurante");
+      setValidationError("Ingresá la dirección de tu local");
       return;
     }
 
     const numQuantity = Number(quantity);
 
     if (!quantity || isNaN(numQuantity)) {
-      setValidationError("Ingresa una cantidad válida de mesas");
+      setValidationError("Ingresá una cantidad válida de mesas");
       return;
     }
 
@@ -84,7 +84,7 @@ export const Onboarding = () => {
 
     if (!restaurantResult.success || !restaurantResult.data) {
       setValidationError(
-        restaurantResult.error || "Error al crear el restaurante",
+        restaurantResult.error || "Error al crear el local",
       );
       setIsSubmitting(false);
       return;
@@ -148,7 +148,7 @@ export const Onboarding = () => {
         <div className="card w-full bg-base-100 shadow-xl">
           <div className="card-body p-6">
             <h2 className="font-display text-2xl font-semibold text-center mb-2">
-              Configura tu local
+              Configurá tu local
             </h2>
 
             {selectedPlan && (
@@ -157,7 +157,7 @@ export const Onboarding = () => {
                   {selectedPlan.name}
                 </span>
                 {selectedPlan.trialDays > 0 && (
-                  <span className="text-xs opacity-60">
+                  <span className="text-xs text-fg-soft">
                     {selectedPlan.trialDays} días de prueba gratis
                   </span>
                 )}
@@ -171,12 +171,12 @@ export const Onboarding = () => {
             <form onSubmit={handleSubmit}>
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Nombre del restaurante</span>
+                  <span className="label-text">Nombre del local</span>
                 </label>
                 <input
                   type="text"
                   name="restaurantName"
-                  placeholder="Mi Restaurante"
+                  placeholder="Mi local"
                   className="input input-bordered w-full"
                   value={restaurantName}
                   onChange={handleRestaurantNameChange}
@@ -221,7 +221,7 @@ export const Onboarding = () => {
                 <label className="label">
                   <span className="label-text">Cantidad de mesas</span>
                   {maxTablesHint && (
-                    <span className="label-text-alt opacity-60">
+                    <span className="label-text-alt text-fg-soft">
                       {maxTablesHint}
                     </span>
                   )}

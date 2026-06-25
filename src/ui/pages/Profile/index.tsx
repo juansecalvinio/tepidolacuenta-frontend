@@ -7,6 +7,7 @@ import { useSubscription } from "../../hooks/useSubscription";
 import { useFetchInvitation } from "../../hooks/useFetchInvitation";
 import { useFetchTeam } from "../../hooks/useFetchTeam";
 import { useFetchBranches } from "../../hooks/useFetchBranches";
+import { getPlanSummary } from "../../utils/plan.utils";
 
 export const Profile = () => {
   const navigate = useNavigate();
@@ -15,7 +16,14 @@ export const Profile = () => {
   const { restaurant, branches, activeBranch } = useRestaurants();
   const { fetchBranchesByRestaurant } = useFetchBranches();
   const { subscription } = useSubscription();
-  const { isLoading: invitationLoading, error: invitationError, invitationCode, invitationExpiresAt, generateInvitation, clearInvitation } = useFetchInvitation();
+  const {
+    isLoading: invitationLoading,
+    error: invitationError,
+    invitationCode,
+    invitationExpiresAt,
+    generateInvitation,
+    clearInvitation,
+  } = useFetchInvitation();
   const {
     employees,
     isLoading: teamLoading,
@@ -65,7 +73,11 @@ export const Profile = () => {
   };
 
   const formatDate = (value: Date | string) =>
-    new Date(value).toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric" });
+    new Date(value).toLocaleDateString("es-AR", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
 
   const formatExpiresAt = (iso: string) => formatDate(iso);
 
@@ -73,7 +85,7 @@ export const Profile = () => {
     <div className="p-4 max-w-3xl mx-auto">
       <h2 className="font-display text-2xl font-semibold mb-6">Tu perfil</h2>
 
-      <div className="bg-base-100 border border-base-300 rounded-xl overflow-hidden">
+      <div className="surface bg-base-100 border border-base-300 rounded-xl overflow-hidden">
         {/* Avatar + email */}
         <div className="p-4 flex items-center gap-4 border-b border-base-300">
           <div className="avatar avatar-placeholder shrink-0">
@@ -104,9 +116,11 @@ export const Profile = () => {
 
       {isOwner && (
         <>
-          <h2 className="font-display text-2xl font-semibold my-6">Suscripción</h2>
+          <h2 className="font-display text-2xl font-semibold my-6">
+            Suscripción
+          </h2>
 
-          <div className="bg-base-100 border border-base-300 rounded-xl flex items-center justify-between gap-4 p-4">
+          <div className="surface bg-base-100 border border-base-300 rounded-xl flex items-center justify-between gap-4 p-4">
             <div className="min-w-0">
               <p className="text-xs text-fg-subtle uppercase tracking-wider mb-1">
                 Plan actual
@@ -114,9 +128,14 @@ export const Profile = () => {
               <p className="text-base font-semibold truncate">
                 {subscription?.plan?.name}
               </p>
+              {subscription?.plan && (
+                <p className="text-xs text-fg-soft mt-0.5 truncate">
+                  {getPlanSummary(subscription.plan)}
+                </p>
+              )}
             </div>
             <button
-              className="btn btn-sm btn-secondary shrink-0"
+              className="btn btn-sm btn-primary shrink-0"
               onClick={() => navigate("/dashboard/subscription")}
             >
               Gestionar
@@ -125,10 +144,12 @@ export const Profile = () => {
 
           <h2 className="font-display text-2xl font-semibold my-6">Equipo</h2>
 
-          <div className="bg-base-100 border border-base-300 rounded-xl overflow-hidden">
+          <div className="surface bg-base-100 border border-base-300 rounded-xl overflow-hidden">
             <div className="p-4 border-b border-base-300">
               <p className="text-sm text-fg-soft">
-                Elegí la sucursal y generá un código para que un empleado se registre con acceso solo a esa sucursal. El código expira a los 7 días y es de un solo uso.
+                Elegí la sucursal y generá un código para que un empleado se
+                registre con acceso solo a esa sucursal. El código expira a los
+                7 días y es de un solo uso.
               </p>
             </div>
 
@@ -142,7 +163,9 @@ export const Profile = () => {
               {invitationCode ? (
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center gap-2 bg-base-200 rounded-lg p-3">
-                    <code className="flex-1 font-mono text-sm break-all">{invitationCode}</code>
+                    <code className="flex-1 font-mono text-sm break-all">
+                      {invitationCode}
+                    </code>
                     <button
                       className="btn btn-sm btn-ghost shrink-0"
                       onClick={handleCopyCode}
@@ -187,7 +210,7 @@ export const Profile = () => {
                     </select>
                   </label>
                   <button
-                    className="btn btn-primary btn-sm self-start"
+                    className="btn btn-secondary btn-sm self-start"
                     onClick={handleGenerateInvitation}
                     disabled={invitationLoading || !effectiveBranchId}
                   >
@@ -203,11 +226,12 @@ export const Profile = () => {
           </div>
 
           {/* Lista de empleados */}
-          <div className="bg-base-100 border border-base-300 rounded-xl overflow-hidden mt-4">
+          <div className="surface bg-base-100 border border-base-300 rounded-xl overflow-hidden mt-4">
             <div className="p-4 border-b border-base-300">
               <p className="text-sm font-medium text-base-content">Empleados</p>
               <p className="text-xs text-fg-soft mt-0.5">
-                Tienen acceso a este local. Podés revocarles el acceso cuando quieras.
+                Tienen acceso a este local. Podés revocarles el acceso cuando
+                quieras.
               </p>
             </div>
 
@@ -228,7 +252,8 @@ export const Profile = () => {
               </div>
             ) : employees.length === 0 ? (
               <p className="p-4 text-sm text-fg-subtle">
-                Todavía no hay empleados. Generá un código de invitación para sumar uno.
+                Todavía no hay empleados. Generá un código de invitación para
+                sumar uno.
               </p>
             ) : (
               <ul className="divide-y divide-base-300">

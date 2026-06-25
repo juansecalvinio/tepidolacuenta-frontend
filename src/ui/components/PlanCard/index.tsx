@@ -21,7 +21,7 @@ export const PlanCard = ({
   loading = false,
 }: Props) => (
   <div
-    className={`card card-border w-full relative transition-shadow ${
+    className={`card card-border w-full h-full relative transition-shadow ${
       isRecommended
         ? "border-primary border-2 bg-base-100 md:shadow-lg"
         : "border-base-300 bg-base-100"
@@ -42,11 +42,11 @@ export const PlanCard = ({
         <span className="font-host text-3xl font-black whitespace-nowrap tabular-nums">
           $ {PriceUtils.getFormattedPrice(plan.price)}
         </span>
-        <span className="text-sm opacity-60">/mes</span>
+        <span className="text-sm text-fg-soft">/mes</span>
       </div>
 
       {plan.trialDays > 0 && (
-        <p className="text-xs opacity-60 -mt-1">
+        <p className="text-xs text-fg-soft -mt-1">
           {plan.trialDays} días gratis al comenzar
         </p>
       )}
@@ -60,7 +60,9 @@ export const PlanCard = ({
         ))}
       </ul>
 
-      <div className="card-actions">
+      {/* mt-auto empuja el CTA al pie: con las cards a igual altura, los botones
+          quedan alineados sin importar cuánto contenido tenga cada plan. */}
+      <div className="card-actions mt-auto">
         {isCurrent ? (
           <button className="btn btn-outline w-full" disabled>
             Plan actual

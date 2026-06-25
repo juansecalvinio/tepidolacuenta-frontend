@@ -4,6 +4,7 @@ import { useFetchAuth } from "../../hooks/useFetchAuth";
 import { useFetchInvitation } from "../../hooks/useFetchInvitation";
 import { AuthLogo } from "../../components/AuthLogo";
 import { Alert } from "../../components/Alert";
+import { StorefrontIcon, KeyIcon } from "../../components/icons";
 
 type SelectedRole = "owner" | "employee" | null;
 
@@ -127,9 +128,9 @@ export const RoleSelection = () => {
                     : "border-base-300 hover:border-base-content/30"
                 }`}
               >
-                <span className="text-2xl mt-0.5">🏪</span>
+                <StorefrontIcon className="w-7 h-7 mt-0.5 shrink-0 text-primary" />
                 <div>
-                  <p className="font-semibold text-base-content">Registrar mi negocio</p>
+                  <p className="font-semibold text-base-content">Registrar mi local</p>
                   <p className="text-sm text-fg-soft mt-0.5">
                     Creá tu local, elegí un plan y administrá tus mesas y sucursales.
                   </p>
@@ -147,7 +148,7 @@ export const RoleSelection = () => {
                     : "border-base-300 hover:border-base-content/30"
                 }`}
               >
-                <span className="text-2xl mt-0.5">🔑</span>
+                <KeyIcon className="w-7 h-7 mt-0.5 shrink-0 text-primary" />
                 <div>
                   <p className="font-semibold text-base-content">Tengo un código de invitación</p>
                   <p className="text-sm text-fg-soft mt-0.5">

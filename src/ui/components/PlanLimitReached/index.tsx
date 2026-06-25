@@ -29,7 +29,7 @@ export const PlanLimitReached = ({ title, description }: Props) => {
 
       <div>
         <h2 className="font-display text-lg font-semibold mb-2">{title}</h2>
-        <p className="opacity-60 text-sm max-w-xs">{description}</p>
+        <p className="text-fg-soft text-sm max-w-xs">{description}</p>
       </div>
 
       <button

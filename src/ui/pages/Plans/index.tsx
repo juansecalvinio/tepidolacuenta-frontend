@@ -42,12 +42,12 @@ export const Plans = () => {
     <div className="p-4 max-w-4xl mx-auto">
       <div className="mb-8">
         <h1 className="font-display text-3xl font-semibold mb-1 text-balance">Planes</h1>
-        <p className="opacity-60">
-          Elegí el plan que mejor se adapta a tu negocio.
+        <p className="text-fg-soft">
+          Elegí el plan que mejor se adapta a tu local.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
         {sortedPlans.map((plan) => (
           <PlanCard
             key={plan.id}
@@ -63,7 +63,7 @@ export const Plans = () => {
 
       {plans.length === 0 && !isLoading && (
         <div className="card bg-base-100 card-border border-base-300">
-          <div className="card-body text-center opacity-60">
+          <div className="card-body text-center text-fg-soft">
             No hay planes disponibles por el momento.
           </div>
         </div>

@@ -7,6 +7,7 @@ import { useFetchBillRequests } from "../../hooks/useFetchBillRequests";
 import { useFetchTables } from "../../hooks/useFetchTables";
 import { useBillRequestContext } from "../../contexts/bill-request.context";
 import { useRestaurants } from "../../hooks/useRestaurants";
+import { useSubscription } from "../../hooks/useSubscription";
 import { useFetchBranches } from "../../hooks/useFetchBranches";
 import { useFetchRestaurant } from "../../hooks/useFetchRestaurant";
 import {
@@ -16,6 +17,7 @@ import {
 import { NewTrialBanner } from "../../components/NewTrialBanner";
 import { NotificationPermissionBanner } from "../../components/NotificationPermissionBanner";
 import { TimeUtils } from "../../utils/time.utils";
+import { CashIcon, CardIcon } from "../../components/icons";
 import type {
   BillRequest,
   PaymentMethod,
@@ -38,42 +40,6 @@ const PAYMENT_LABELS: Record<PaymentMethod, string> = {
   debit_card: "Débito",
   credit_card: "Crédito",
 };
-
-// ─── Icons ───────────────────────────────────────────────────────────────────
-
-const CashIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    strokeWidth={1.5}
-    stroke="currentColor"
-    className="w-3.5 h-3.5"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h1.125c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125H15m-5.625 0h1.875M9.375 10.5H7.5"
-    />
-  </svg>
-);
-
-const CardIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    strokeWidth={1.5}
-    stroke="currentColor"
-    className="w-3.5 h-3.5"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z"
-    />
-  </svg>
-);
 
 // ─── WS Status badge ─────────────────────────────────────────────────────────
 
@@ -129,6 +95,7 @@ export const NewDashboard = () => {
   const { fetchTables } = useFetchTables();
   const { restaurant, activeBranch } = useRestaurants();
   const { tables, isLoading: isTablesLoading } = useTables();
+  const { currentPlan } = useSubscription();
   const {
     requests,
     error: requestsError,
@@ -221,7 +188,7 @@ export const NewDashboard = () => {
       <div className="flex items-start justify-between gap-3 mb-6">
         <div className="flex-1 min-w-0">
           <h1 className="font-display text-3xl sm:text-4xl font-semibold leading-tight truncate">
-            {restaurant?.name || "Tu restaurante"}
+            {restaurant?.name || "Tu local"}
           </h1>
           {activeBranch && (
             <p className="text-sm text-fg-subtle mt-0.5 truncate">
@@ -275,7 +242,7 @@ export const NewDashboard = () => {
             />
           </svg>
           <p className="flex-1 text-fg">
-            Sin conexión en tiempo real. Las solicitudes no se actualizarán
+            Sin conexión en tiempo real. Los pedidos no se actualizarán
             automáticamente.
           </p>
           <button
@@ -287,7 +254,7 @@ export const NewDashboard = () => {
         </div>
       )}
 
-      {/* Error al cargar solicitudes */}
+      {/* Error al cargar pedidos */}
       {!isInitialLoading && requestsError && (
         <div className="flex items-start gap-3 border border-error/25 bg-error/5 rounded-xl px-4 py-3 mb-4 text-sm">
           <svg
@@ -305,7 +272,7 @@ export const NewDashboard = () => {
             />
           </svg>
           <p className="flex-1 text-fg">
-            No pudimos cargar las solicitudes.
+            No pudimos cargar los pedidos.
           </p>
           <button
             className="btn btn-xs btn-ghost shrink-0"
@@ -319,7 +286,7 @@ export const NewDashboard = () => {
       {/* Métricas */}
       <div className="flex gap-3 mb-6">
         {/* Mesas */}
-        <div className="flex-1 border border-base-300 rounded-xl p-4 bg-base-100">
+        <div className="surface flex-1 border border-base-300 rounded-xl p-4 bg-base-100">
           <p className="text-xs font-medium text-fg-subtle uppercase tracking-wider mb-2">
             Mesas
           </p>
@@ -338,8 +305,13 @@ export const NewDashboard = () => {
             )
           ) : (
             <div className="flex items-end justify-between">
-              <span className="font-host text-3xl font-black">
+              <span className="font-host text-3xl font-black leading-none">
                 {tables.length}
+                {currentPlan && currentPlan.maxTables !== -1 && (
+                  <span className="font-sans text-sm font-normal text-fg-soft ml-1">
+                    de {currentPlan.maxTables}
+                  </span>
+                )}
               </span>
               <button
                 className="btn btn-square btn-xs btn-ghost opacity-40 hover:opacity-100 transition-opacity"
@@ -370,7 +342,7 @@ export const NewDashboard = () => {
           className={`flex-1 border rounded-xl p-4 transition-colors ${
             filteredPendingCount > 0
               ? "border-primary/30 bg-primary/5"
-              : "border-base-300 bg-base-100"
+              : "surface border-base-300 bg-base-100"
           }`}
         >
           <p
@@ -394,19 +366,19 @@ export const NewDashboard = () => {
         </div>
       </div>
 
-      {/* Sección de solicitudes */}
+      {/* Sección de pedidos */}
       <div className="mb-3">
         <h2 className="font-display text-lg font-semibold">
           {filteredPendingCount > 0
             ? filteredPendingCount === 1
-              ? "1 solicitud pendiente"
-              : `${filteredPendingCount} solicitudes pendientes`
-            : "Solicitudes de cuentas"}
+              ? "1 pedido pendiente"
+              : `${filteredPendingCount} pedidos pendientes`
+            : "Pedidos de cuenta"}
         </h2>
       </div>
 
       {pendingRequests.length === 0 ? (
-        <div className="border border-base-300 rounded-xl bg-base-100">
+        <div className="surface border border-base-300 rounded-xl bg-base-100">
           <div className="p-8 flex flex-col items-center gap-2 text-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -423,7 +395,7 @@ export const NewDashboard = () => {
               />
             </svg>
             <p className="text-fg-subtle text-sm">
-              Sin solicitudes por el momento
+              Sin pedidos por el momento
             </p>
           </div>
         </div>
@@ -441,10 +413,10 @@ export const NewDashboard = () => {
                 key={request.id}
                 className={`border rounded-xl bg-base-100 transition-colors ${
                   isUrgent
-                    ? "border-error/25"
+                    ? "shadow-surface border-error/25"
                     : isModerate
-                      ? "border-warning/25"
-                      : "border-base-300"
+                      ? "shadow-surface border-warning/25"
+                      : "surface border-base-300"
                 }`}
               >
                 <div className="p-4 flex items-center gap-3">
@@ -472,7 +444,7 @@ export const NewDashboard = () => {
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5 text-xs text-fg-subtle mt-0.5">
-                      <PayIcon />
+                      <PayIcon className="w-3.5 h-3.5" />
                       <span>
                         {PAYMENT_LABELS[request.paymentMethod as PaymentMethod]}
                       </span>

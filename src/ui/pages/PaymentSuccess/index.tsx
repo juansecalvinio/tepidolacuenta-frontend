@@ -31,7 +31,7 @@ export const PaymentSuccess = () => {
               <h1 className="font-display text-2xl font-semibold mb-2">
                 Procesando tu pago
               </h1>
-              <p className="opacity-60 text-sm">
+              <p className="text-fg-soft text-sm">
                 Estamos confirmando tu pago con MercadoPago. Esto puede tardar
                 unos segundos…
               </p>
@@ -65,7 +65,7 @@ export const PaymentSuccess = () => {
               <h1 className="font-display text-2xl font-semibold mb-2">
                 ¡Pago aprobado!
               </h1>
-              <p className="opacity-60 text-sm">
+              <p className="text-fg-soft text-sm">
                 Tu suscripción fue activada correctamente. Redirigiendo al
                 dashboard…
               </p>
@@ -97,7 +97,7 @@ export const PaymentSuccess = () => {
               <h1 className="font-display text-2xl font-semibold mb-2">
                 El pago sigue procesándose
               </h1>
-              <p className="opacity-60 text-sm">
+              <p className="text-fg-soft text-sm">
                 Está tardando más de lo normal. Tu suscripción puede activarse en
                 unos minutos — podés revisar el estado en el dashboard.
               </p>

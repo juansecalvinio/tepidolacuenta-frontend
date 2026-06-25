@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import QRCode from "react-qr-code";
+import { CloseIcon } from "../icons";
 
 interface Props {
   title: string;
@@ -41,7 +42,7 @@ export const QRModal = ({ title, qrCode, show, onClose }: Props) => {
             onClick={closeModal}
             aria-label="Cerrar"
           >
-            ✕
+            <CloseIcon className="w-4 h-4" />
           </button>
         </form>
         <h3 className="font-display text-3xl font-semibold text-center mb-4">{title}</h3>

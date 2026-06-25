@@ -9,14 +9,18 @@ import { getBillRequestRepository } from "../../../core/modules/bill-request/inf
 import { GetVenueInfo } from "../../../core/modules/bill-request/use-cases/GetVenueInfo";
 import { BillGeneratingAnimation } from "../../components/FeedbacksAnimations/BillGeneratingAnimation";
 import { WaiterComingAnimation } from "../../components/FeedbacksAnimations/WaiterComingAnimation";
+import { CashIcon, CardIcon } from "../../components/icons";
 import { parseBillRequestQr } from "./parseBillRequestQr";
 
-const PAYMENT_OPTIONS: { value: PaymentMethod; label: string; icon: string }[] =
-  [
-    { value: "cash", label: "Efectivo", icon: "💵" },
-    { value: "debit_card", label: "Débito", icon: "🏧" },
-    { value: "credit_card", label: "Crédito", icon: "💳" },
-  ];
+const PAYMENT_OPTIONS: {
+  value: PaymentMethod;
+  label: string;
+  Icon: (props: { className?: string }) => React.ReactElement;
+}[] = [
+  { value: "cash", label: "Efectivo", Icon: CashIcon },
+  { value: "debit_card", label: "Débito", Icon: CardIcon },
+  { value: "credit_card", label: "Crédito", Icon: CardIcon },
+];
 
 const Spinner = () => (
   <div
@@ -286,9 +290,7 @@ export const NewRequestBill = () => {
                               </svg>
                             </span>
                           )}
-                          <span className="text-2xl" aria-hidden="true">
-                            {option.icon}
-                          </span>
+                          <option.Icon className="w-6 h-6" />
                           <span
                             className={`text-xs font-medium tracking-wide ${isSelected ? "text-primary" : "text-fg-soft"}`}
                           >
@@ -341,7 +343,7 @@ export const NewRequestBill = () => {
               className="flex items-center justify-center gap-1.5 text-sm text-fg-soft"
             >
               <span>Vas a pagar con</span>
-              <span aria-hidden="true">{selectedOption.icon}</span>
+              <selectedOption.Icon className="w-4 h-4" />
               <span className="font-semibold text-base-content">
                 {selectedOption.label}
               </span>

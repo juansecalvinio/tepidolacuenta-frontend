@@ -77,7 +77,7 @@ export const Restaurant = () => {
     <div className="p-4 max-w-3xl mx-auto">
       <h2 className="font-display text-2xl font-semibold mb-6">Información de tu local</h2>
 
-      <div className="bg-base-100 border border-base-300 rounded-xl overflow-hidden">
+      <div className="surface bg-base-100 border border-base-300 rounded-xl overflow-hidden">
         {/* Header del local */}
         <div className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 ">
           <p className="text-xl font-semibold">{restaurant?.name}</p>

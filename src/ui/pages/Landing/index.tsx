@@ -204,7 +204,7 @@ const PlanCard = ({
   onSelect: () => void;
 }) => (
   <div
-    className={`relative flex flex-col w-full rounded-2xl transition-shadow ${
+    className={`relative flex flex-col w-full h-full rounded-2xl transition-shadow ${
       isRecommended
         ? "border-2 border-primary bg-base-100 md:shadow-lg"
         : "border border-base-300 bg-base-100"
@@ -503,7 +503,7 @@ export const Landing = () => {
               <span className="loading loading-spinner loading-lg"></span>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
               {sortedPlans.map((plan) => (
                 <PlanCard
                   key={plan.id}

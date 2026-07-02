@@ -27,3 +27,6 @@ dist-ssr
 scripts
 payment-flow-screenshots
 docs
+
+# Brainstorming visual companion (superpowers)
+.superpowers/

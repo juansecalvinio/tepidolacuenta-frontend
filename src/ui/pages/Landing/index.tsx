@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import { APP_ORIGIN, isAppHost } from "../../utils/host";
+import { isAppHost } from "../../utils/host";
 import { motion } from "motion/react";
-import QRCode from "react-qr-code";
+import { HeroVisual } from "./components/HeroVisual";
+import { PhoneDemo } from "./components/PhoneDemo";
+import { ManageShowcase } from "./components/ManageShowcase";
 import { useAuth } from "../../hooks/useAuth";
 import { useSubscription } from "../../hooks/useSubscription";
 import { useFetchSubscription } from "../../hooks/useFetchSubscription";
@@ -152,9 +154,9 @@ const STEPS = [
   },
   {
     number: "03",
-    title: "Vos recibís la solicitud",
+    title: "Vos recibís el pedido",
     description:
-      "La solicitud aparece en tu dashboard en tiempo real. Un toque y está atendida.",
+      "El pedido aparece en tu dashboard en tiempo real. Un toque y está atendido.",
   },
 ];
 
@@ -247,47 +249,6 @@ const PlanCard = ({
         Empezar Gratis
       </button>
     </div>
-  </div>
-);
-
-// ─── Hero mockup ──────────────────────────────────────────────────────────────
-
-const HeroMockup = () => (
-  <div className="relative w-full max-w-[300px]">
-    {/* Phone — what the customer sees */}
-    <div className="relative mx-auto w-64 rounded-[2.5rem] border-[6px] border-base-300 bg-base-100 shadow-xl p-3">
-      <div className="absolute top-3 left-1/2 -translate-x-1/2 h-1.5 w-16 rounded-full bg-base-300" />
-      <div className="mt-5 rounded-[1.75rem] bg-base-200/50 px-5 py-6 flex flex-col items-center text-center">
-        <span className="font-display text-lg font-semibold">La Parrilla</span>
-        <span className="text-xs text-fg-subtle mb-4">Mesa 5</span>
-        <div className="rounded-xl bg-white p-3">
-          <QRCode value={`${APP_ORIGIN}/request`} size={116} />
-        </div>
-        <div className="mt-5 w-full rounded-xl bg-primary text-primary-content text-sm font-semibold py-2.5">
-          Pedir la cuenta
-        </div>
-        <span className="text-[10px] text-fg-subtle mt-2">
-          Sin descargar ninguna app
-        </span>
-      </div>
-    </div>
-
-    {/* Floating notification — what the owner gets, instantly */}
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: 0.85, ease: [0.16, 1, 0.3, 1] }}
-      className="absolute -right-2 sm:-right-6 -bottom-4 w-52 rounded-2xl border border-base-300/60 bg-base-100 shadow-lg p-3.5 flex items-start gap-3"
-    >
-      <span className="shrink-0 w-9 h-9 rounded-xl bg-primary/15 flex items-center justify-center text-primary">
-        <BellIcon />
-      </span>
-      <div className="text-left">
-        <p className="text-sm font-semibold leading-tight">Nueva solicitud</p>
-        <p className="text-xs text-fg-subtle">Mesa 5 · hace un instante</p>
-      </div>
-      <span className="ml-auto mt-0.5 w-2 h-2 rounded-full bg-success animate-pulse shrink-0" />
-    </motion.div>
   </div>
 );
 
@@ -403,7 +364,9 @@ export const Landing = () => {
             transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
             className="relative flex justify-center lg:justify-end"
           >
-            <HeroMockup />
+            <div className="relative w-full h-[420px] lg:h-[500px]">
+              <HeroVisual />
+            </div>
           </motion.div>
         </div>
       </section>
@@ -460,31 +423,12 @@ export const Landing = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            {STEPS.map(({ number, title, description }, i) => (
-              <motion.div
-                key={number}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{
-                  duration: 0.5,
-                  delay: i * 0.1,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
-              >
-                <span className="font-display text-6xl font-semibold italic text-primary/25 leading-none block mb-4">
-                  {number}
-                </span>
-                <h3 className="font-display font-semibold text-xl mb-2">{title}</h3>
-                <p className="text-fg-subtle text-sm leading-relaxed">
-                  {description}
-                </p>
-              </motion.div>
-            ))}
-          </div>
+          <PhoneDemo steps={STEPS} />
         </div>
       </section>
+
+      {/* ── Manage showcase ────────────────────────────────────────────────── */}
+      <ManageShowcase />
 
       {/* ── Plans ──────────────────────────────────────────────────────────── */}
       <section id="planes" className="py-24 px-4 border-t border-base-300/40">

@@ -8,7 +8,10 @@ import { usePendingPayment } from "../../hooks/usePendingPayment";
 import { AuthLogo } from "../../components/AuthLogo";
 import { Alert } from "../../components/Alert";
 import { PlanCard } from "../../components/PlanCard";
+import { BillingCycleToggle } from "../../components/BillingCycleToggle";
+import { EnterpriseContactCta } from "../../components/EnterpriseContactCta";
 import type { Plan } from "../../../core/modules/subscription/domain/models/Subscription";
+import type { BillingCycle } from "../../../core/modules/payment/domain/models/Payment";
 
 export const SelectPlan = () => {
   const navigate = useNavigate();
@@ -20,6 +23,7 @@ export const SelectPlan = () => {
   // Guard contra doble pago: si ya hay un pago en vuelo, no dejamos pagar otra vez.
   const { status: pendingStatus, recheck, dismiss } = usePendingPayment();
   const [isRechecking, setIsRechecking] = useState(false);
+  const [cycle, setCycle] = useState<BillingCycle>("monthly");
 
   useEffect(() => {
     fetchPlans();
@@ -32,11 +36,13 @@ export const SelectPlan = () => {
     }
   }, [pendingStatus, navigate]);
 
-  const handleSelectPlan = async (plan: Plan) => {
+  const handleSelectPlan = async (plan: Plan, branches: number) => {
     if (restaurantId) {
       const result = await createPreference({
         restaurantId,
         planId: plan.id,
+        cycle,
+        branches,
       });
       if (result.success && result.data) {
         window.location.href = result.data.paymentUrl;
@@ -65,7 +71,7 @@ export const SelectPlan = () => {
   }
 
   const sortedPlans = [...plans].sort((a, b) => a.price - b.price);
-  const recommendedId = sortedPlans[Math.floor((sortedPlans.length - 1) / 2)]?.id;
+  const recommendedId = sortedPlans[1]?.id; // Pro
 
   // Con local existente se cobra (MercadoPago); sin local, el alta arranca con
   // un trial. El CTA y el subtítulo lo comunican explícitamente.
@@ -73,7 +79,7 @@ export const SelectPlan = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-start bg-base-100 p-4 mt-4">
-      <div className="w-full max-w-4xl">
+      <div className="w-full max-w-6xl">
         <AuthLogo />
 
         {pendingStatus === "pending" ? (
@@ -138,11 +144,16 @@ export const SelectPlan = () => {
 
             {error && <Alert className="mb-6">{error}</Alert>}
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
+            <div className="flex justify-center mb-8">
+              <BillingCycleToggle value={cycle} onChange={setCycle} />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
               {sortedPlans.map((plan) => (
                 <PlanCard
                   key={plan.id}
                   plan={plan}
+                  cycle={cycle}
                   isRecommended={plan.id === recommendedId}
                   ctaLabel={
                     isPayFlow
@@ -156,6 +167,8 @@ export const SelectPlan = () => {
                 />
               ))}
             </div>
+
+            {plans.length > 0 && <EnterpriseContactCta />}
 
             {plans.length === 0 && !isLoading && (
               <div className="card bg-base-100 card-border border-base-300">

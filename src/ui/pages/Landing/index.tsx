@@ -10,7 +10,14 @@ import { useSubscription } from "../../hooks/useSubscription";
 import { useFetchSubscription } from "../../hooks/useFetchSubscription";
 import type { Plan } from "../../../core/modules/subscription/domain/models/Subscription";
 import { PriceUtils } from "../../utils/price.utils";
-import { getPlanFeatures } from "../../utils/plan.utils";
+import {
+  getPlanFeatures,
+  priceForBranches,
+  supportsBranchAddon,
+} from "../../utils/plan.utils";
+import { BillingCycleToggle } from "../../components/BillingCycleToggle";
+import { EnterpriseContactCta } from "../../components/EnterpriseContactCta";
+import type { BillingCycle } from "../../../core/modules/payment/domain/models/Payment";
 
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
@@ -198,59 +205,106 @@ const FAQS = [
 
 const PlanCard = ({
   plan,
+  cycle,
   isRecommended,
   onSelect,
 }: {
   plan: Plan;
+  cycle: BillingCycle;
   isRecommended: boolean;
-  onSelect: () => void;
-}) => (
-  <div
-    className={`relative flex flex-col w-full h-full rounded-2xl transition-shadow ${
-      isRecommended
-        ? "border-2 border-primary bg-base-100 md:shadow-lg"
-        : "border border-base-300 bg-base-100"
-    }`}
-  >
-    {isRecommended && (
-      <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-        <span className="badge badge-primary badge-sm font-semibold px-3">
-          Recomendado
-        </span>
-      </div>
-    )}
-    <div className="flex flex-col flex-1 p-6">
-      <h3 className="font-display text-xl font-semibold mb-3">{plan.name}</h3>
-      <div className="mb-1">
-        <span className="font-display text-4xl font-semibold tracking-tight whitespace-nowrap tabular-nums">
-          $ {PriceUtils.getFormattedPrice(plan.price)}
-        </span>
-        <span className="text-sm opacity-60">/mes</span>
-      </div>
-      {plan.trialDays > 0 && (
-        <p className="text-xs opacity-50 mb-5">
-          {plan.trialDays} días gratis al comenzar
-        </p>
+  onSelect: (plan: Plan, branches: number) => void;
+}) => {
+  const addon = supportsBranchAddon(plan);
+  const [branches, setBranches] = useState(plan.includedBranches);
+  const price = priceForBranches(plan, branches, cycle);
+
+  return (
+    <div
+      className={`relative flex flex-col w-full h-full rounded-2xl transition-shadow ${
+        isRecommended
+          ? "border-2 border-primary bg-base-100 md:shadow-lg"
+          : "border border-base-300 bg-base-100"
+      }`}
+    >
+      {isRecommended && (
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+          <span className="badge badge-primary badge-sm font-semibold px-3">
+            Recomendado
+          </span>
+        </div>
       )}
-      <ul className="space-y-2.5 mb-8 flex-1">
-        {getPlanFeatures(plan).map((feature) => (
-          <li key={feature} className="flex items-center gap-2">
-            <span className="text-success">
-              <CheckIcon />
-            </span>
-            <span className="text-sm">{feature}</span>
-          </li>
-        ))}
-      </ul>
-      <button
-        className={`btn w-full ${isRecommended ? "btn-primary" : "btn-secondary"}`}
-        onClick={onSelect}
-      >
-        Empezar Gratis
-      </button>
+      <div className="flex flex-col flex-1 p-6">
+        <h3 className="font-display text-xl font-semibold mb-3">{plan.name}</h3>
+        <div className="mb-1">
+          <span className="font-display text-4xl font-semibold tracking-tight whitespace-nowrap tabular-nums">
+            $ {PriceUtils.getFormattedPrice(price)}
+          </span>
+          <span className="text-sm opacity-60">
+            {cycle === "annual" ? "/año" : "/mes"}
+          </span>
+        </div>
+        {cycle === "annual" ? (
+          <p className="text-xs text-success mb-5">Equivale a 2 meses gratis</p>
+        ) : plan.trialDays > 0 ? (
+          <p className="text-xs opacity-50 mb-5">
+            {plan.trialDays} días gratis al comenzar
+          </p>
+        ) : (
+          <div className="mb-5" />
+        )}
+
+        {addon && (
+          <div className="mb-5 flex items-center justify-between gap-2 rounded-lg border border-base-300 px-3 py-2">
+            <span className="text-sm">Sucursales</span>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                className="btn btn-xs btn-circle btn-ghost"
+                aria-label="Quitar sucursal"
+                disabled={branches <= plan.includedBranches}
+                onClick={() =>
+                  setBranches((b) => Math.max(plan.includedBranches, b - 1))
+                }
+              >
+                −
+              </button>
+              <span className="text-sm font-semibold tabular-nums w-6 text-center">
+                {branches}
+              </span>
+              <button
+                type="button"
+                className="btn btn-xs btn-circle btn-ghost"
+                aria-label="Agregar sucursal"
+                onClick={() => setBranches((b) => b + 1)}
+              >
+                +
+              </button>
+            </div>
+          </div>
+        )}
+
+        <ul className="space-y-2.5 mb-8 flex-1">
+          {getPlanFeatures(plan).map((feature) => (
+            <li key={feature} className="flex items-center gap-2">
+              <span className="text-success">
+                <CheckIcon />
+              </span>
+              <span className="text-sm">{feature}</span>
+            </li>
+          ))}
+        </ul>
+        <button
+          className={`btn w-full ${
+            isRecommended ? "btn-primary" : "btn-secondary"
+          }`}
+          onClick={() => onSelect(plan, branches)}
+        >
+          Empezar Gratis
+        </button>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
@@ -281,12 +335,18 @@ export const Landing = () => {
     return () => observer.disconnect();
   }, []);
 
+  const [cycle, setCycle] = useState<BillingCycle>("monthly");
+
   const handleGetStarted = () => {
     navigate(isAuthenticated ? "/dashboard" : "/register");
   };
 
+  const handleSelectLandingPlan = () => {
+    handleGetStarted();
+  };
+
   const sortedPlans = [...plans].sort((a, b) => a.price - b.price);
-  const recommendedId = sortedPlans[Math.floor((sortedPlans.length - 1) / 2)]?.id;
+  const recommendedId = sortedPlans[1]?.id; // Pro
   const trialDays = sortedPlans[0]?.trialDays ?? 30;
 
   // En el subdominio app la landing no se muestra: a la app directamente.
@@ -432,7 +492,7 @@ export const Landing = () => {
 
       {/* ── Plans ──────────────────────────────────────────────────────────── */}
       <section id="planes" className="py-24 px-4 border-t border-base-300/40">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="font-display text-3xl sm:text-4xl font-semibold tracking-tight mb-3 text-balance">
               Planes
@@ -447,16 +507,25 @@ export const Landing = () => {
               <span className="loading loading-spinner loading-lg"></span>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
-              {sortedPlans.map((plan) => (
-                <PlanCard
-                  key={plan.id}
-                  plan={plan}
-                  isRecommended={plan.id === recommendedId}
-                  onSelect={handleGetStarted}
-                />
-              ))}
-            </div>
+            <>
+              <div className="flex justify-center mb-8">
+                <BillingCycleToggle value={cycle} onChange={setCycle} />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
+                {sortedPlans.map((plan) => (
+                  <PlanCard
+                    key={plan.id}
+                    plan={plan}
+                    cycle={cycle}
+                    isRecommended={plan.id === recommendedId}
+                    onSelect={handleSelectLandingPlan}
+                  />
+                ))}
+              </div>
+
+              <EnterpriseContactCta />
+            </>
           )}
 
           {plans.length > 0 && (

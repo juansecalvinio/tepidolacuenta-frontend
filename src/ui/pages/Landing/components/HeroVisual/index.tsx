@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
+import { useTranslation } from "react-i18next";
 import QRCode from "react-qr-code";
 import { APP_ORIGIN } from "../../../../utils/host";
 import { usePrefersReducedMotion } from "../../../../hooks/usePrefersReducedMotion";
@@ -8,6 +9,7 @@ import { usePrefersReducedMotion } from "../../../../hooks/usePrefersReducedMoti
 // recibe el dueño), ahora con tilt hacia el mouse, flotación y parallax de
 // profundidad. Todo 2D + Framer Motion. Respeta prefers-reduced-motion.
 export const HeroVisual = () => {
+  const { t } = useTranslation();
   const reduced = usePrefersReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
 
@@ -62,15 +64,17 @@ export const HeroVisual = () => {
         <div className="absolute top-3 left-1/2 -translate-x-1/2 h-1.5 w-16 rounded-full bg-base-300" />
         <div className="mt-5 rounded-[1.75rem] bg-base-200/50 px-5 py-6 flex flex-col items-center text-center">
           <span className="font-display text-lg font-semibold">La Parrilla</span>
-          <span className="text-xs text-fg-subtle mb-4">Mesa 5</span>
+          <span className="text-xs text-fg-subtle mb-4">
+            {t("demo.table", { n: 5 })}
+          </span>
           <div className="rounded-xl bg-white p-3">
             <QRCode value={`${APP_ORIGIN}/request`} size={116} />
           </div>
           <div className="mt-5 w-full rounded-xl bg-primary text-primary-content text-sm font-semibold py-2.5">
-            Pedir la cuenta
+            {t("demo.askBill")}
           </div>
           <span className="text-[10px] text-fg-subtle mt-2">
-            Sin descargar ninguna app
+            {t("demo.noApp")}
           </span>
         </div>
       </motion.div>
@@ -94,8 +98,10 @@ export const HeroVisual = () => {
           </svg>
         </span>
         <div className="text-left">
-          <p className="text-sm font-semibold leading-tight">Mesa 5 pidió la cuenta</p>
-          <p className="text-xs text-fg-subtle">recién · sin apps</p>
+          <p className="text-sm font-semibold leading-tight">
+            {t("demo.tableAskedBill", { n: 5 })}
+          </p>
+          <p className="text-xs text-fg-subtle">{t("demo.justNowNoApps")}</p>
         </div>
         <span className="ml-auto mt-1 w-2 h-2 rounded-full bg-success animate-pulse shrink-0" />
       </motion.div>

@@ -3,6 +3,7 @@ import type {
   ReportsTier,
 } from "../../core/modules/subscription/domain/models/Subscription";
 import type { BillingCycle } from "../../core/modules/payment/domain/models/Payment";
+import i18n from "../i18n";
 
 // Email de contacto para el plan Enterprise (cotización a medida). Ajustable.
 export const ENTERPRISE_CONTACT_EMAIL = "hola@tepidolacuenta.site";
@@ -39,15 +40,35 @@ export const priceForBranches = (
   return base + extras * extraUnit;
 };
 
+// Ancla USD (referencia) para el ciclo y la cantidad de sucursales. Mismo cálculo
+// que priceForBranches pero sobre priceUsd/extraBranchPriceUsd. No hay campo
+// "priceUsdAnnual": el anual es priceUsd × 10 (2 meses gratis).
+export const priceUsdForBranches = (
+  plan: Plan,
+  branches: number,
+  cycle: BillingCycle,
+): number => {
+  const extras = Math.max(0, branches - plan.includedBranches);
+  const multiplier = cycle === "annual" ? ANNUAL_MULTIPLIER : 1;
+  return (
+    plan.priceUsd * multiplier +
+    extras * plan.extraBranchPriceUsd * multiplier
+  );
+};
+
+// USD sin decimales, con separador de miles en formato en-US (ej. "1,060").
+export const formatUsd = (amount: number): string =>
+  Math.round(amount).toLocaleString("en-US");
+
 // Etiqueta de reportes por tier (null = no mostrar la línea).
 export const getReportsLabel = (tier: ReportsTier): string | null => {
   switch (tier) {
     case "included":
-      return "Reportes y estadísticas";
+      return i18n.t("planFeatures.reportsIncluded");
     case "advanced":
-      return "Reportes avanzados";
+      return i18n.t("planFeatures.reportsAdvanced");
     case "consolidated":
-      return "Reportes avanzados + consolidado";
+      return i18n.t("planFeatures.reportsConsolidated");
     default:
       return null;
   }
@@ -55,24 +76,28 @@ export const getReportsLabel = (tier: ReportsTier): string | null => {
 
 export const getPlanFeatures = (plan: Plan): string[] => {
   const branches = supportsBranchAddon(plan)
-    ? `Incluye ${plan.includedBranches} sucursales · sumás más a US$${plan.extraBranchPriceUsd} c/u`
+    ? i18n.t("planFeatures.branchesIncluded", {
+        count: plan.includedBranches,
+        price: plan.extraBranchPriceUsd,
+      })
     : plan.maxBranches === -1
-      ? "Sucursales ilimitadas"
-      : `Hasta ${plan.maxBranches} sucursal${plan.maxBranches > 1 ? "es" : ""}`;
+      ? i18n.t("planFeatures.branchesUnlimited")
+      : i18n.t("planFeatures.branchesUpTo", { count: plan.maxBranches });
 
   // El límite de mesas es POR sucursal: lo aclaramos salvo que el plan tenga una
   // sola sucursal (donde "en cada sucursal" sería redundante).
-  const perBranch = plan.maxBranches === 1 ? "" : " en cada sucursal";
+  const perBranch =
+    plan.maxBranches === 1 ? "" : i18n.t("planFeatures.perBranchSuffix");
   const tables =
     plan.maxTables === -1
-      ? `Mesas ilimitadas${perBranch}`
-      : `Hasta ${plan.maxTables} mesas${perBranch}`;
+      ? i18n.t("planFeatures.tablesUnlimited") + perBranch
+      : i18n.t("planFeatures.tablesUpTo", { count: plan.maxTables }) + perBranch;
 
   const features = [
     branches,
     tables,
-    "Equipo ilimitado",
-    "Pedidos de cuenta por QR",
+    i18n.t("planFeatures.teamUnlimited"),
+    i18n.t("planFeatures.qrOrders"),
   ];
 
   const reports = getReportsLabel(plan.reportsTier);

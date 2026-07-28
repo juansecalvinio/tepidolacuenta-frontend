@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { useTranslation } from "react-i18next";
 import { usePrefersReducedMotion } from "../../../../hooks/usePrefersReducedMotion";
 
 type Step = {
@@ -15,10 +16,12 @@ const STEP_MS = 2800;
 const screenTransition = { duration: 0.45, ease: [0.16, 1, 0.3, 1] as const };
 
 // Pantalla 01 — el dueño configura sus mesas (cada una con su QR).
-const SetupScreen = () => (
-  <div className="flex flex-col h-full">
-    <span className="text-xs text-fg-subtle mb-3">Tus mesas</span>
-    {[1, 2, 3, 4].map((n, i) => (
+const SetupScreen = () => {
+  const { t } = useTranslation();
+  return (
+    <div className="flex flex-col h-full">
+      <span className="text-xs text-fg-subtle mb-3">{t("demo.yourTables")}</span>
+      {[1, 2, 3, 4].map((n, i) => (
       <motion.div
         key={n}
         initial={{ opacity: 0, x: -8 }}
@@ -34,22 +37,27 @@ const SetupScreen = () => (
             <path strokeLinecap="round" d="M14 14h2m4 0h.01M14 18h.01M18 18h2m0 2h.01" />
           </svg>
         </span>
-        <span className="text-sm font-medium flex-1">Mesa {n}</span>
+        <span className="text-sm font-medium flex-1">
+          {t("demo.table", { n })}
+        </span>
         <span className="text-success">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
             <path strokeLinecap="round" strokeLinejoin="round" d="m5 13 4 4L19 7" />
           </svg>
         </span>
       </motion.div>
-    ))}
-  </div>
-);
+      ))}
+    </div>
+  );
+};
 
 // Pantalla 02 — el comensal escanea y pide la cuenta (sin apps).
-const ScanScreen = () => (
-  <div className="flex flex-col items-center text-center h-full justify-center">
-    <span className="font-display text-lg font-semibold">La Parrilla</span>
-    <span className="text-xs text-fg-subtle mb-4">Mesa 5</span>
+const ScanScreen = () => {
+  const { t } = useTranslation();
+  return (
+    <div className="flex flex-col items-center text-center h-full justify-center">
+      <span className="font-display text-lg font-semibold">La Parrilla</span>
+      <span className="text-xs text-fg-subtle mb-4">{t("demo.table", { n: 5 })}</span>
     <motion.div
       initial={{ scale: 0.9, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
@@ -72,16 +80,23 @@ const ScanScreen = () => (
       transition={{ delay: 0.4, duration: 0.4 }}
       className="mt-5 w-full rounded-xl bg-primary text-primary-content text-sm font-semibold py-2.5"
     >
-      Pedir la cuenta
+      {t("demo.askBill")}
     </motion.div>
-    <span className="text-[10px] text-fg-subtle mt-2">Sin descargar ninguna app</span>
-  </div>
-);
+      <span className="text-[10px] text-fg-subtle mt-2">
+        {t("demo.noApp")}
+      </span>
+    </div>
+  );
+};
 
 // Pantalla 03 — el dueño recibe el pedido en tiempo real.
-const ReceiveScreen = () => (
-  <div className="flex flex-col h-full">
-    <span className="text-xs text-fg-subtle mb-3">Pedidos pendientes</span>
+const ReceiveScreen = () => {
+  const { t } = useTranslation();
+  return (
+    <div className="flex flex-col h-full">
+      <span className="text-xs text-fg-subtle mb-3">
+        {t("demo.pendingRequests")}
+      </span>
     <motion.div
       initial={{ opacity: 0, y: 12, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -90,19 +105,24 @@ const ReceiveScreen = () => (
     >
       <div className="flex items-center gap-2 mb-3">
         <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
-        <span className="text-sm font-semibold">Mesa 5</span>
-        <span className="ml-auto text-[10px] text-fg-subtle">recién</span>
+        <span className="text-sm font-semibold">{t("demo.table", { n: 5 })}</span>
+        <span className="ml-auto text-[10px] text-fg-subtle">
+          {t("demo.justNow")}
+        </span>
       </div>
       <div className="flex items-center gap-2 text-xs text-fg-subtle mb-4">
-        <span className="rounded-full bg-base-200 px-2 py-0.5">Efectivo</span>
-        <span>Pidió la cuenta</span>
+        <span className="rounded-full bg-base-200 px-2 py-0.5">
+          {t("demo.cash")}
+        </span>
+        <span>{t("demo.askedBill")}</span>
       </div>
       <div className="w-full rounded-lg bg-primary text-primary-content text-xs font-semibold py-2 text-center">
-        Marcar como atendida
+        {t("demo.markHandled")}
       </div>
-    </motion.div>
-  </div>
-);
+      </motion.div>
+    </div>
+  );
+};
 
 const SCREENS = [SetupScreen, ScanScreen, ReceiveScreen];
 

@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import { initSentry, Sentry } from "./observability/sentry";
 import { ErrorFallback } from "./components/ErrorFallback";
+import "./i18n";
 import "./styles.css";
 
 initSentry();

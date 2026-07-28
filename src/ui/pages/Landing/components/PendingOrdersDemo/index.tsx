@@ -1,23 +1,24 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { useTranslation } from "react-i18next";
 import { CashIcon, CardIcon } from "../../../../components/icons";
 import { usePrefersReducedMotion } from "../../../../hooks/usePrefersReducedMotion";
 
 type Order = {
   id: string;
   mesa: number;
-  label: string;
+  labelKey: string; // clave i18n del método de pago (minúscula)
   Icon: (props: { className?: string }) => React.ReactElement;
-  hace: string;
+  agoKey: string; // clave i18n del tiempo transcurrido
 };
 
 // Pedidos que van "llegando" en vivo, en orden de arribo (el índice 0 llega
 // primero). Espejan la card real de la vista employee. El contenedor reserva
 // espacio para los tres, así no se redimensiona a medida que aparecen.
 const ORDERS: Order[] = [
-  { id: "o1", mesa: 5, label: "efectivo", Icon: CashIcon, hace: "recién" },
-  { id: "o2", mesa: 12, label: "crédito", Icon: CardIcon, hace: "hace 1 min" },
-  { id: "o3", mesa: 3, label: "débito", Icon: CardIcon, hace: "hace 2 min" },
+  { id: "o1", mesa: 5, labelKey: "demo.cashLower", Icon: CashIcon, agoKey: "demo.justNow" },
+  { id: "o2", mesa: 12, labelKey: "demo.creditLower", Icon: CardIcon, agoKey: "demo.ago1min" },
+  { id: "o3", mesa: 3, labelKey: "demo.debitLower", Icon: CardIcon, agoKey: "demo.ago2min" },
 ];
 
 // Cada cuánto llega un pedido nuevo, y pausa antes de reiniciar el ciclo.
@@ -28,6 +29,7 @@ const RESTART_MS = 2600;
 // el más nuevo arriba, con su punto pulsante. Al completarse el listado hace
 // una pausa y reinicia. Respeta prefers-reduced-motion (los muestra todos).
 export const PendingOrdersDemo = () => {
+  const { t } = useTranslation();
   const reduced = usePrefersReducedMotion();
   // Arranca con el contenedor vacío y va sumando 1, 2, 3.
   const [count, setCount] = useState(reduced ? ORDERS.length : 0);
@@ -57,17 +59,17 @@ export const PendingOrdersDemo = () => {
             <span className="absolute inline-flex h-full w-full rounded-full bg-success opacity-70 animate-ping" />
             <span className="relative inline-flex rounded-full w-2 h-2 bg-success" />
           </span>
-          Pedidos pendientes
+          {t("demo.pendingRequests")}
         </span>
         <span className="ml-auto text-xs text-fg-subtle tabular-nums">
-          {count} en vivo
+          {t("demo.live", { count })}
         </span>
       </div>
 
       {/* Listado de pedidos: alto fijo para tres, van apareciendo de a uno */}
       <div className="p-4 flex flex-col gap-3 h-[21rem]">
         <AnimatePresence initial={false}>
-          {visible.map(({ id, mesa, label, Icon, hace }) => (
+          {visible.map(({ id, mesa, labelKey, Icon, agoKey }) => (
             <motion.div
               key={id}
               initial={reduced ? false : { opacity: 0, y: -10, scale: 0.98 }}
@@ -81,16 +83,18 @@ export const PendingOrdersDemo = () => {
                   <div className="flex items-center gap-3 flex-1 min-w-0">
                     <div className="w-2 h-2 bg-primary rounded-full animate-pulse shrink-0" />
                     <div className="min-w-0">
-                      <div className="font-bold text-xl leading-tight">Mesa {mesa}</div>
+                      <div className="font-bold text-xl leading-tight">
+                        {t("demo.table", { n: mesa })}
+                      </div>
                       <div className="font-semibold text-sm text-fg flex items-center gap-1.5">
-                        <span>Paga con {label}</span>
+                        <span>{t("demo.paysWith", { label: t(labelKey) })}</span>
                         <Icon className="w-4 h-4 shrink-0" />
                       </div>
-                      <div className="text-xs text-fg-soft">{hace}</div>
+                      <div className="text-xs text-fg-soft">{t(agoKey)}</div>
                     </div>
                   </div>
                   <span className="btn btn-primary btn-sm pointer-events-none shrink-0">
-                    Entregar cuenta
+                    {t("demo.deliverBill")}
                   </span>
                 </div>
               </div>

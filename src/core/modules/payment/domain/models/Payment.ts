@@ -13,10 +13,14 @@ export interface Payment {
   updatedAt: string;
 }
 
+export type BillingCycle = "monthly" | "annual";
+
 // Create preference
 export interface CreatePaymentPreferenceRequest {
   planId: string;
   restaurantId: string;
+  cycle?: BillingCycle;
+  branches?: number;
 }
 
 export interface CreatePaymentPreferenceResponse {

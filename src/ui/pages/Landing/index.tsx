@@ -1,14 +1,30 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import { APP_ORIGIN, isAppHost } from "../../utils/host";
+import { useTranslation } from "react-i18next";
+import { isAppHost } from "../../utils/host";
 import { motion } from "motion/react";
-import QRCode from "react-qr-code";
+import { HeroVisual } from "./components/HeroVisual";
+import { PhoneDemo } from "./components/PhoneDemo";
+import { ManageShowcase } from "./components/ManageShowcase";
+import { SectionGlow } from "./components/SectionGlow";
+import { Reveal } from "./components/Reveal";
 import { useAuth } from "../../hooks/useAuth";
 import { useSubscription } from "../../hooks/useSubscription";
 import { useFetchSubscription } from "../../hooks/useFetchSubscription";
 import type { Plan } from "../../../core/modules/subscription/domain/models/Subscription";
 import { PriceUtils } from "../../utils/price.utils";
-import { getPlanFeatures } from "../../utils/plan.utils";
+import {
+  getPlanFeatures,
+  priceForBranches,
+  priceUsdForBranches,
+  formatUsd,
+  supportsBranchAddon,
+  ENTERPRISE_CONTACT_EMAIL,
+} from "../../utils/plan.utils";
+import { BillingCycleToggle } from "../../components/BillingCycleToggle";
+import { EnterpriseContactCta } from "../../components/EnterpriseContactCta";
+import { LangToggle } from "../../components/LangToggle";
+import type { BillingCycle } from "../../../core/modules/payment/domain/models/Payment";
 
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
@@ -110,194 +126,154 @@ const CheckIcon = () => (
 
 // ─── Static data ──────────────────────────────────────────────────────────────
 
-const FEATURES = [
-  {
-    Icon: QrCodeIcon,
-    title: "QR por mesa",
-    description:
-      "Cada mesa tiene su propio código QR. El cliente escanea sin instalar ninguna app, en segundos.",
-  },
-  {
-    Icon: BellIcon,
-    title: "Solicitudes en tiempo real",
-    description:
-      "Recibís la notificación al instante que tu cliente la hace. Sin tener que mirar cada mesa.",
-  },
-  {
-    Icon: BuildingStorefrontIcon,
-    title: "Multi-sucursal",
-    description:
-      "Manejá todas tus sucursales desde un solo panel. Cada una con sus propias mesas y QRs.",
-  },
-  {
-    Icon: ChartBarIcon,
-    title: "Panel de administración",
-    description:
-      "Configurá tus mesas, revisá el historial y gestioná las solicitudes de cuenta desde un solo lugar.",
-  },
-];
-
-const STEPS = [
-  {
-    number: "01",
-    title: "Configurás tus mesas",
-    description:
-      "Creás tu cuenta, agregás tu restaurante y generás los códigos QR para cada mesa en minutos.",
-  },
-  {
-    number: "02",
-    title: "El cliente escanea",
-    description:
-      "Cuando quiere la cuenta, escanea el QR de la mesa y elige el método de pago. Sin apps.",
-  },
-  {
-    number: "03",
-    title: "Vos recibís la solicitud",
-    description:
-      "La solicitud aparece en tu dashboard en tiempo real. Un toque y está atendida.",
-  },
-];
-
-const TRUST_SIGNALS = [
-  "Sin app para el cliente",
-  "Sin tarjeta para probar",
-  "Listo en minutos",
-];
-
-const FAQS = [
-  {
-    question: "¿El cliente tiene que descargar una app?",
-    answer:
-      "No. El cliente escanea el QR de la mesa con la cámara del teléfono y pide la cuenta desde el navegador. Sin instalar nada.",
-  },
-  {
-    question: "¿Necesito comprar algún hardware?",
-    answer:
-      "No hace falta. Imprimís los códigos QR que genera el sistema y los ponés en cada mesa. Nada más.",
-  },
-  {
-    question: "¿Cómo me entero cuando un cliente pide la cuenta?",
-    answer:
-      "Te llega una notificación al instante en tu panel, con el número de mesa. La atendés con un toque.",
-  },
-  {
-    question: "¿Puedo manejar más de una sucursal?",
-    answer:
-      "Sí. Gestionás todas tus sucursales desde un mismo panel, cada una con sus propias mesas y QRs.",
-  },
-  {
-    question: "¿Puedo cancelar cuando quiera?",
-    answer:
-      "Sí. Empezás con días de prueba gratis y cancelás cuando quieras, sin compromiso ni permanencia.",
-  },
+// Los íconos viven en código; los textos vienen de i18n (features.items) y se
+// zipean por índice en el componente.
+const FEATURE_ICONS = [
+  QrCodeIcon,
+  BellIcon,
+  BuildingStorefrontIcon,
+  ChartBarIcon,
 ];
 
 // ─── Plan card ────────────────────────────────────────────────────────────────
 
 const PlanCard = ({
   plan,
+  cycle,
   isRecommended,
   onSelect,
 }: {
   plan: Plan;
+  cycle: BillingCycle;
   isRecommended: boolean;
-  onSelect: () => void;
-}) => (
-  <div
-    className={`relative flex flex-col w-full rounded-2xl transition-shadow ${
-      isRecommended
-        ? "border-2 border-primary bg-base-100 md:shadow-lg"
-        : "border border-base-300 bg-base-100"
-    }`}
-  >
-    {isRecommended && (
-      <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-        <span className="badge badge-primary badge-sm font-semibold px-3">
-          Recomendado
-        </span>
-      </div>
-    )}
-    <div className="flex flex-col flex-1 p-6">
-      <h3 className="font-display text-xl font-semibold mb-3">{plan.name}</h3>
-      <div className="mb-1">
-        <span className="font-display text-4xl font-semibold tracking-tight whitespace-nowrap tabular-nums">
-          $ {PriceUtils.getFormattedPrice(plan.price)}
-        </span>
-        <span className="text-sm opacity-60">/mes</span>
-      </div>
-      {plan.trialDays > 0 && (
-        <p className="text-xs opacity-50 mb-5">
-          {plan.trialDays} días gratis al comenzar
-        </p>
-      )}
-      <ul className="space-y-2.5 mb-8 flex-1">
-        {getPlanFeatures(plan).map((feature) => (
-          <li key={feature} className="flex items-center gap-2">
-            <span className="text-success">
-              <CheckIcon />
-            </span>
-            <span className="text-sm">{feature}</span>
-          </li>
-        ))}
-      </ul>
-      <button
-        className={`btn w-full ${isRecommended ? "btn-primary" : "btn-secondary"}`}
-        onClick={onSelect}
-      >
-        Empezar Gratis
-      </button>
-    </div>
-  </div>
-);
+  onSelect: (plan: Plan, branches: number) => void;
+}) => {
+  const { t } = useTranslation();
+  const addon = supportsBranchAddon(plan);
+  const [branches, setBranches] = useState(plan.includedBranches);
+  const priceUsd = priceUsdForBranches(plan, branches, cycle);
+  const priceArs = priceForBranches(plan, branches, cycle);
 
-// ─── Hero mockup ──────────────────────────────────────────────────────────────
-
-const HeroMockup = () => (
-  <div className="relative w-full max-w-[300px]">
-    {/* Phone — what the customer sees */}
-    <div className="relative mx-auto w-64 rounded-[2.5rem] border-[6px] border-base-300 bg-base-100 shadow-xl p-3">
-      <div className="absolute top-3 left-1/2 -translate-x-1/2 h-1.5 w-16 rounded-full bg-base-300" />
-      <div className="mt-5 rounded-[1.75rem] bg-base-200/50 px-5 py-6 flex flex-col items-center text-center">
-        <span className="font-display text-lg font-semibold">La Parrilla</span>
-        <span className="text-xs text-fg-subtle mb-4">Mesa 5</span>
-        <div className="rounded-xl bg-white p-3">
-          <QRCode value={`${APP_ORIGIN}/request`} size={116} />
-        </div>
-        <div className="mt-5 w-full rounded-xl bg-primary text-primary-content text-sm font-semibold py-2.5">
-          Pedir la cuenta
-        </div>
-        <span className="text-[10px] text-fg-subtle mt-2">
-          Sin descargar ninguna app
-        </span>
-      </div>
-    </div>
-
-    {/* Floating notification — what the owner gets, instantly */}
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: 0.85, ease: [0.16, 1, 0.3, 1] }}
-      className="absolute -right-2 sm:-right-6 -bottom-4 w-52 rounded-2xl border border-base-300/60 bg-base-100 shadow-lg p-3.5 flex items-start gap-3"
+  return (
+    <div
+      className={`relative flex flex-col w-full h-full rounded-2xl transition-shadow ${
+        isRecommended
+          ? "border-2 border-primary bg-base-100 md:shadow-lg"
+          : "border border-base-300 bg-base-100"
+      }`}
     >
-      <span className="shrink-0 w-9 h-9 rounded-xl bg-primary/15 flex items-center justify-center text-primary">
-        <BellIcon />
-      </span>
-      <div className="text-left">
-        <p className="text-sm font-semibold leading-tight">Nueva solicitud</p>
-        <p className="text-xs text-fg-subtle">Mesa 5 · hace un instante</p>
+      {isRecommended && (
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+          <span className="badge badge-primary badge-sm font-semibold px-3">
+            {t("planCard.recommended")}
+          </span>
+        </div>
+      )}
+      <div className="flex flex-col flex-1 p-6">
+        <h3 className="font-display text-xl font-semibold mb-3">{plan.name}</h3>
+        <div className="mb-0.5">
+          <span className="font-display text-4xl font-semibold tracking-tight whitespace-nowrap tabular-nums">
+            US$ {formatUsd(priceUsd)}
+          </span>
+          <span className="text-sm opacity-60">
+            {cycle === "annual" ? t("planCard.perYear") : t("planCard.perMonth")}
+          </span>
+        </div>
+        <p className="text-xs opacity-50 mb-3 tabular-nums">
+          ${PriceUtils.getFormattedPrice(priceArs)} ARS
+        </p>
+        {cycle === "annual" ? (
+          <p className="text-xs text-success mb-5">
+            {t("planCard.annualEquiv")}
+          </p>
+        ) : plan.trialDays > 0 ? (
+          <p className="text-xs opacity-50 mb-5">
+            {t("planCard.trialStart", { count: plan.trialDays })}
+          </p>
+        ) : (
+          <div className="mb-5" />
+        )}
+
+        {addon && (
+          <div className="mb-5 flex items-center justify-between gap-2 rounded-lg border border-base-300 px-3 py-2">
+            <span className="text-sm">{t("planCard.branchesLabel")}</span>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                className="btn btn-xs btn-circle btn-ghost"
+                aria-label={t("planCard.removeBranch")}
+                disabled={branches <= plan.includedBranches}
+                onClick={() =>
+                  setBranches((b) => Math.max(plan.includedBranches, b - 1))
+                }
+              >
+                −
+              </button>
+              <span className="text-sm font-semibold tabular-nums w-6 text-center">
+                {branches}
+              </span>
+              <button
+                type="button"
+                className="btn btn-xs btn-circle btn-ghost"
+                aria-label={t("planCard.addBranch")}
+                onClick={() => setBranches((b) => b + 1)}
+              >
+                +
+              </button>
+            </div>
+          </div>
+        )}
+
+        <ul className="space-y-2.5 mb-8 flex-1">
+          {getPlanFeatures(plan).map((feature) => (
+            <li key={feature} className="flex items-center gap-2">
+              <span className="text-success">
+                <CheckIcon />
+              </span>
+              <span className="text-sm">{feature}</span>
+            </li>
+          ))}
+        </ul>
+        <button
+          className={`btn w-full ${
+            isRecommended ? "btn-primary" : "btn-secondary"
+          }`}
+          onClick={() => onSelect(plan, branches)}
+        >
+          {t("planCard.ctaStart")}
+        </button>
       </div>
-      <span className="ml-auto mt-0.5 w-2 h-2 rounded-full bg-success animate-pulse shrink-0" />
-    </motion.div>
-  </div>
-);
+    </div>
+  );
+};
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export const Landing = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { isAuthenticated } = useAuth();
   const { plans, isLoading } = useSubscription();
   const { fetchPlans } = useFetchSubscription();
+
+  // Textos de listas: los íconos viven en código, el texto en i18n (zip por índice).
+  const features = (
+    t("features.items", { returnObjects: true }) as {
+      title: string;
+      description: string;
+    }[]
+  ).map((it, i) => ({ ...it, Icon: FEATURE_ICONS[i] }));
+  const steps = (
+    t("how.steps", { returnObjects: true }) as {
+      title: string;
+      description: string;
+    }[]
+  ).map((s, i) => ({ number: `0${i + 1}`, ...s }));
+  const trustSignals = t("hero.trust", { returnObjects: true }) as string[];
+  const faqs = t("faq.items", { returnObjects: true }) as {
+    question: string;
+    answer: string;
+  }[];
 
   // El sticky CTA (mobile) aparece solo cuando el CTA del hero queda fuera de
   // vista, para no mostrar dos botones idénticos al mismo tiempo.
@@ -320,12 +296,18 @@ export const Landing = () => {
     return () => observer.disconnect();
   }, []);
 
+  const [cycle, setCycle] = useState<BillingCycle>("monthly");
+
   const handleGetStarted = () => {
     navigate(isAuthenticated ? "/dashboard" : "/register");
   };
 
+  const handleSelectLandingPlan = () => {
+    handleGetStarted();
+  };
+
   const sortedPlans = [...plans].sort((a, b) => a.price - b.price);
-  const recommendedId = sortedPlans[Math.floor((sortedPlans.length - 1) / 2)]?.id;
+  const recommendedId = sortedPlans[1]?.id; // Pro
   const trialDays = sortedPlans[0]?.trialDays ?? 30;
 
   // En el subdominio app la landing no se muestra: a la app directamente.
@@ -343,17 +325,18 @@ export const Landing = () => {
           <span className="font-display text-lg font-semibold tracking-tight">
             tepidolacuenta
           </span>
-          <Link to="/login" className="btn btn-secondary btn-sm">
-            Ingresar
-          </Link>
+          <div className="flex items-center gap-2">
+            <LangToggle />
+            <Link to="/login" className="btn btn-secondary btn-sm">
+              {t("nav.login")}
+            </Link>
+          </div>
         </div>
       </header>
 
       {/* ── Hero ───────────────────────────────────────────────────────────── */}
       <section className="relative flex items-center min-h-[calc(100vh-3.5rem)] px-4 py-16 overflow-hidden">
-        <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-175 h-87.5 bg-primary/10 rounded-full blur-3xl" />
-        </div>
+        <SectionGlow position="center" />
 
         <div className="relative max-w-5xl mx-auto w-full grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           <motion.div
@@ -363,12 +346,13 @@ export const Landing = () => {
             className="text-center lg:text-left"
           >
             <h1 className="font-display text-5xl sm:text-6xl md:text-7xl font-semibold tracking-tight leading-[1.08] mb-6 text-balance">
-              Pedir la cuenta
-              <span className="text-primary italic block">ahora es más simple</span>
+              {t("hero.titleLine1")}
+              <span className="text-primary italic block">
+                {t("hero.titleAccent")}
+              </span>
             </h1>
             <p className="text-lg sm:text-xl text-fg-soft mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-              Tus clientes escanean el QR de la mesa. Vos recibís la solicitud al
-              instante. Sin aplicaciones, sin confusión.
+              {t("hero.subtitle")}
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
               <button
@@ -376,14 +360,14 @@ export const Landing = () => {
                 onClick={handleGetStarted}
                 className="btn btn-primary btn-lg"
               >
-                Empezar Gratis
+                {t("hero.ctaStart")}
               </button>
               <a href="#planes" className="btn btn-ghost btn-lg">
-                Ver planes →
+                {t("hero.ctaPlans")}
               </a>
             </div>
             <ul className="mt-8 flex flex-wrap gap-x-5 gap-y-2 justify-center lg:justify-start">
-              {TRUST_SIGNALS.map((signal) => (
+              {trustSignals.map((signal) => (
                 <li
                   key={signal}
                   className="flex items-center gap-1.5 text-sm text-fg-subtle"
@@ -403,7 +387,9 @@ export const Landing = () => {
             transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
             className="relative flex justify-center lg:justify-end"
           >
-            <HeroMockup />
+            <div className="relative w-full h-[420px] lg:h-[500px]">
+              <HeroVisual />
+            </div>
           </motion.div>
         </div>
       </section>
@@ -411,18 +397,17 @@ export const Landing = () => {
       {/* ── Features ───────────────────────────────────────────────────────── */}
       <section className="py-24 px-4 border-t border-base-300/40">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
+          <Reveal className="text-center mb-16">
             <h2 className="font-display text-3xl sm:text-4xl font-semibold tracking-tight mb-3 text-balance">
-              Todo lo que necesitás
+              {t("features.heading")}
             </h2>
             <p className="text-fg-subtle text-lg max-w-md mx-auto">
-              Diseñado para restaurantes que quieren dejar de depender del "¿nos
-              trae la cuenta?"
+              {t("features.subtitle")}
             </p>
-          </div>
+          </Reveal>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {FEATURES.map(({ Icon, title, description }, i) => (
+            {features.map(({ Icon, title, description }, i) => (
               <motion.div
                 key={title}
                 initial={{ opacity: 0, y: 16 }}
@@ -433,7 +418,7 @@ export const Landing = () => {
                   delay: i * 0.08,
                   ease: [0.16, 1, 0.3, 1],
                 }}
-                className="border border-base-300/60 rounded-2xl p-6 bg-base-100 hover:border-base-300 transition-colors"
+                className="border border-base-300/60 rounded-2xl p-6 bg-base-100 hover:border-base-300 hover:-translate-y-0.5 hover:shadow-[var(--surface-shadow)] transition-all duration-200"
               >
                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-4">
                   <Icon />
@@ -449,95 +434,94 @@ export const Landing = () => {
       </section>
 
       {/* ── How it works ───────────────────────────────────────────────────── */}
-      <section className="py-24 px-4 border-t border-base-300/40 bg-base-200/20">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
+      <section
+        id="como-funciona"
+        className="relative overflow-hidden py-24 px-4 border-t border-base-300/40 bg-base-200/20 scroll-mt-14"
+      >
+        <SectionGlow position="left" />
+        <div className="relative max-w-5xl mx-auto">
+          <Reveal className="text-center mb-16">
             <h2 className="font-display text-3xl sm:text-4xl font-semibold tracking-tight mb-3 text-balance">
-              Tres pasos y ya
+              {t("how.heading")}
             </h2>
-            <p className="text-fg-subtle text-lg">
-              Configuración en minutos, resultados desde el primer día.
-            </p>
-          </div>
+            <p className="text-fg-subtle text-lg">{t("how.subtitle")}</p>
+          </Reveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            {STEPS.map(({ number, title, description }, i) => (
-              <motion.div
-                key={number}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{
-                  duration: 0.5,
-                  delay: i * 0.1,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
-              >
-                <span className="font-display text-6xl font-semibold italic text-primary/25 leading-none block mb-4">
-                  {number}
-                </span>
-                <h3 className="font-display font-semibold text-xl mb-2">{title}</h3>
-                <p className="text-fg-subtle text-sm leading-relaxed">
-                  {description}
-                </p>
-              </motion.div>
-            ))}
-          </div>
+          <Reveal direction="scale" delay={0.1}>
+            <PhoneDemo steps={steps} />
+          </Reveal>
         </div>
       </section>
 
+      {/* ── Manage showcase ────────────────────────────────────────────────── */}
+      <ManageShowcase />
+
       {/* ── Plans ──────────────────────────────────────────────────────────── */}
-      <section id="planes" className="py-24 px-4 border-t border-base-300/40">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-16">
+      <section
+        id="planes"
+        className="relative overflow-hidden py-24 px-4 border-t border-base-300/40 scroll-mt-14"
+      >
+        <SectionGlow position="top" />
+        <div className="relative max-w-6xl mx-auto">
+          <Reveal className="text-center mb-16">
             <h2 className="font-display text-3xl sm:text-4xl font-semibold tracking-tight mb-3 text-balance">
-              Planes
+              {t("plans.heading")}
             </h2>
-            <p className="text-fg-subtle text-lg">
-              Elegí el plan que mejor se adapta a tu negocio.
-            </p>
-          </div>
+            <p className="text-fg-subtle text-lg">{t("plans.subtitle")}</p>
+          </Reveal>
 
           {isLoading && plans.length === 0 ? (
             <div className="flex justify-center py-12">
               <span className="loading loading-spinner loading-lg"></span>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
-              {sortedPlans.map((plan) => (
-                <PlanCard
-                  key={plan.id}
-                  plan={plan}
-                  isRecommended={plan.id === recommendedId}
-                  onSelect={handleGetStarted}
-                />
-              ))}
-            </div>
+            <>
+              <div className="flex justify-center mb-8">
+                <BillingCycleToggle value={cycle} onChange={setCycle} />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
+                {sortedPlans.map((plan, i) => (
+                  <Reveal key={plan.id} delay={i * 0.08} className="h-full">
+                    <PlanCard
+                      plan={plan}
+                      cycle={cycle}
+                      isRecommended={plan.id === recommendedId}
+                      onSelect={handleSelectLandingPlan}
+                    />
+                  </Reveal>
+                ))}
+              </div>
+
+              <Reveal delay={0.1}>
+                <EnterpriseContactCta />
+              </Reveal>
+            </>
           )}
 
           {plans.length > 0 && (
             <p className="text-center text-sm text-fg-subtle mt-6">
-              Todos los planes incluyen {trialDays} días de prueba gratis.
-              Cancelás cuando quieras.
+              {t("plans.trialNote", { count: trialDays })}
             </p>
           )}
         </div>
       </section>
 
       {/* ── FAQ ────────────────────────────────────────────────────────────── */}
-      <section className="py-24 px-4 border-t border-base-300/40 bg-base-200/20">
+      <section
+        id="faq"
+        className="py-24 px-4 border-t border-base-300/40 bg-base-200/20 scroll-mt-14"
+      >
         <div className="max-w-2xl mx-auto">
-          <div className="text-center mb-12">
+          <Reveal className="text-center mb-12">
             <h2 className="font-display text-3xl sm:text-4xl font-semibold tracking-tight mb-3 text-balance">
-              Preguntas frecuentes
+              {t("faq.heading")}
             </h2>
-            <p className="text-fg-subtle text-lg">
-              Lo que suelen preguntar antes de empezar.
-            </p>
-          </div>
+            <p className="text-fg-subtle text-lg">{t("faq.subtitle")}</p>
+          </Reveal>
 
           <div className="space-y-3">
-            {FAQS.map(({ question, answer }, i) => (
+            {faqs.map(({ question, answer }, i) => (
               <motion.details
                 key={question}
                 initial={{ opacity: 0, y: 12 }}
@@ -580,27 +564,118 @@ export const Landing = () => {
       </section>
 
       {/* ── Final CTA ──────────────────────────────────────────────────────── */}
-      <section className="py-24 px-4 border-t border-base-300/40">
-        <div className="max-w-2xl mx-auto text-center">
+      <section className="relative overflow-hidden py-24 px-4 border-t border-base-300/40">
+        <SectionGlow position="center" intensity="strong" />
+        <Reveal direction="scale" className="relative max-w-2xl mx-auto text-center">
           <h2 className="font-display text-3xl sm:text-4xl font-semibold tracking-tight mb-4 text-balance">
-            Empezá a usarlo hoy
+            {t("finalCta.heading")}
           </h2>
           <p className="text-fg-subtle text-lg mb-8">
-            {trialDays} días gratis. Cancelás cuando quieras.
+            {t("finalCta.subtitle", { count: trialDays })}
           </p>
           <button onClick={handleGetStarted} className="btn btn-primary btn-lg">
-            Crear Cuenta Gratis
+            {t("finalCta.button")}
           </button>
-        </div>
+        </Reveal>
       </section>
 
       {/* ── Footer ─────────────────────────────────────────────────────────── */}
-      <footer className="border-t border-base-300/40 py-10 pb-28 md:pb-10 px-4">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-fg-subtle">
-          <span className="font-display font-semibold text-fg-soft">
-            tepidolacuenta
-          </span>
-          <span>© 2026 tepidolacuenta</span>
+      <footer className="border-t border-base-300/40 px-4 pt-14 pb-28 md:pb-14">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-6">
+            {/* Marca */}
+            <div className="col-span-2 md:col-span-1">
+              <span className="font-display text-lg font-semibold tracking-tight">
+                tepidolacuenta
+              </span>
+              <p className="mt-2 text-sm text-fg-subtle max-w-xs leading-relaxed">
+                {t("footer.tagline")}
+              </p>
+            </div>
+
+            {/* Producto */}
+            <nav aria-label={t("footer.product")}>
+              <h3 className="text-xs font-semibold uppercase tracking-wide text-fg-subtle mb-3">
+                {t("footer.product")}
+              </h3>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <a
+                    href="#como-funciona"
+                    className="text-fg-soft hover:text-primary transition-colors"
+                  >
+                    {t("footer.linkHow")}
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#planes"
+                    className="text-fg-soft hover:text-primary transition-colors"
+                  >
+                    {t("footer.linkPlans")}
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#faq"
+                    className="text-fg-soft hover:text-primary transition-colors"
+                  >
+                    {t("footer.linkFaq")}
+                  </a>
+                </li>
+              </ul>
+            </nav>
+
+            {/* Cuenta */}
+            <nav aria-label={t("footer.account")}>
+              <h3 className="text-xs font-semibold uppercase tracking-wide text-fg-subtle mb-3">
+                {t("footer.account")}
+              </h3>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <Link
+                    to="/login"
+                    className="text-fg-soft hover:text-primary transition-colors"
+                  >
+                    {t("footer.login")}
+                  </Link>
+                </li>
+                <li>
+                  <button
+                    onClick={handleGetStarted}
+                    className="text-fg-soft hover:text-primary transition-colors"
+                  >
+                    {t("footer.createAccount")}
+                  </button>
+                </li>
+              </ul>
+            </nav>
+
+            {/* Contacto */}
+            <div>
+              <h3 className="text-xs font-semibold uppercase tracking-wide text-fg-subtle mb-3">
+                {t("footer.contact")}
+              </h3>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <a
+                    href={`mailto:${ENTERPRISE_CONTACT_EMAIL}`}
+                    className="text-fg-soft hover:text-primary transition-colors break-all"
+                  >
+                    {ENTERPRISE_CONTACT_EMAIL}
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="mt-10 pt-6 border-t border-base-300/40 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-fg-subtle">
+            <span>© 2026 tepidolacuenta</span>
+            <div className="flex items-center gap-4">
+              <LangToggle />
+              <span>{t("footer.madeIn")}</span>
+            </div>
+          </div>
         </div>
       </footer>
 

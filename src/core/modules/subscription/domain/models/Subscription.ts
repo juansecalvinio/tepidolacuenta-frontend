@@ -1,10 +1,18 @@
+export type ReportsTier = "none" | "included" | "advanced" | "consolidated";
+
 export interface Plan {
   id: string;
   name: string;
-  price: number;
+  price: number; // ARS mensual
+  priceAnnual: number; // ARS anual
+  priceUsd: number; // ancla USD mensual
+  extraBranchPrice: number; // ARS por sucursal extra; 0 = sin add-on
+  extraBranchPriceUsd: number; // ancla USD por sucursal extra
   maxTables: number;
+  includedBranches: number;
   maxBranches: number;
   trialDays: number;
+  reportsTier: ReportsTier;
 }
 
 export type SubscriptionStatus =
@@ -19,6 +27,7 @@ export interface Subscription {
   userId: string;
   restaurantId: string;
   planId: string;
+  purchasedBranches: number;
   plan?: Plan;
   status: SubscriptionStatus;
   trialStartedAt: string | null;

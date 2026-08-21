@@ -1,85 +1,86 @@
-import { lazy, Suspense } from "react";
+import { Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { MainLayout } from "../layouts/MainLayout";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 import { OwnerRoute } from "../components/OwnerRoute";
 import { useDomainRouting } from "../hooks/useDomainRouting";
+import { lazyWithReload } from "../utils/lazyWithReload";
 
 // Páginas cargadas de forma diferida (code-splitting por ruta).
-const Landing = lazy(() =>
+const Landing = lazyWithReload(() =>
   import("../pages/Landing").then((m) => ({ default: m.Landing })),
 );
-const NewRequestBill = lazy(() =>
+const NewRequestBill = lazyWithReload(() =>
   import("../pages/NewRequestBill").then((m) => ({ default: m.NewRequestBill })),
 );
-const NewDashboard = lazy(() =>
+const NewDashboard = lazyWithReload(() =>
   import("../pages/NewDashboard").then((m) => ({ default: m.NewDashboard })),
 );
-const Onboarding = lazy(() =>
+const Onboarding = lazyWithReload(() =>
   import("../pages/Onboarding").then((m) => ({ default: m.Onboarding })),
 );
-const Tables = lazy(() =>
+const Tables = lazyWithReload(() =>
   import("../pages/Tables").then((m) => ({ default: m.Tables })),
 );
-const AuthPage = lazy(() =>
+const AuthPage = lazyWithReload(() =>
   import("../pages/Auth").then((m) => ({ default: m.AuthPage })),
 );
-const AuthCallback = lazy(() =>
+const AuthCallback = lazyWithReload(() =>
   import("../pages/AuthCallback").then((m) => ({ default: m.AuthCallback })),
 );
-const ForgotPassword = lazy(() =>
+const ForgotPassword = lazyWithReload(() =>
   import("../pages/ForgotPassword").then((m) => ({ default: m.ForgotPassword })),
 );
-const ResetPassword = lazy(() =>
+const ResetPassword = lazyWithReload(() =>
   import("../pages/ResetPassword").then((m) => ({ default: m.ResetPassword })),
 );
-const RoleSelection = lazy(() =>
+const RoleSelection = lazyWithReload(() =>
   import("../pages/RoleSelection").then((m) => ({ default: m.RoleSelection })),
 );
-const Profile = lazy(() =>
+const Profile = lazyWithReload(() =>
   import("../pages/Profile").then((m) => ({ default: m.Profile })),
 );
-const Settings = lazy(() =>
+const Settings = lazyWithReload(() =>
   import("../pages/Settings").then((m) => ({ default: m.Settings })),
 );
-const PrintQRs = lazy(() =>
+const PrintQRs = lazyWithReload(() =>
   import("../pages/PrintQRs").then((m) => ({ default: m.PrintQRs })),
 );
-const Restaurant = lazy(() =>
+const Restaurant = lazyWithReload(() =>
   import("../pages/Restaurant").then((m) => ({ default: m.Restaurant })),
 );
-const AddBranch = lazy(() =>
+const AddBranch = lazyWithReload(() =>
   import("../pages/AddBranch").then((m) => ({ default: m.AddBranch })),
 );
-const AddBranchResult = lazy(() =>
+const AddBranchResult = lazyWithReload(() =>
   import("../pages/AddBranchResult").then((m) => ({
     default: m.AddBranchResult,
   })),
 );
-const AddTables = lazy(() =>
+const AddTables = lazyWithReload(() =>
   import("../pages/AddTables").then((m) => ({ default: m.AddTables })),
 );
-const AddTablesResult = lazy(() =>
+const AddTablesResult = lazyWithReload(() =>
   import("../pages/AddTablesResult").then((m) => ({
     default: m.AddTablesResult,
   })),
 );
-const Plans = lazy(() =>
+const Plans = lazyWithReload(() =>
   import("../pages/Plans").then((m) => ({ default: m.Plans })),
 );
-const Subscription = lazy(() =>
+const Subscription = lazyWithReload(() =>
   import("../pages/Subscription").then((m) => ({ default: m.Subscription })),
 );
-const SelectPlan = lazy(() =>
+const SelectPlan = lazyWithReload(() =>
   import("../pages/SelectPlan").then((m) => ({ default: m.SelectPlan })),
 );
-const PaymentSuccess = lazy(() =>
+const PaymentSuccess = lazyWithReload(() =>
   import("../pages/PaymentSuccess").then((m) => ({ default: m.PaymentSuccess })),
 );
-const PaymentFailure = lazy(() =>
+const PaymentFailure = lazyWithReload(() =>
   import("../pages/PaymentFailure").then((m) => ({ default: m.PaymentFailure })),
 );
-const PaymentPending = lazy(() =>
+const PaymentPending = lazyWithReload(() =>
   import("../pages/PaymentPending").then((m) => ({ default: m.PaymentPending })),
 );
 

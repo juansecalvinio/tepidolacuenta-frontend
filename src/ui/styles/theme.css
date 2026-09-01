@@ -7,7 +7,7 @@
    🎨 PALETA PRIMARY — única fuente de verdad de los colores seleccionables.
 
    Los valores oklch viven SOLO acá. El default lo elige cada tema abajo
-   (`--color-primary: var(--primary-emerald)`), y la preferencia por dispositivo
+   (`--color-primary: var(--primary-amber)`), y la preferencia por dispositivo
    se aplica en runtime sobreescribiendo --color-primary con `var(--primary-<key>)`
    (ver src/ui/utils/primaryColor.ts y el script anti-FOUC de index.html, que ya
    NO repiten estos valores: referencian estas vars por nombre).
@@ -34,6 +34,7 @@
 
 @plugin "daisyui/theme" {
   name: "white";
+  default: true;
   color-scheme: "light";
   /* Superficies con un toque de calidez (croma bajo, hue ~85) para que el fondo
      no sea gris neutro de plantilla. El canvas (base-200) está un poco más bajo
@@ -43,10 +44,10 @@
   --color-base-200: oklch(94% 0.006 85);
   --color-base-300: oklch(89% 0.008 85);
   --color-base-content: oklch(20% 0 0);
-  --color-primary: var(--primary-emerald);
-  --color-primary-content: var(--primary-emerald-content);
+  --color-primary: var(--primary-amber);
+  --color-primary-content: var(--primary-amber-content);
   --color-secondary: oklch(0% 0 0);
-  --color-secondary-content: var(--primary-emerald);
+  --color-secondary-content: var(--primary-amber);
   --color-accent: oklch(70% 0.04 256.788);
   --color-accent-content: oklch(98% 0.003 247.858);
   --color-neutral: oklch(92% 0 0);
@@ -74,8 +75,6 @@
 
 @plugin "daisyui/theme" {
   name: "black";
-  default: true;
-  prefersdark: true;
   color-scheme: "dark";
   /* Charcoal con un toque de calidez (mismo hue ~85 que el tema claro) en vez de
      gris neutro. base-100 a 23% para que no sea tan profundo. */
@@ -83,10 +82,10 @@
   --color-base-200: oklch(27.5% 0.006 85);
   --color-base-300: oklch(34% 0.008 85);
   --color-base-content: oklch(97% 0 0);
-  --color-primary: var(--primary-emerald);
-  --color-primary-content: var(--primary-emerald-content);
+  --color-primary: var(--primary-amber);
+  --color-primary-content: var(--primary-amber-content);
   --color-secondary: oklch(0% 0 0);
-  --color-secondary-content: var(--primary-emerald);
+  --color-secondary-content: var(--primary-amber);
   --color-accent: oklch(70% 0.04 256.788);
   --color-accent-content: oklch(98% 0.003 247.858);
   --color-neutral: oklch(14% 0 0);
@@ -115,7 +114,7 @@
    🎨 BRANDING — punto único para cambiar los colores de marca del producto.
 
    • PRIMARY (botones, links, acentos, anillos de foco): el default de cada tema
-     apunta a una var de la paleta de arriba (`--color-primary: var(--primary-emerald)`).
+     apunta a una var de la paleta de arriba (`--color-primary: var(--primary-amber)`).
      Para cambiar el default global, cambiá esa referencia. El usuario puede
      sobreescribirlo por dispositivo desde Configuración (ver primaryColor.ts).
    • BRAND (acento de marca, ej. el punto "nuevo pedido"): por defecto sigue al

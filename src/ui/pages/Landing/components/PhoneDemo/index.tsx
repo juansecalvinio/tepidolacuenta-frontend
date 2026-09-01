@@ -162,7 +162,11 @@ export const PhoneDemo = ({ steps }: PhoneDemoProps) => {
       >
         <div className="relative">
           <div className="absolute inset-0 -z-10 m-auto w-56 h-56 rounded-full bg-primary/10 blur-3xl" aria-hidden="true" />
-          <div className="relative mx-auto w-64 h-[420px] rounded-[2.5rem] border-[6px] border-base-300 bg-base-100 shadow-2xl p-3">
+          {/* El celular va en oscuro (data-theme) para resaltar sobre la landing
+              clara; la lista de pasos de la derecha queda en el tema de la página.
+              El data-theme va acá (en el marco redondeado), no en el wrapper, para
+              que el fondo base-100 llene la forma del teléfono y no un rectángulo. */}
+          <div data-theme="black" className="relative mx-auto w-64 h-[420px] rounded-[2.5rem] border-[6px] border-base-300 bg-base-100 shadow-2xl p-3">
             <div className="absolute top-3 left-1/2 -translate-x-1/2 h-1.5 w-16 rounded-full bg-base-300" />
             <div className="mt-5 h-[calc(100%-1.75rem)] rounded-[1.75rem] bg-base-200/50 px-4 py-5 overflow-hidden">
               <AnimatePresence mode="wait">

@@ -47,8 +47,11 @@ export const HeroVisual = () => {
       {/* Glow cálido detrás */}
       <div className="absolute w-72 h-72 rounded-full bg-primary/15 blur-3xl" aria-hidden="true" />
 
-      {/* Teléfono — lo que ve el comensal */}
+      {/* Teléfono — lo que ve el comensal. Va en oscuro (data-theme en el propio
+          marco, no en el contenedor) para flotar como pantalla real sobre el
+          fondo claro de la landing sin dibujar un rectángulo de fondo. */}
       <motion.div
+        data-theme="black"
         style={{
           rotateX: reduced ? 0 : rotateX,
           rotateY: reduced ? 0 : rotateY,
@@ -79,8 +82,10 @@ export const HeroVisual = () => {
         </div>
       </motion.div>
 
-      {/* Notificación flotante — lo que recibe el dueño, al instante (parallax) */}
+      {/* Notificación flotante — lo que recibe el dueño, al instante (parallax).
+          También en oscuro (data-theme en la propia card). */}
       <motion.div
+        data-theme="black"
         style={{ x: reduced ? 0 : notifX, y: reduced ? 0 : notifY }}
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}

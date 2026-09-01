@@ -6,11 +6,13 @@ import type { BillingCycle } from "../../core/modules/payment/domain/models/Paym
 import i18n from "../i18n";
 
 // Email de contacto para el plan Enterprise (cotización a medida). Ajustable.
-export const ENTERPRISE_CONTACT_EMAIL = "hola@tepidolacuenta.site";
+// IMPORTANTE: esta casilla debe existir en el proveedor de mail (Hostinger) para
+// poder recibir; si no, los correos rebotan.
+export const ENTERPRISE_CONTACT_EMAIL = "contacto@tepidolacuenta.site";
 
 export const getEnterpriseMailto = (): string =>
   `mailto:${ENTERPRISE_CONTACT_EMAIL}?subject=${encodeURIComponent(
-    "Consulta plan a medida — muchas sucursales — TePidoLaCuenta",
+    "Consulta plan a medida — muchas sucursales — tepidolacuenta",
   )}`;
 
 // Monto ARS a mostrar/cobrar según el ciclo.

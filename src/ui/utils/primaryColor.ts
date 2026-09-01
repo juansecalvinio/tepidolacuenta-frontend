@@ -9,12 +9,14 @@
 
 export type PrimaryColor = "amber" | "emerald" | "indigo";
 
-export const DEFAULT_PRIMARY: PrimaryColor = "emerald";
+export const DEFAULT_PRIMARY: PrimaryColor = "amber";
 
+// El orden de las keys define el orden en que se muestran las opciones en
+// Configuración → Color principal (Settings itera Object.keys sobre esto).
 export const PRIMARY_PALETTE: Record<PrimaryColor, { label: string }> = {
-  emerald: { label: "Esmeralda" },
-  indigo: { label: "Índigo" },
   amber: { label: "Ámbar" },
+  indigo: { label: "Índigo" },
+  emerald: { label: "Esmeralda" },
 };
 
 // Referencias a las vars CSS de la paleta (única fuente: styles.css).

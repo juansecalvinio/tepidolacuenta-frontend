@@ -49,6 +49,9 @@ export const PendingOrdersDemo = () => {
 
   return (
     <div
+      // Mockup en oscuro (independiente del tema de la página) para que la
+      // ventana simule una pantalla real y contraste con la landing clara.
+      data-theme="black"
       className="surface rounded-3xl border border-base-300 bg-base-100 overflow-hidden"
       aria-hidden="true"
     >

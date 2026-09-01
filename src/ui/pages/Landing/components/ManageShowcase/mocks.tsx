@@ -2,6 +2,10 @@
 // visuales fieles al look de la app (mismos tokens y componentes daisyUI).
 // El texto de sample viene de i18n (demo.*); "La Parrilla" y las direcciones no
 // se traducen (nombres propios).
+//
+// Cada mockup se renderiza SIEMPRE en oscuro (`data-theme="black"` en su raíz),
+// independiente del tema de la página, para que las ventanas simulen pantallas
+// reales y resalten sobre el fondo claro de la landing.
 import { useTranslation } from "react-i18next";
 
 // Glifo de QR reutilizable (decorativo).
@@ -29,6 +33,7 @@ export const MockTeamInvite = () => {
   const { t } = useTranslation();
   return (
     <div
+      data-theme="black"
       className="surface bg-base-100 border border-base-300 rounded-2xl overflow-hidden max-w-md mx-auto lg:mx-0"
       aria-hidden="true"
     >
@@ -61,6 +66,7 @@ export const MockBranches = () => {
   ];
   return (
     <div
+      data-theme="black"
       className="surface bg-base-100 border border-base-300 rounded-2xl p-4 flex flex-col gap-2.5 max-w-md mx-auto lg:mx-0"
       aria-hidden="true"
     >
@@ -90,6 +96,7 @@ export const MockTables = () => {
   const { t } = useTranslation();
   return (
     <div
+      data-theme="black"
       className="surface bg-base-100 border border-base-300 rounded-2xl p-4 max-w-md mx-auto lg:mx-0"
       aria-hidden="true"
     >
@@ -116,7 +123,14 @@ export const MockTables = () => {
 export const MockPrintQRs = () => {
   const { t } = useTranslation();
   return (
-    <div className="max-w-md mx-auto lg:mx-0" aria-hidden="true">
+    <div
+      data-theme="black"
+      // padding + radius + borde: sin esto el fondo base-100 que daisyUI aplica
+      // al elemento con data-theme sería un rectángulo de bordes duros. Con el
+      // panel redondeado, la barra y las dos tarjetas de impresión quedan adentro.
+      className="surface bg-base-100 border border-base-300 rounded-2xl p-4 max-w-md mx-auto lg:mx-0"
+      aria-hidden="true"
+    >
       <div className="flex items-center justify-between mb-3">
         <span className="text-sm font-semibold text-fg-soft">
           {t("demo.readyToPrint")}

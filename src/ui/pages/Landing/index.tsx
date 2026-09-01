@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { isAppHost } from "../../utils/host";
+import { appHref, isAppHost, isMarketingHost } from "../../utils/host";
 import { motion } from "motion/react";
 import { HeroVisual } from "./components/HeroVisual";
 import { PhoneDemo } from "./components/PhoneDemo";
@@ -299,7 +299,14 @@ export const Landing = () => {
   const [cycle, setCycle] = useState<BillingCycle>("monthly");
 
   const handleGetStarted = () => {
-    navigate(isAuthenticated ? "/dashboard" : "/register");
+    const path = isAuthenticated ? "/dashboard" : "/register";
+    // En marketing (apex/www) vamos DIRECTO al subdominio de la app para evitar
+    // el hop apex→app de useDomainRouting; en hosts neutros, SPA con navigate.
+    if (isMarketingHost()) {
+      window.location.assign(appHref(path));
+    } else {
+      navigate(path);
+    }
   };
 
   const handleSelectLandingPlan = () => {
@@ -327,9 +334,11 @@ export const Landing = () => {
           </span>
           <div className="flex items-center gap-2">
             <LangToggle />
-            <Link to="/login" className="btn btn-secondary btn-sm">
+            {/* En marketing apunta directo a app.tepidolacuenta.site/login (cross-origin
+                → <a>, no <Link>); en hosts neutros queda relativo. */}
+            <a href={appHref("/login")} className="btn btn-secondary btn-sm">
               {t("nav.login")}
-            </Link>
+            </a>
           </div>
         </div>
       </header>
@@ -633,12 +642,12 @@ export const Landing = () => {
               </h3>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link
-                    to="/login"
+                  <a
+                    href={appHref("/login")}
                     className="text-fg-soft hover:text-primary transition-colors"
                   >
                     {t("footer.login")}
-                  </Link>
+                  </a>
                 </li>
                 <li>
                   <button

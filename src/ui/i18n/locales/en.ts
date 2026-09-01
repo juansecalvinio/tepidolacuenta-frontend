@@ -133,6 +133,7 @@ export const en = {
     title: "Does your business have many branches?",
     subtitle: "Get in touch and we'll build a plan for you.",
     button: "Contact us",
+    whatsapp: "Chat on WhatsApp",
   },
   faq: {
     heading: "Frequently asked questions",
@@ -181,6 +182,8 @@ export const en = {
     linkFaq: "FAQ",
     login: "Log in",
     createAccount: "Create free account",
+    whatsapp: "WhatsApp",
+    whatsappFabAria: "Message us on WhatsApp",
     madeIn: "Made in Argentina 🇦🇷",
   },
   // Sample text inside the demos and mockups (phone, orders, cards).

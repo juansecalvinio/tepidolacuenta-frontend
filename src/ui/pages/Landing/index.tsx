@@ -20,10 +20,13 @@ import {
   formatUsd,
   supportsBranchAddon,
   ENTERPRISE_CONTACT_EMAIL,
+  getWhatsappLink,
+  hasWhatsapp,
 } from "../../utils/plan.utils";
 import { BillingCycleToggle } from "../../components/BillingCycleToggle";
 import { EnterpriseContactCta } from "../../components/EnterpriseContactCta";
 import { LangToggle } from "../../components/LangToggle";
+import { WhatsappIcon } from "../../components/icons";
 import type { BillingCycle } from "../../../core/modules/payment/domain/models/Payment";
 
 
@@ -674,6 +677,20 @@ export const Landing = () => {
                     {ENTERPRISE_CONTACT_EMAIL}
                   </a>
                 </li>
+                {/* WhatsApp solo si hay número configurado (ver WHATSAPP_NUMBER). */}
+                {hasWhatsapp() && (
+                  <li>
+                    <a
+                      href={getWhatsappLink()}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-fg-soft hover:text-primary transition-colors"
+                    >
+                      <WhatsappIcon className="w-4 h-4" />
+                      {t("footer.whatsapp")}
+                    </a>
+                  </li>
+                )}
               </ul>
             </div>
           </div>
@@ -705,6 +722,23 @@ export const Landing = () => {
           Empezar Gratis
         </button>
       </div>
+
+      {/* ── FAB de WhatsApp ────────────────────────────────────────────────── */}
+      {/* Burbuja fija (solo si hay número configurado). En mobile sube cuando la
+          barra sticky está visible, para no superponerse; en desktop, posición fija. */}
+      {hasWhatsapp() && (
+        <a
+          href={getWhatsappLink()}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={t("footer.whatsappFabAria")}
+          className={`fixed right-5 z-40 btn btn-circle btn-lg btn-success shadow-lg hover:scale-105 transition-all duration-300 md:bottom-6 ${
+            showStickyCta ? "bottom-24" : "bottom-5"
+          }`}
+        >
+          <WhatsappIcon className="w-7 h-7" />
+        </a>
+      )}
     </div>
   );
 };

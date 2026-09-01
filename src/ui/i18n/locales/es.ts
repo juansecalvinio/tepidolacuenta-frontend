@@ -137,6 +137,7 @@ export const es = {
     title: "¿Tu negocio tiene muchas sucursales?",
     subtitle: "Escribinos y armamos un plan para vos.",
     button: "Escribinos",
+    whatsapp: "Chatear por WhatsApp",
   },
   faq: {
     heading: "Preguntas frecuentes",
@@ -185,6 +186,8 @@ export const es = {
     linkFaq: "Preguntas frecuentes",
     login: "Ingresar",
     createAccount: "Crear cuenta gratis",
+    whatsapp: "WhatsApp",
+    whatsappFabAria: "Escribinos por WhatsApp",
     madeIn: "Hecho en Argentina 🇦🇷",
   },
   // Texto de sample dentro de las demos y mockups (teléfono, pedidos, tarjetas).

@@ -15,6 +15,26 @@ export const getEnterpriseMailto = (): string =>
     "Consulta plan a medida — muchas sucursales — tepidolacuenta",
   )}`;
 
+// Número de WhatsApp de contacto, en formato internacional SOLO dígitos (código
+// de país incluido, sin +, espacios ni guiones). Ej: "5493511234567".
+// Viene de la env var VITE_WHATSAPP_NUMBER (se setea en .env local y en Vercel).
+// Mientras esté vacío, los botones de WhatsApp NO se renderizan (ver hasWhatsapp),
+// así se puede mergear/deployar sin número y nada queda roto ni apunta a un link
+// inválido. OJO: al ser una landing pública, el número queda visible en el bundle
+// del cliente — la env var sirve para gestionarlo desde Vercel, no para ocultarlo.
+export const WHATSAPP_NUMBER: string = import.meta.env.VITE_WHATSAPP_NUMBER ?? "";
+
+// true cuando hay un número configurado: las superficies de WhatsApp se muestran
+// solo si esto es true.
+export const hasWhatsapp = (): boolean => WHATSAPP_NUMBER.trim().length > 0;
+
+// Link de wa.me con un mensaje inicial prellenado (aparece en el chat al abrir).
+export const getWhatsappLink = (message?: string): string => {
+  const base = `https://wa.me/${WHATSAPP_NUMBER}`;
+  const text = message ?? "Hola! Quiero saber más sobre tepidolacuenta.";
+  return `${base}?text=${encodeURIComponent(text)}`;
+};
+
 // Monto ARS a mostrar/cobrar según el ciclo.
 export const priceForCycle = (plan: Plan, cycle: BillingCycle): number =>
   cycle === "annual" ? plan.priceAnnual : plan.price;
